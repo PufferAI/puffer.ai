@@ -10,9 +10,9 @@
     <main class="content">
         <nav class="nav-box">
             <ul>
-                <li><a href="#post-8">Reinforcement Learning at 1M sps</a></li>
-                <li><a href="#post-7">Reinforcement Learning Quickstart Guide</a></li>
-
+                <li><a href="#post-9">PufferLib 2.0: Reinforcement Learning at 1M sps</a></li>
+                <li><a href="#post-8">Reinforcement Learning Quickstart Guide</a></li>
+                <li><a href="#post-7">PufferLib 1.0: Now Stable</a></li>
                 <li><a href="#post-6">The Puffer Stack</a></li>
                 <li><a href="#post-5">PufferLib 0.7: Puffing Up Performance with Shared Memory</a></li>
                 <li><a href="#post-4">PufferLib 0.6: 🐡🌊 An Ocean of Environments for Learning Pufferfish</a></li>
@@ -21,9 +21,9 @@
                 <li><a href="#post-1">PufferLib 0.2: Ready to Take on the Big Fish</a></li>
             </ul>
         </nav>
-            <article id="post-8" class="blog-post">
+            <article id="post-9" class="blog-post">
                 <header class="post-header">
-                    <h1>Reinforcement Learning at 1,000,000 Steps/second</h1>
+                    <h1>PufferLib 2.0: Reinforcement Learning at 1,000,000 Steps/Second</h1>
                 </header>
                 <p>Welcome to a new age of reinforcement learning. This is our biggest release ever. 11 new environments totaling ~20,000 lines of pure C. They all run >1M steps/second (sps) on a single CPU core, and you can train at 300k-1.2M sps on a single GPU, depending on the environment and policy. That means you can run centuries of simulations per GPU per day. Academic labs with a handful of GPUs now effectively have thousands. It's all free and open source under the MIT license -- star the repo to support the project!</p>
                 <div style="text-align: center;">
@@ -44,7 +44,7 @@
                 <p>To achieve this level of performance, we introduce a new PufferEnv API for native environments. It's less than 100 lines and allows new environments to take full advantage of the rest of PufferLib's optimizations. Native environments skip the Python loop over agents as well as several redundant copy operations. Our multiprocessing implementation checks if you are using a native environment and, if you are, it passes your constructor a pointer into shared memory. Each C environment then writes observations directly into that buffer, so they are immediately available on the main process.</p>
                 <p>In case you're worried about compatibility, don't be. Everything can still be run with Gymnasium/PettingZoo. We just use a VecEnv style API by default. Async mode is a superset of Gymnasium, so you can start off synchronous and implement async with a few small changes to your training code. And even if you don't do any of that, you will still be able to train an order of magnitude faster than with more standard environments.</p>
             </article>
-            <article id="post-7" class="blog-post">
+            <article id="post-8" class="blog-post">
                 <header class="post-header">
                     <h1>Reinforcement Learning Quickstart Guide</h1>
                 </header>
@@ -82,7 +82,14 @@
                 <h2>Contribute to PufferLib</h2>
                 <p>I'm not here to sell you courses. I wrote this mostly so new contributors would have a place to start. Many came in with zero RL experience. I spend a lot of time going through PRs and helping fill in knowledge gaps on stream or in voice chat. This all happens through the Discord. Folks usually start off by contributing to environments and then move into the science side as they get more comfortable. Major contributors even get hardware access for running experiments!</p>
             </article>
-
+            <article id="post-7" class="blog-post">
+                <header class="post-header">
+                    <h1>PufferLib 1.0: Now Stable</h1>
+                </header>
+                <p>Our first stable release. This update doesn't have any fancy new features, but it fixes a ton of common pain points. Here's 30 minutes of fast and simple reinforcement learning demos. As of this update, we now offer priority service packages for companies.</p>
+                <div align="center">
+                    <iframe width="854" height="480" src="https://www.youtube.com/embed/h-AFmgAtVgw" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
 
             <article id="post-6" class="blog-post">
                 <header class="post-header">
