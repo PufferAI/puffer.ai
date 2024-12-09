@@ -7,6 +7,8 @@ A spiritual successor to Neural MMO 1-2. Explore, forage, fight, and trade in a 
 
 This environment supports configurable difficulty and scale. We are running a medium size map (512x512), but with only 8 agents for browser compatibility. The same map runs 1024 locally. 
 
+SHADERS ARE BROKEN ON MOBILE. I know. I will fix them soon.
+
 Controls: LEFT CONTROL to toggle human play, NOT shift like the other environments.
     Move (1st person) or pan (3rd person): W/A/S/D or Arrow keys Sprint (1st person) or increase pan/zoom speed (3rd person): Left shift Use item: Number keys
     Attack: Space
