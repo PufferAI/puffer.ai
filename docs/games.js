@@ -1,5 +1,4 @@
 const games = {
-/*
     nmmo3: {
         title: "Neural MMO 3",
         description: `A massively multiagent environment with progression and an agent-driven economy. By Joseph Suarez.
@@ -23,7 +22,6 @@ Actions: Discrete. Move, sprint, attack, use item, buy, sell`,
         width: 960,
         height: 704,
     },
-*/
     moba: {
         title: "Puffer MOBA",
         description: `A Multiplayer Online Battle Arena (MOBA) inspired by DoTA and OpenAI Five. By Joseph Suarez.
