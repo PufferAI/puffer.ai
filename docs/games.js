@@ -167,6 +167,18 @@ Actions: Discrete. Move, turn, load/drop box`,
         width: 640,
         height: 704,
     },
+    trash_pickup: {
+        title: "Trash Pickup",
+        description: `Collect trash, put it in the bin. By Xander.
+
+Controls: Move with WASD or Arrow keys
+Observations: 3D crop of nearby tiles (one-hot)
+Actions: Discrete. Move`,
+        thumbnail: "assets/trash_pickup_thumbnail.png",
+        path: "assets/trash_pickup/game.html",
+        width: 400,
+        height: 460,
+    },
     connect4: {
         title: "Connect4",
         description: `The classic two-player board game. By Spencer, with opponent AI by Jake Forsey
