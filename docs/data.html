@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PufferLib - Experimental Data</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="plots.js" defer></script> <!-- Include external JS file -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        #plots {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .plot-container {
+            flex: 1 1 45%; /* Adjust width to 45% or other value to control size */
+            min-width: 400px; /* Ensure plots don't get too small */
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <main class="content">
+        <span style="border: 2px solid red; padding: 2px; display: inline-block;">In 2025, PufferAI will be running RL experiments and ablations at a scale previously reserved only for Google. Our objective is to make RL 10x easier to get working on new problems by the end of the year. We are still experimenting with where we will share results, but for now, they will be here.</span>
+
+        <h1>Quick test demo from a Puffer Pong sweep</h1>
+        <div id="plots"></div> <!-- Container for the scatter plots -->
+        <script src="header.js"></script>
+    </main>
+</body>
+</html>
