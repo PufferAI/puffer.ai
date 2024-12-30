@@ -123,8 +123,9 @@ vecenv = pufferlib.vector.make(
     **kwargs # extra backend-specific options
 )
 
-# Make 4 copies of Breakout on the current process (Serial is the default)
-vecenv = pufferlib.vector.make(env_creator, num_envs=4)
+# Make 4 copies of Breakout on the current process
+vecenv = pufferlib.vector.make(env_creator, num_envs=4,
+    backend=pufferlib.vector.Serial)
 
 # Make 4 copies of Breakout, each on a separate process
 vecenv = pufferlib.vector.make(env_creator, num_envs=4,
