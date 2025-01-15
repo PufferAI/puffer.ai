@@ -20,9 +20,6 @@
             </ul>
         </nav>
 
-        <span style="border: 2px solid red; padding: 2px; display: inline-block;">Release Week Note: 2.0 just launched. This is a massive update. discord.gg/puffer for prompt support if anything doesn't work</span>
-
-
         <p>PufferLib is a library for sane and simple reinforcement learning. Our key features are:</p>
                 <ul>
                     <li><strong>Clean PuffeRL:</strong> Our training demo is a turbocharged version of CleanRL's PPO + LSTM with severalfold performance improvements and major quality of life upgrades. Train at 1M+ steps/second and easily run hyperparameter sweeps powered by CARBS on dozens of environments.
@@ -40,6 +37,9 @@
             <header class="post-header">
                 <h1>Installation</h1>
             </header>
+
+        <span style="border: 2px solid red; padding: 2px; display: inline-block;">CONDA USERS: Be warned, Conda's C compiler is fundamentally broken. We have hacked around it so Ocean envs will at least run, but most will be several times slower than if you install without Conda.</span>
+
             <h2>PufferTank (Recommended)</h2>
             <p><a href="https://github.com/pufferai/puffertank" target="_blank">PufferTank</a> is a prebuilt GPU Docker image with PufferLib and dependencies for all environments in the registry, including some that are slow and tricky to install. If you have not used containers before and just want everything to work, clone the repository and open it in VSCode. You will need to install the Dev Container plugin as well as Docker Desktop. VSCode will then detect the settings in .devcontainer and set up the container for you. Neovim (btw) is also included.</p>
             <pre><code>git clone https://github.com/pufferai/puffertank
