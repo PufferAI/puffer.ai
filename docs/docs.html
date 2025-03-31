@@ -107,7 +107,7 @@ ls -lt experiments | head</code></pre>
            <header class="post-header">
                <h1>Vectorization</h1>
            </header>
-                <p>In RL, vectorization refers to the process of simulating multiple copies of an environment in parallel. Our Multiprocessing backend is fast -- much faster than Gymnasium's in most cases. Atari runs 50-60% faster synchronous and 5x faster async by our latest benchmark, and some environments like NetHack can be 10x faster even synchronous, with no API changes. Here's how to create a vectorized environment:</p>
+                <p>In RL, vectorization refers to the process of simulating multiple copies of an environment in parallel. Our Multiprocessing backend is fast -- much faster than Gymnasium's in most cases. Atari runs 50-60% faster synchronous and 5x faster async by our latest benchmark, and some environments like NetHack can be 10x faster even synchronous, with no API changes. Here's how to create a vectorized environment. Note to mac users: your OS doesn't like to run subprocesses without __main__.</p>
                         <pre><code>
 
 from pufferlib.environments import atari
