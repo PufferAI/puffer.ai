@@ -808,12 +808,22 @@ minibatch_size = 32768</code></pre>
 
         <pre><code>puffer train --env puffer_squared</code></pre>
 
-        <p> A few tips for debugging: write in C first. Compile with script/build_ocean.sh. <env_name> local to enable address sanitizer. This will catch most indexing and overflow bugs. If your env works in C but not when you bind to Python, make sure you set up all initialization parameters in binding.c and called your init function, if you have one. If your env hangs with multiprocessing, it's probably segfaulting. You can see that if you train with --vec.backend Serial. You can usually get a stack track as follows:</p>
+        <p> We suggest writing your whole environment in C first. Compile with script/build_ocean.sh. <env_name> local to enable address sanitizer. This will catch most indexing and overflow bugs. If your env works in C but not when you bind to Python, you can usually get a stack track as follows:</p>
 
         <pre><code>DEBUG=1 python setup.py build_ext --inplace --force
 CUDA_VISIBLE_DEVICES=None LD_PRELOAD=$(gcc -print-file-name=libasan.so) python3.12 -m pufferlib.clean_pufferl train --env <env_name> --train.device cpu --vec.backend Serial</code></pre>
 
-        <p>You do have to have your compiler and asan set up correctly. This is done for you in PufferTank.</p>
+        <p>You do have to have your compiler and asan set up correctly. This is done for you in PufferTank. You can also set breakpoints from Python into C with gdb:</p>
+
+        <pre><code>gdb --args python3.12 -m pufferlib.clean_pufferl train --env <env_name> --train.device cpu --vec.backend Serial</code></pre>
+
+        <p>Here's a checklist of commong bugs if your env is not training:</p>
+        <ul>
+            <li><b>Zero or incorrect observations/actions:</b> Ensure the data type and shapes used in the Python spaces and observation/action buffers match the types you've defined in C</li>
+            <li><b>Incorrect or missing resets:</b> Your environment should handle its own resets internally. For envs that never reset, it is often useful to respawn agents if they are stuck (e.g. no reward for 500 steps)</li>
+            <li><b>Manually inspect data scale:</b> You want observations and rewards to be roughly in the range of -1 to 1. </li>
+            <li><b>Incorrect binding args:</b> Ensure your binding sets the same args as your .c file does. Call your init function if you have one.</b>
+        </ul>
 
         <p>There's a second tutorial environment called Target on the GitHub. It's multi-agent with a continuous state space and multi-discrete actions. It's commented like Squared, which is also in the repo. Star on your way in to support!</p>
 
