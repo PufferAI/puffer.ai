@@ -23,7 +23,7 @@
         <p>PufferLib is a library for sane and simple reinforcement learning at millions of steps per second. Our key features are:</p>
                 <ul>
                     <li><strong>Ocean:</strong> 20+ environments from simple arcade games to massively multiagent sims</li>
-                    <li><strong>PuffeRL:</strong> All our training advancements packed into a single ~1000 line script</li>
+                    <li><strong>PuffeRL:</strong> Train at millions of steps/second with our algoritm in a single ~1000 line script</li>
                     <li><strong>Protein:</strong> Our algorithm for automatic hyperparameter and reward tuning</li>
                     <li><strong>Vectorization:</strong> Ultra fast synchronous and asynchronous parallel simulation</li>
                     <li><strong>Emulation:</strong> Use Gymnasium and PettingZoo environments with PufferLib</li>
@@ -64,127 +64,121 @@ cd puffertank
 
         <article id="post-2" class="blog-post">
             <header class="post-header">
-                <h1>PuffeRL</h1>
+                <h1>Cheat Sheet</h1>
+            </header>
+            <pre><code>puffer [train|eval|sweep] env_name [OPTIONS]                      # PufferLib CLI, available from package
+python -m pufferlib.pufferl [train|eval|sweep] env_name [OPTIONS] # Equivalent command from source
+
+puffer train puffer_breakout --help                               # Get help on a specific environment
+puffer train puffer_breakout --train.learning-rate 0.001          # Set train params
+puffer train puffer_breakout --env.vision 3                       # Set env params
+puffer train puffer_breakout --vec.backend Serial                 # Set vec params
+puffer train puffer_breakout --neptune --tag tag_name             # Track with Neptune
+puffer train puffer_breakout --wandb --tag tag_name               # Track with Weights and Biases
+
+puffer eval puffer_breakout                                       # Render the env with a random agent
+puffer eval puffer_breakout --load-model-path path/model.pt       # Load a trained model
+puffer eval puffer_breakout --load-model-path latest              # Load the latest model (ls -lt experiments/*.pt | head -n 1)
+puffer eval puffer_breakout --neptune --load-id id                # Load a model from Neptune
+puffer eval puffer_breakout --wandb --load-id id                  # Load a model from WandB
+
+puffer sweep puffer_breakout --neptune --tag tag_name             # Run a hyperparameter sweep tracked with Neptune
+puffer sweep puffer_breakout --wandb --tag tag_name               # Run a hyperparameter sweep tracked with Weights and Biases
+
+# TODO: Add DDP Example
+
+
+# PuffeRL
+pufferl.PuffeRL(config, vecenv, policy)                           # PuffeRL trainer
+PuffeRL.evaluate()                                                # Collect batch_size environment interactions
+PuffeRL.train()                                                   # On one batch
+PuffeRL.mean_and_log()                                            # Aggregate logs and send to Wandb/Neptune
+PuffeRL.close()                                                   # Final logs and close envs
+PuffeRL.save_checkpoint()
+PuffeRL.print_dashboard()                                         # Monitor stats in your term
+
+PuffeRL.NoLogger
+PuffeRL.NeptuneLogger
+PuffeRL.WandbLogger
+logger.log(logs, step)
+logger.close(model_path)
+logger.download()
+
+pufferl.train(env_name, args=None, vecenv=None, policy=None, logger=None)
+pufferl.eval(env_name, args=None, vecenv=None, policy=None)
+pufferl.sweep(env_name, args=None)
+
+pufferl.load_config(env_name)                                     # Load args from cli + config file
+pufferl.load_env(env_name, args)
+pufferl.load_policy(args, vecenv)
+
+
+# VecEnv
+pufferlib.vector.make(env_creator_or_creators, env_args=None, env_kwargs=None, backend=PufferEnv, num_envs=1, seed=0, **kwargs)
+vecenv.num_envs                                                   # Number of observations returned by step() and recv()
+vecenv.reset()                                                    # Synchronous reset
+vecenv.async_reset(seed=None)                                     # Asynchronous reset
+vecenv.step(actions)                                              # Synchronous step
+vecenv.send(actions)                                              # Asynchronous step - send actions to env
+vecenv.recv()                                                     # Asynchronous step - receive observations from env
+vecenv.notify()                                                   # Call env.notify for all envs
+vecenv.close()                                                    # Close all envs
+
+
+# Emulation
+pufferlib.emulation.GymnasiumPufferEnv(env=None, env_creator=None, env_args=[], env_kwargs={}, buf=None, seed=0)
+env.render_mode                                                   # Gymnasium render mode
+env.observation_space                                             # Gymnasium/PettingZoo observation space
+env.action_space                                                  # Gymnasium/PettingZoo action space
+env.single_observation_space                                      # Observation space for a single agent
+env.single_action_space                                           # Action space for a single agent
+env.seed(seed)                                                    # Legacy Gym seed method
+env.reset(seed=None)                                              # Gym/Gymnasium/PettingZoo reset
+env.step(action)                                                  # Gym/Gymnasium/PettingZoo step
+env.render()                                                      # Gym/Gymnasium/PettingZoo render
+env.close()                                                       # Gym/Gymnasium/PettingZoo close
+
+pufferlib.emulation.PettingZooPufferEnv(env=None, env_creator=None, env_args=[], env_kwargs={}, buf=None, seed=0)
+env.agents                                                        # List of agent ids
+env.possible_agents                                               # List of possible agent ids
+env.done                                                          # True if all agents are done
+</code></pre>
+        </article>
+        <article id="post-2" class="blog-post">
+            <header class="post-header">
+                <h1>Examples</h1>
             </header>
 
-            <p>Our trainer is based on CleanRL's PPO + LSTM, but it includes the results of our own optimizations and research.We have run it up to 15M steps/second on a single RTX 5090, and it can solve many problems out of the box that standard PPO can't.</p>
- 
-            <h2>CLI</h2>
-            <pre><code>puffer [train, eval, sweep]
-    --env [env_name]
-    --vec.backend [Serial, Multiprocessing]
-    --[neptune, wandb] # Track online
+            <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/examples/gym_env.py">Gym:</a> Wrapping a legacy Gym environment for use with PufferLib</p>
+            <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/examples/gymnasium_env.py">Gymnasium:</a> Wrapping a Gymnasium environment for use with PufferLib</p>
+            <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/examples/pettingzoo_env.py">PettingZoo:</a> Wrapping a multiagent PettingZoo environment for use with PufferLib</p>
+            <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/examples/puffer_env.py">PufferEnv:</a> Minimal example of our native vector env format that supports single-agent and multi-agent environments</p>
+            <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/examples/structured_env.py">Structured Spaces:</a> Using PufferLib's emulation to handle non-flat observation and action spaces</p>
+            <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/examples/vectorization.py">Vectorization:</a>Fast and broadly compatible serial, multiprocessed synchronous, and multiprocessed asynchronous environment simulation</p>
+            <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/ocean/squared">Custom PufferEnv (Squared):</a> A sample environment with implementations in C and Python. See the tutorial below for a walkthrough</p>
+            <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/ocean/target">Custom PufferEnv (Target):</a> A slightly more complex, multi-agent sample environment in C. Reference this after reading the Squared walkthrough.</p>
+            <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/ocean/target">PufferEnv Template:</a> Minimal working environment. Copy this as a starting point for your new environment.</p>
+            <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/examples/pufferl.py">PuffeRL (importable):</a> Minimal example importing + using PuffeRL. Allows for custom models and environments without editing our training algorithm.</p>
+            <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/pufferl.py">PuffeRL:</a> Our main training code for PufferLib. Inspired by CleanRL - use this as a starting point for your own algo research</p>
+            <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/environments/atari/environment.py">Atari Wrapper:</a> How we wrap Atari for use with PufferLib</p>
+            <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/environments/nethack/environment.py">NetHack Wrapper:</a> How we wrap NetHack for use with PufferLib</p>
+            <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/environments/procgen/environment.py">Procgen Wrapper:</a> How we wrap Procgen for use with PufferLib</p>
+            <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/models.py">Our Default Model:</a> Flattens observations and handles discrete, multi-discrete, and continuous action spaces. Meant as a broadly compatible starting point.</p>
+            <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/ocean/torch.py">Custom Models:</a> A collection of architectures used for our Ocean environments
+        </article>
 
-# Get help
-puffer train --help
-
-# Get help on a specific environment
-puffer train --env puffer_snake --help
-
-# Run a hyperparameter sweep. Specify --neptune or --wandb to track
-puffer sweep --env puffer_snake --wandb
-
-# Set train and env params from cli:
-puffer train --env puffer_snake --train.learning-rate 0.001 --env.vision 3
-
-# Watch your trained model play the game
-ls -lt experiments | head # Find your latest checkpoint
-puffer eval --env puffer_snake --load-model-path experiments/your_model.pt
-
-# Download a model from WandB/Neptune to eval
-puffer eval --env puffer_snake --load-id <id></code></pre>
-
-           <h2>API</h2>
-           <p>You import functionality from the trainer file without editing it directly. This allows you to use your own environments and config files.</p>
-
-           <p>ADD SCRIPT HERE</p>
-
-           <h2>Running Locally</h2>
-           The CLI is equivalent to running the pufferl file directly:
-           <pre><code>python -m pufferlib/pufferl train --env breakout</code></pre>
-
-           This is how we typically run PufferLib from source.
-
-       </article>
        <article id="post-3" class="blog-post">
            <header class="post-header">
-               <h1>Vectorization</h1>
+               <h1>About PufferLib</h1>
            </header>
-                <p>In RL, vectorization refers to the process of simulating multiple copies of an environment in parallel. Our Multiprocessing backend is fast -- much faster than Gymnasium's in most cases. Atari runs 50-60% faster synchronous and 5x faster async by our latest benchmark, and some environments like NetHack can be 10x faster even synchronous, with no API changes. Here's how to create a vectorized environment. Note to mac users: your OS doesn't like to run subprocesses without __main__.</p>
-                        <pre><code>
 
-from pufferlib.environments import atari
-env_creator = atari.env_creator('breakout')
+               <p>PufferLib is the reinforcement learning library I wish existed during my PhD. It started as a compatibility layer to make working with complex environments a breeze. Now, it's a high-performance toolkit for research and industry with optimized parallel simulation, training at millions of steps per second, and core algorithm improvements from our own research.</p>
 
-import pufferlib.vector
-vecenv = pufferlib.vector.make(
-    env_creator, # A callable (class or function) that returns an env
-    env_args: None, # A list of arguments to pass to each environment
-    env_kwargs: None, # A list of dictionary keyword arguments to pass to each environment
-    backend: Serial, # pufferlib.vector.[Serial|Multiprocessing|Native|Ray]
-    num_envs: 1, # The total number of environments to create
-    **kwargs # extra backend-specific options
-)
-
-# Make 4 copies of Breakout on the current process
-vecenv = pufferlib.vector.make(env_creator, num_envs=4,
-    backend=pufferlib.vector.Serial)
-
-# Make 4 copies of Breakout, each on a separate process
-vecenv = pufferlib.vector.make(env_creator, num_envs=4,
-    backend=pufferlib.vector.Multiprocessing)
-
-# Make 4 copies of Breakout, 2 on each of 2 processes
-vecenv = pufferlib.vector.make(env_creator, num_envs=4,
-    backend=pufferlib.vector.Multiprocessing, num_workers=2)
-
-# Make 4 copies of Breakout, 2 on each of 2 processes,
-# but only get two observations per step
-vecenv = pufferlib.vector.make(env_creator, num_envs=4,
-    backend=pufferlib.vector.Multiprocessing, num_workers=2,
-    batch_size=2)
-
-# Make 1024 instances of Ocean breakout on the current process
-from pufferlib.ocean import Breakout
-vecenv = pufferlib.vector.make(Breakout,
-    backend=pufferlib.vector.Native,
-    env_kwargs={'num_envs': 1024},
-)
-
-# Notice that Native envs handle multiple instances internally.
-# You can still multiprocess/async, but don't make multiple external
-# copies per process.
-vecenv = pufferlib.vector.make(Breakout, num_envs=2,
-    backend=pufferlib.vector.Multiprocessing, batch_size=1)
-
-# Synchronous API - reset/step
-import time
-vecenv = pufferlib.vector.make(Breakout, num_envs=2,
-    backend=pufferlib.vector.Multiprocessing)
-vecenv.reset()
-start, steps, TIMEOUT = time.time(), 0, 3
-while time.time() - start < TIMEOUT:
-    vecenv.step(vecenv.action_space.sample())
-    steps += 1
-
-vecenv.close()
-print('Puffer FPS:', steps*vecenv.num_envs/TIMEOUT)
-
-# Async API - async_reset, send/recv
-# Call your model between recv() and send()
-vecenv = pufferlib.vector.make(Breakout, num_envs=2,
-    backend=pufferlib.vector.Multiprocessing, batch_size=1)
-vecenv.async_reset()
-start, steps, TIMEOUT = time.time(), 0, 3
-while time.time() - start < TIMEOUT:
-    vecenv.recv()
-    vecenv.send(vecenv.action_space.sample())
-    steps += 1
-
-vecenv.close()
-print('Puffer Async FPS:', steps*vecenv.num_envs/TIMEOUT)
-</code></pre>
-            <p>Our vectorization works on almost any Gymnasium/PettingZoo environment, not just the ones we have bound manually. All you have to do is wrap your environment with our Emulation layer, covered in the next section. PufferLib outperforms other vectorization implementations by implementing the following optimizations:</p>
+                <h2>Emulation</h2>
+                <p>Complex environments may have heirarchical observations and actions, variable numbers of agents, and other quirks that make them difficult to work with and incompatible with standard reinforcement learning libraries. This was the initial motivation for PufferLib. The idea is to make every environment <i>emulate</i> the structure of simpler environments that most original RL tooling was written for. We flatten Gym/Gymnasium/PettingZoo spaces in our wrappers and unflatten them just in time for the model forward pass. This means you don't have to keep track of structured data during vectorization, in your experience buffers, or anywhere else, allowing for simpler and faster code. We also apply extra compatibility checks and pad multiagent environments to a fixed agent count. Under the hood, our wrappers maintain the Gym/Gymnasium/PettingZoo API using a stricter subset of available spaces, so you can still use them with other libraries outside of PufferLib.</p>
+ 
+                <h2>Vectorization</h2>
+                <p>In RL, vectorization refers to the process of simulating multiple copies of an environment in parallel. Our Multiprocessing backend is fast -- much faster than Gymnasium's in most cases. Atari runs 50-60% faster synchronous and 5x faster async by our latest benchmark, and some environments like NetHack can be 10x faster even synchronous, with no API changes. Our vectorization works on almost any Gym/Gymnasium/PettingZoo environment after applying our 1-line emulation wrapper. PufferLib outperforms other vectorization implementations using the following optimizations:</p>
             <ul>
                 <li><strong>A Python implementation of EnvPool.</strong> Simulates more envs than are needed per batch and returns batches of observations as soon as they are ready. Requires using the async send/recv instead of the sync step API.</li>
                 <li><strong>Multiple environments per worker.</strong> Important for fast environments.</li>
@@ -194,171 +188,18 @@ print('Puffer Async FPS:', steps*vecenv.num_envs/TIMEOUT)
                 <li><strong>Native multiagent support.</strong> It's not an extra wrapper or slow bolt-on feature. PufferLib treats single-agent and multi-agent environments the same. API differences are handled at the emulation level.</li>
             </ul>
 
-</article>
-    <article id="post-4" class="blog-post">
-        <header class="post-header">
-            <h1>Emulation</h1>
-        </header>
-        <p>Complex environments may have heirarchical observations and actions, variable numbers of agents, and other quirks that make them difficult to work with and incompatible with standard reinforcement learning libraries. PufferLib's emulation layer makes every environment look like it has flat observations/actions and a constant number of agents. Here's how it works with NetHack and Neural MMO, two notoriously complex environments.</p>
+        <h2>PuffeRL</h2>
+        <p>PuffeRL is our training algorithm. It's based on CleanRL's PPO + LSTM but with a ton of improvements, including core algorithm changes based on our own research. We have no plans to ship a collection of standard implementations. Instead, our goal is to continue improving our one core algorithm through research and rigorous testing on all of Ocean. See our Blog for research updates!</p>
 
-        <pre><code>pip install -e .[nethack,nmmo]</code></pre>
-        <pre><code>import pufferlib.emulation
-import pufferlib.wrappers
-
-import nle, nmmo
-
-def nmmo_creator():
-    env = nmmo.Env()
-    env = pufferlib.wrappers.PettingZooTruncatedWrapper(env)
-    return pufferlib.emulation.PettingZooPufferEnv(env=env)
-
-def nethack_creator():
-    env = nle.env.NLE()
-    import shimmy # Gym versioning
-    env = shimmy.GymV21CompatibilityV0(env=env)
-    return pufferlib.emulation.GymnasiumPufferEnv(env=env)
-
-env = nethack_creator()
-obs, _ = env.reset()
-structured_obs = obs.view(env.obs_dtype)
-print('NetHack observation space:', structured_obs.dtype)
-print('Packed shape:', obs.shape)
-
-env = nmmo_creator()
-obs, _ = env.reset()
-structured_obs = obs[1].view(env.obs_dtype)
-print('NMMO observation space:', structured_obs.dtype)
-print('Packed shape:', obs[1].shape)</code></pre>
-        <p>The wrappers give you back a Gymnasium/PettingZoo compliant environment. There is no loss of generality and no change to the underlying environment. You can wrap environments by class, creator function, or object, with or without additional arguments. These wrappers enable us to make some optimizations to vectorization code that would be difficult to implement otherwise.</p>
-    </article>
-    <article id="post-5" class="blog-post">
-        <header class="post-header">
-            <h1>Policies</h1>
-        </header>
-        <p>You don't want another Policy API so we don't have one. We Just write normal PyTorch code. We do provide:</p>
+           <h2>Policies</h2>
+        <p>We don't have a policy API. You just write normal PyTorch code. We do provide some defaults and surrounding tools:</p>
         <ul>
-            <li><strong>Default policies:</strong> A small collection of broadly useful networks. These include MLPs and CNNs.</li>
-            <li><strong>LSTM Integration:</strong> Break your <code>forward()</code> function into <code>encode_observations()</code> and <code>decode_actions()</code> and our LSTM wrapper will handle recurrance for you</li>
-            <li><strong>CleanRL API compatibility:</strong> Wrappers that format your policy for usage with CleanRL. We use these in our demos. This is mostly fluff -- we're working on cutting down boilerplate.</li>
+            <li><strong>PyTorch observation unflattening:</strong> A batched inversion function for the flattening applied to structured observation spaces by our emulation layer</li>
+            <li><strong>Default policies:</strong> A small collection of broadly useful networks. These include MLPs and CNNs. You can also refer to all of the models used as defaults by our Ocean environments.</li>
+            <li><strong>LSTM Integration:</strong> Break your <code>forward()</code> function into <code>encode_observations()</code> and <code>decode_actions()</code> and our LSTM wrapper will handle recurrance for you. We have a major optimization here that uses LSTMCell during rollouts and LSTM during training for up to 3x faster inference.</li>
         </ul>
 
-<pre><code>import torch
-from torch import nn
-import numpy as np
-
-
-class Default(nn.Module):
-    '''Default PyTorch policy. Flattens obs and applies a linear layer.
-
-    PufferLib is not a framework. It does not enforce a base class.
-    You can use any PyTorch policy that returns actions and values.
-    We structure our forward methods as encode_observations and decode_actions
-    to make it easier to wrap policies with LSTMs. You can do that and use
-    our LSTM wrapper or implement your own. To port an existing policy
-    for use with our LSTM wrapper, simply put everything from forward() before
-    the recurrent cell into encode_observations and put everything after
-    into decode_actions.
-    '''
-    def __init__(self, env, hidden_size=128):
-        super().__init__()
-        self.hidden_size = hidden_size
-        self.is_multidiscrete = isinstance(env.single_action_space,
-                pufferlib.spaces.MultiDiscrete)
-        self.is_continuous = isinstance(env.single_action_space,
-                pufferlib.spaces.Box)
-        try:
-            self.is_dict_obs = isinstance(env.env.observation_space, pufferlib.spaces.Dict) 
-        except:
-            self.is_dict_obs = isinstance(env.observation_space, pufferlib.spaces.Dict) 
-
-        if self.is_dict_obs:
-            self.dtype = pufferlib.pytorch.nativize_dtype(env.emulated)
-            input_size = sum(np.prod(v.shape) for v in env.env.observation_space.values())
-            self.encoder = nn.Linear(input_size, self.hidden_size)
-        else:
-            self.encoder = nn.Linear(np.prod(env.single_observation_space.shape), hidden_size)
-
-        if self.is_multidiscrete:
-            action_nvec = env.single_action_space.nvec
-            self.decoder = nn.ModuleList([pufferlib.pytorch.layer_init(
-                nn.Linear(hidden_size, n), std=0.01) for n in action_nvec])
-        elif not self.is_continuous:
-            self.decoder = pufferlib.pytorch.layer_init(
-                nn.Linear(hidden_size, env.single_action_space.n), std=0.01)
-        else:
-            self.decoder_mean = pufferlib.pytorch.layer_init(
-                nn.Linear(hidden_size, env.single_action_space.shape[0]), std=0.01)
-            self.decoder_logstd = nn.Parameter(torch.zeros(
-                1, env.single_action_space.shape[0]))
-
-        self.value_head = nn.Linear(hidden_size, 1)
-
-    def forward(self, observations):
-        hidden, lookup = self.encode_observations(observations)
-        actions, value = self.decode_actions(hidden, lookup)
-        return actions, value
-
-    def encode_observations(self, observations):
-        '''Encodes a batch of observations into hidden states. Assumes
-        no time dimension (handled by LSTM wrappers).'''
-        batch_size = observations.shape[0]
-        if self.is_dict_obs:
-            observations = pufferlib.pytorch.nativize_tensor(observations, self.dtype)
-            observations = torch.cat([v.view(batch_size, -1) for v in observations.values()], dim=1)
-        else: 
-            observations = observations.view(batch_size, -1)
-        return torch.relu(self.encoder(observations.float())), None
-
-    def decode_actions(self, hidden, lookup, concat=True):
-        '''Decodes a batch of hidden states into (multi)discrete actions.
-        Assumes no time dimension (handled by LSTM wrappers).'''
-        value = self.value_head(hidden)
-        if self.is_multidiscrete:
-            actions = [dec(hidden) for dec in self.decoder]
-            return actions, value
-        elif self.is_continuous:
-            mean = self.decoder_mean(hidden)
-            logstd = self.decoder_logstd.expand_as(mean)
-            std = torch.exp(logstd)
-            probs = torch.distributions.Normal(mean, std)
-            batch = hidden.shape[0]
-            return probs, value
-
-        actions = self.decoder(hidden)
-        return actions, value
-
-import pufferlib.vector
-from pufferlib.ocean import Breakout
-vecenv = pufferlib.vector.make(Breakout, backend=pufferlib.vector.Native)
-policy = Default(vecenv.driver_env)
-obs, _ = vecenv.reset()
-obs = torch.as_tensor(obs)
-
-# Use the PyTorch policy raw
-actions, value = policy(obs)
-
-# Use our LSTM compatibility layer
-from pufferlib.models import LSTMWrapper
-lstm_policy = LSTMWrapper(vecenv.driver_env, policy)
-state = (
-    torch.zeros(1, 1, lstm_policy.hidden_size),
-    torch.zeros(1, 1, lstm_policy.hidden_size),
-)
-actions, value, state = lstm_policy(obs, state)
-
-# Use our CleanRL API compatibility layer
-import pufferlib.cleanrl
-cleanrl_policy = pufferlib.cleanrl.Policy(policy)
-actions = cleanrl_policy.get_action_and_value(obs)[0].numpy()
-
-# Use our CleanRL LSTM API compatibility layer
-cleanrl_lstm_policy = pufferlib.cleanrl.RecurrentPolicy(lstm_policy)
-actions = cleanrl_lstm_policy.get_action_and_value(obs)[0].numpy()
-
-obs, rewards, terminals, truncateds, infos = vecenv.step(actions)
-vecenv.close()</code></pre>
-
-        <p>Remember the unflatten operation in Emulation? Notice our usage of <code>pufferlib.pytorch.nativize_dtype</code> and <code>pufferlib.pytorch.nativize_tensor</code> to unpack structured data in the forward pass. You only need to worry about this if your environment has structured observation data.</p>
+</article>
 
     </article>
     <article id="post-6" class="blog-post">
@@ -366,458 +207,38 @@ vecenv.close()</code></pre>
             <h1>Writing Custom Environments that run 1M+ steps/second</h1>
         </header>
 
-        <p>Ocean environments are written with the PufferEnv API. It's a vector format very similar to Gymnasium's VectorEnv, but with native multiagent support. Here's a pure Python environment using this format:</p>
+        <p>Ocean environments are written with the PufferEnv API. It's a vector format very similar to Gymnasium's VectorEnv, but with native multiagent support. Here's a pure Python environment using this format: <a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/ocean/pysquared/pysquared.py">pysquared.py</a></p>
 
-        <pre><code>'''Pure python version of Squared, a simple single-agent sample environment.
-   Use this as a template for your own envs.
-'''
+        <p> If you're familiar with Gymnasium/PettingZoo, you'll notice that this is almost identical. The main difference is that observations, actions, rewards, etc. are initialized from this <i>buf</i> object. All operations happen in-place to avoid creating and copying redundant arrays. Our vectorization passes in slices of shared memory during multiprocessing, so your environment is storing observations directly to a batch on the main process. Note that this means calling <i>step</i> again will overwrite your observations etc. from the previous call.</p>
 
-# We only use Gymnasium for their spaces API for compatibility with other libraries.
-import gymnasium
-import numpy as np
+        <p>The above environment runs at several hundred thousand steps/second, but pure Python quickly becomes a bottleneck as environments become more complex. Below is the exact same code written in C that runs over 100M sps: <a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/ocean/squared/squared.h">squared.h</a></p>
 
-import pufferlib
+        <p>Using our standard 2-core double-buffered multiprocessing settings, this environment trains at 4M steps/second while the pure Python version only trains at 400k. There are a few more steps to bind to PufferLib, though. Add a main in a separate .c so you can demo the code and work in C locally without having to compile through Python: <a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/ocean/squared/squared.c">squared.c</a></p>
 
-NOOP = 0
-DOWN = 1
-UP = 2
-LEFT = 3
-RIGHT = 4
+        <p>Now you have to bind to Python. We provide a short Python C API wrapper for this. All you have to do is write a short binding file that passes initialization args from Python and logs back from C: <a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/ocean/squared/binding.c">binding.c</a></p>
 
-EMPTY = 0
-AGENT = 1
-TARGET = 2
-
-# Inherit from PufferEnv
-class PySquared(pufferlib.PufferEnv):
-    # Required keyword arguments: render_mode, buf, seed
-    def __init__(self, render_mode='ansi', size=11, buf=None, seed=0):
-        # Required attributes below
-        self.single_observation_space = gymnasium.spaces.Box(low=0, high=1,
-            shape=(size*size,), dtype=np.uint8)
-        self.single_action_space = gymnasium.spaces.Discrete(5)
-        self.render_mode = render_mode
-        self.num_agents = 1
-
-        # Call super after initializing attributes
-        super().__init__(buf)
-
-        # Add anything else you want
-        self.size = size
-
-    # All methods below are required with the signatures shown
-    def reset(self, seed=0):
-        self.observations[0, :] = EMPTY
-        self.observations[0, self.size*self.size//2] = AGENT
-        self.r = self.size//2
-        self.c = self.size//2
-        self.tick = 0
-        while True:
-            target_r, target_c = np.random.randint(0, self.size, 2)
-            if target_r != self.r or target_c != self.c:
-                self.observations[0, target_r*self.size + target_c] = TARGET
-                break
-
-        # Observations are read from self. Don't create extra copies
-        return self.observations, []
-
-    def step(self, actions):
-        atn = actions[0]
-
-        # Note that terminals, rewards, etc. are updated in-place
-        self.terminals[0] = False
-        self.rewards[0] = 0
-
-        self.observations[0, self.r*self.size + self.c] = EMPTY
-
-        if atn == DOWN:
-            self.r += 1
-        elif atn == RIGHT:
-            self.c += 1
-        elif atn == UP:
-            self.r -= 1
-        elif atn == LEFT:
-            self.c -= 1
-
-        # Info is a list of dictionaries
-        info = []
-        pos = self.r*self.size + self.c
-        if (self.tick > 3*self.size
-                or self.r < 0
-                or self.c < 0
-                or self.r >= self.size
-                or self.c >= self.size):
-            self.terminals[0] = True
-            self.rewards[0] = -1.0
-            info = [{'reward': -1.0}]
-            self.reset()
-        elif self.observations[0, pos] == TARGET:
-            self.terminals[0] = True
-            self.rewards[0] = 1.0
-            info = [{'reward': 1.0}]
-            self.reset()
-        else:
-            self.observations[0, pos] = AGENT
-            self.tick += 1
-
-        # Return the in-place versions. Don't copy!
-        return self.observations, self.rewards, self.terminals, self.truncations, info
-
-    def render(self):
-        # Quick ascii rendering. If you want a Python-based renderer,
-        # we highly recommend Raylib over PyGame etc. If you use the
-        # C-style Python API, it will be very easy to port to C native later.
-        chars = []
-        grid = self.observations.reshape(self.size, self.size)
-        for row in grid:
-            for val in row:
-                if val == AGENT:
-                    color = 94
-                elif val == TARGET:
-                    color = 91
-                else:
-                    color = 90
-                chars.append(f'\033[{color}m██\033[0m')
-            chars.append('\n')
-        return ''.join(chars)
-
-    def close(self):
-        pass
-
-if __name__ == '__main__':
-    env = PySquared()
-    env.reset()
-    steps = 0
-
-    CACHE = 1024
-    actions = np.random.randint(0, 5, (CACHE, 1))
-
-    import time
-    start = time.time()
-    while time.time() - start < 10:
-        env.step(actions[steps % CACHE])
-        steps += 1
-
-    print('PySquared SPS:', int(steps / (time.time() - start)))</code></pre>
-
-        <p> If you're familiar with Gymnasium/PettingZoo, you'll notice that this is almost identical. The main difference is that observations, actions, rewards, etc. are initialized from this <i>buf</i> object. All operations happen in-place to aavoid creating and copying redundant arrays. Our vectorization passes in slices of shared memory during multiprocessing, so your environment is storing observations directly to a batch on the main process. Note that this means calling <i>step</i> again will overwrite your observations etc. from the previous call.</p>
-
-        <p>The above environment runs at several hundred thousand steps/second, but pure Python quickly becomes a bottleneck as environments become more complex. Below is the exact same code written in C that runs over 100M sps.</p>
-
-        <pre><code>/* Squared: a sample single-agent grid env.
- * Use this as a tutorial and template for your first env.
- * See the Target env for a slightly more complex example.
- * Star PufferLib on GitHub to support. It really, really helps!
- */
-
-#include <stdlib.h>
-#include <string.h>
-#include "raylib.h"
-
-const unsigned char NOOP = 0;
-const unsigned char DOWN = 1;
-const unsigned char UP = 2;
-const unsigned char LEFT = 3;
-const unsigned char RIGHT = 4;
-
-const unsigned char EMPTY = 0;
-const unsigned char AGENT = 1;
-const unsigned char TARGET = 2;
-
-// Required struct. Only use floats!
-typedef struct {
-    float perf; // Recommended 0-1 normalized single real number perf metric
-    float score; // Recommended unnormalized single real number perf metric
-    float episode_return; // Recommended metric: sum of agent rewards over episode
-    float episode_length; // Recommended metric: number of steps of agent episode
-    // Any extra fields you add here may be exported to Python in binding.c
-    float n; // Required as the last field 
-} Log;
-
-// Required that you have some struct for your env
-// Recommended that you name it the same as the env file
-typedef struct {
-    Log log; // Required field. Env binding code uses this to aggregate logs
-    unsigned char* observations; // Required. You can use any obs type, but make sure it matches in Python!
-    int* actions; // Required. int* for discrete/multidiscrete, float* for box
-    float* rewards; // Required
-    unsigned char* terminals; // Required. We don't yet have truncations as standard yet
-    int size;
-    int tick;
-    int r;
-    int c;
-} Squared;
-
-void add_log(Squared* env) {
-    env->log.perf += (env->rewards[0] > 0) ? 1 : 0;
-    env->log.score += env->rewards[0];
-    env->log.episode_length += env->tick;
-    env->log.episode_return += env->rewards[0];
-    env->log.n++;
-}
-
-// Required function
-void c_reset(Squared* env) {
-    int tiles = env->size*env->size;
-    memset(env->observations, 0, tiles*sizeof(unsigned char));
-    env->observations[tiles/2] = AGENT;
-    env->r = env->size/2;
-    env->c = env->size/2;
-    env->tick = 0;
-    int target_idx;
-    do {
-        target_idx = rand() % tiles;
-    } while (target_idx == tiles/2);
-    env->observations[target_idx] = TARGET;
-}
-
-// Required function
-void c_step(Squared* env) {
-    env->tick += 1;
-
-    int action = env->actions[0];
-    env->terminals[0] = 0;
-    env->rewards[0] = 0;
-
-    env->observations[env->r*env->size + env->c] = EMPTY;
-
-    if (action == DOWN) {
-        env->r += 1;
-    } else if (action == RIGHT) {
-        env->c += 1;
-    } else if (action == UP) {
-        env->r -= 1;
-    } else if (action == LEFT) {
-        env->c -= 1;
-    }
-
-    if (env->tick > 3*env->size 
-            || env->r < 0
-            || env->c < 0
-            || env->r >= env->size
-            || env->c >= env->size) {
-        env->terminals[0] = 1;
-        env->rewards[0] = -1.0;
-        add_log(env);
-        c_reset(env);
-        return;
-    }
-
-    int pos = env->r*env->size + env->c;
-    if (env->observations[pos] == TARGET) {
-        env->terminals[0] = 1;
-        env->rewards[0] = 1.0;
-        add_log(env);
-        c_reset(env);
-        return;
-    }
-
-    env->observations[pos] = AGENT;
-}
-
-// Required function. Should handle creating the client on first call
-void c_render(Squared* env) {
-    if (!IsWindowReady()) {
-        InitWindow(64*env->size, 64*env->size, "PufferLib Squared");
-        SetTargetFPS(5);
-    }
-
-    // Standard across our envs so exiting is always the same
-    if (IsKeyDown(KEY_ESCAPE)) {
-        exit(0);
-    }
-
-    BeginDrawing();
-    ClearBackground((Color){6, 24, 24, 255});
-
-    int px = 64;
-    for (int i = 0; i < env->size; i++) {
-        for (int j = 0; j < env->size; j++) {
-            int tex = env->observations[i*env->size + j];
-            if (tex == EMPTY) {
-                continue;
-            }
-            Color color = (tex == AGENT) ? (Color){0, 187, 187, 255} : (Color){187, 0, 0, 255};
-            DrawRectangle(j*px, i*px, px, px, color);
-        }
-    }
-
-    EndDrawing();
-}
-
-// Required function. Should clean up anything you allocated
-// Do not free env->observations, actions, rewards, terminals
-void c_close(Squared* env) {
-    if (IsWindowReady()) {
-        CloseWindow();
-    }
-}</code></pre>
-
-        <p>Using our standard 2-core double-buffered multiprocessing settings, this environment trains at 4M steps/second while the pure Python version only trains at 400k. There are a few more steps to bind to PufferLib, though. Add a main in a separate .c so you can demo the code and work in C locally without having to compile through Python:</p>
-
-        <pre><code>/* Pure C demo file for Squared. Build it with:
- * bash scripts/build_ocean.sh target local (debug)
- * bash scripts/build_ocean.sh target fast
- * We suggest building and debugging your env in pure C first. You
- * get faster builds and better error messages. To keep this example
- * simple, it does not include C neural nets. See Target for that.
- */
-
-#include "squared.h"
-
-int main() {
-    Squared env = {.size = 11};
-    env.observations = (unsigned char*)calloc(env.size*env.size, sizeof(unsigned char));
-    env.actions = (int*)calloc(1, sizeof(int));
-    env.rewards = (float*)calloc(1, sizeof(float));
-    env.terminals = (unsigned char*)calloc(1, sizeof(unsigned char));
-
-    c_reset(&env);
-    c_render(&env);
-    while (!WindowShouldClose()) {
-        if (IsKeyDown(KEY_LEFT_SHIFT)) {
-            env.actions[0] = 0;
-            if (IsKeyDown(KEY_UP)    || IsKeyDown(KEY_W)) env.actions[0] = UP;
-            if (IsKeyDown(KEY_DOWN)  || IsKeyDown(KEY_S)) env.actions[0] = DOWN;
-            if (IsKeyDown(KEY_LEFT)  || IsKeyDown(KEY_A)) env.actions[0] = LEFT;
-            if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) env.actions[0] = RIGHT;
-        } else {
-            env.actions[0] = rand() % 5;
-        }
-        c_step(&env);
-        c_render(&env);
-    }
-    free(env.observations);
-    free(env.actions);
-    free(env.rewards);
-    free(env.terminals);
-    c_close(&env);
-}</code></pre>
-
-        <p>Now you have to bind to Python. We provide a short Python C API wrapper for this. All you have to do is write a short binding file that passes initialization args from Python and logs back from C:</p>
-
-        <pre><code>#include "squared.h"
-
-#define Env Squared
-#include "../env_binding.h"
-
-static int my_init(Env* env, PyObject* args, PyObject* kwargs) {
-    env->size = unpack(kwargs, "size");
-    return 0;
-}
-
-static int my_log(PyObject* dict, Log* log) {
-    assign_to_dict(dict, "perf", log->perf);
-    assign_to_dict(dict, "score", log->score);
-    assign_to_dict(dict, "episode_return", log->episode_return);
-    assign_to_dict(dict, "episode_length", log->episode_length);
-    return 0;
-}</code></pre>
-
-        You can now compile the environment as a Python C extension. If you are using a fork of PufferLib, setup.py will automatically look for <i>binding.c</i>. Ensure you get the latest build with:</p>
+        <p>You can now compile the environment as a Python C extension. If you are using a fork of PufferLib, setup.py will automatically look for <i>binding.c</i>. Ensure you get the latest build with:</p>
 
         <pre><code>python setup.py build_ext --inplace --force</code></pre>
 
-        <p>To use your new environment from Python, set it up as a PufferEnv:</p>
+        <p>To use your new environment from Python, set it up as a PufferEnv: <a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/ocean/squared/squared.py">squared.py</a></p>
 
-        <pre><code>'''A simple sample environment. Use this as a template for your own envs.'''
-
-import gymnasium
-import numpy as np
-
-import pufferlib
-from pufferlib.ocean.squared import binding
-
-class Squared(pufferlib.PufferEnv):
-    def __init__(self, num_envs=1, render_mode=None, log_interval=128, size=11, buf=None, seed=0):
-        self.single_observation_space = gymnasium.spaces.Box(low=0, high=1,
-            shape=(size*size,), dtype=np.uint8)
-        self.single_action_space = gymnasium.spaces.Discrete(5)
-        self.render_mode = render_mode
-        self.num_agents = num_envs
-        self.log_interval = log_interval
-
-        super().__init__(buf)
-        self.c_envs = binding.vec_init(self.observations, self.actions, self.rewards,
-            self.terminals, self.truncations, num_envs, seed, size=size)
- 
-    def reset(self, seed=0):
-        binding.vec_reset(self.c_envs, seed)
-        self.tick = 0
-        return self.observations, []
-
-    def step(self, actions):
-        self.tick += 1
-
-        self.actions[:] = actions
-        binding.vec_step(self.c_envs)
-
-        episode_returns = self.rewards[self.terminals]
-
-        info = []
-        if self.tick % self.log_interval == 0:
-            info.append(binding.vec_log(self.c_envs))
-
-        return (self.observations, self.rewards,
-            self.terminals, self.truncations, info)
-
-    def render(self):
-        binding.vec_render(self.c_envs, 0)
-
-    def close(self):
-        binding.vec_close(self.c_envs)
-
-if __name__ == '__main__':
-    N = 4096
-
-    env = Squared(num_envs=N)
-    env.reset()
-    steps = 0
-
-    CACHE = 1024
-    actions = np.random.randint(0, 5, (CACHE, N))
-
-    i = 0
-    import time
-    start = time.time()
-    while time.time() - start < 10:
-        env.step(actions[i % CACHE])
-        steps += N
-        i += 1
-
-    print('Squared SPS:', int(steps / (time.time() - start)))</code></pre>
-
-        <p>And finally, if you want to expose your environment to our trainer, add a line to <i>ocean/environment.py</i> and add a .ini file for your environment to <i>pufferlib/config/ocean</i>.
-
-        <pre><code>[base]
-package = ocean
-env_name = puffer_squared
-policy_name = Policy
-rnn_name = Recurrent
-
-[env]
-num_envs = 4096
-
-[train]
-total_timesteps = 20_000_000
-gamma = 0.95
-learning_rate = 0.05
-minibatch_size = 32768</code></pre>
+        <p>And finally, if you want to expose your environment to our trainer, add a line to <i>ocean/environment.py</i> and add a .ini file for your environment to <i>pufferlib/config/ocean</i>: <a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/config/ocean/squared.ini">squared.ini</a></p>
 
         <p>Your environment is now available just like any other Ocean environment:</p>
 
-        <pre><code>puffer train --env puffer_squared</code></pre>
+        <pre><code>puffer train puffer_squared</code></pre>
 
         <p> We suggest writing your whole environment in C first. Compile with script/build_ocean.sh. <env_name> local to enable address sanitizer. This will catch most indexing and overflow bugs. If your env works in C but not when you bind to Python, you can usually get a stack track as follows:</p>
 
         <pre><code>DEBUG=1 python setup.py build_ext --inplace --force
-CUDA_VISIBLE_DEVICES=None LD_PRELOAD=$(gcc -print-file-name=libasan.so) python3.12 -m pufferlib.clean_pufferl train --env <env_name> --train.device cpu --vec.backend Serial</code></pre>
+CUDA_VISIBLE_DEVICES=None LD_PRELOAD=$(gcc -print-file-name=libasan.so) python3.12 -m pufferlib.pufferl train <env_name> --train.device cpu --vec.backend Serial</code></pre>
 
         <p>You do have to have your compiler and asan set up correctly. This is done for you in PufferTank. You can also set breakpoints from Python into C with gdb:</p>
 
-        <pre><code>gdb --args python3.12 -m pufferlib.clean_pufferl train --env <env_name> --train.device cpu --vec.backend Serial</code></pre>
+        <pre><code>gdb --args python3.12 -m pufferlib.pufferl train <env_name> --train.device cpu --vec.backend Serial</code></pre>
 
-        <p>Here's a checklist of commong bugs if your env is not training:</p>
+        <p>Here's a checklist of common bugs if your env is not training:</p>
         <ul>
             <li><b>Zero or incorrect observations/actions:</b> Ensure the data type and shapes used in the Python spaces and observation/action buffers match the types you've defined in C</li>
             <li><b>Incorrect or missing resets:</b> Your environment should handle its own resets internally. For envs that never reset, it is often useful to respawn agents if they are stuck (e.g. no reward for 500 steps)</li>
@@ -825,10 +246,23 @@ CUDA_VISIBLE_DEVICES=None LD_PRELOAD=$(gcc -print-file-name=libasan.so) python3.
             <li><b>Incorrect binding args:</b> Ensure your binding sets the same args as your .c file does. Call your init function if you have one.</b>
         </ul>
 
-        <p>There's a second tutorial environment called Target on the GitHub. It's multi-agent with a continuous state space and multi-discrete actions. It's commented like Squared, which is also in the repo. Star on your way in to support!</p>
+        <p>There's also second tutorial environment called <a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/ocean/target">Target</a>. It's multi-agent with a continuous state space and multi-discrete actions. It's commented like Squared, which is also in the repo. Star on your way in to support! When you're ready to write your own environment, you can use this <a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/ocean/target">template</a> as a starting point. Set it up as follows:</p>
+
+        <pre><code>cp -r pufferlib/ocean/template pufferlib/ocean/your_env_name
+grep -rin --include=*.{h,c,py} template pufferlib/ocean/template</code></pre>
+
+        <p>Replace instances of "template" and "Template" shown with your environment name. Also copy the .ini file from pufferlib/config/ocean/template.ini and add a line for your environment to pufferlib/ocean/environment.py. You can set up outside of PufferLib, but this lets you use our extension compilation.</p>
+
 
     </article>
+            <article id="post-7" class="blog-post">
+                <header class="post-header">
+                    <h1>FAQ</h1>
+                </header>
 
+                <p><b>Why is it called PufferLib?</b> Would you have rathered yet another minimal tech logo? Here, have a pufferfish 🐡
+                <p><b>How do I export gifs?</b> We have this build in to the demo for most envs. There's not an easy way to get frames from Ocean envs, but you can use F12 for screenshots and control+F12 to record a gif.
+                <p><b>Multiprocessing erroring/hanging on Mac:</b> Your OS doesn't like to run subprocesses without __main__
 
             <article id="post-7" class="blog-post">
                 <header class="post-header">
