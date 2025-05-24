@@ -154,7 +154,7 @@ env.done                                                          # True if all 
             <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/examples/pettingzoo_env.py">PettingZoo:</a> Wrapping a multiagent PettingZoo environment for use with PufferLib</p>
             <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/examples/puffer_env.py">PufferEnv:</a> Minimal example of our native vector env format that supports single-agent and multi-agent environments</p>
             <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/examples/structured_env.py">Structured Spaces:</a> Using PufferLib's emulation to handle non-flat observation and action spaces</p>
-            <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/examples/vectorization.py">Vectorization:</a>Fast and broadly compatible serial, multiprocessed synchronous, and multiprocessed asynchronous environment simulation</p>
+            <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/examples/vectorization.py">Vectorization: </a>Fast and broadly compatible serial, multiprocessed synchronous, and multiprocessed asynchronous environment simulation</p>
             <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/ocean/squared">Custom PufferEnv (Squared):</a> A sample environment with implementations in C and Python. See the tutorial below for a walkthrough</p>
             <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/ocean/target">Custom PufferEnv (Target):</a> A slightly more complex, multi-agent sample environment in C. Reference this after reading the Squared walkthrough.</p>
             <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/ocean/target">PufferEnv Template:</a> Minimal working environment. Copy this as a starting point for your new environment.</p>
@@ -191,7 +191,7 @@ env.done                                                          # True if all 
         <h2>PuffeRL</h2>
         <p>PuffeRL is our training algorithm. It's based on CleanRL's PPO + LSTM but with a ton of improvements, including core algorithm changes based on our own research. We have no plans to ship a collection of standard implementations. Instead, our goal is to continue improving our one core algorithm through research and rigorous testing on all of Ocean. See our Blog for research updates!</p>
 
-           <h2>Policies</h2>
+        <h2>Policies</h2>
         <p>We don't have a policy API. You just write normal PyTorch code. We do provide some defaults and surrounding tools:</p>
         <ul>
             <li><strong>PyTorch observation unflattening:</strong> A batched inversion function for the flattening applied to structured observation spaces by our emulation layer</li>
@@ -204,10 +204,10 @@ env.done                                                          # True if all 
     </article>
     <article id="post-6" class="blog-post">
         <header class="post-header">
-            <h1>Writing Custom Environments that run 1M+ steps/second</h1>
+            <h1>Writing Your Own 1M+ SPS Environment</h1>
         </header>
 
-        <p>Ocean environments are written with the PufferEnv API. It's a vector format very similar to Gymnasium's VectorEnv, but with native multiagent support. Here's a pure Python environment using this format: <a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/ocean/pysquared/pysquared.py">pysquared.py</a></p>
+        <p>Ocean environments are written with the PufferEnv API. It's a vector format very similar to Gymnasium's VectorEnv, but with native multiagent support. Writing your own is a great way to learn and a great way to contribute to PufferLib. PR something cool to have it reviewed live on stream! Here's a pure Python environment using this format: <a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/ocean/pysquared/pysquared.py">pysquared.py</a></p>
 
         <p> If you're familiar with Gymnasium/PettingZoo, you'll notice that this is almost identical. The main difference is that observations, actions, rewards, etc. are initialized from this <i>buf</i> object. All operations happen in-place to avoid creating and copying redundant arrays. Our vectorization passes in slices of shared memory during multiprocessing, so your environment is storing observations directly to a batch on the main process. Note that this means calling <i>step</i> again will overwrite your observations etc. from the previous call.</p>
 
@@ -242,6 +242,7 @@ CUDA_VISIBLE_DEVICES=None LD_PRELOAD=$(gcc -print-file-name=libasan.so) python3.
         <ul>
             <li><b>Zero or incorrect observations/actions:</b> Ensure the data type and shapes used in the Python spaces and observation/action buffers match the types you've defined in C</li>
             <li><b>Incorrect or missing resets:</b> Your environment should handle its own resets internally. For envs that never reset, it is often useful to respawn agents if they are stuck (e.g. no reward for 500 steps)</li>
+            <li><b>Not zeroing reward or terminals:</b> If you don't zero out rewards, they will retain their value from the previous step. Ditto for terminals. Zero them at the start of c_step to be safe. A single memset will do it for multiagent envs</li>
             <li><b>Manually inspect data scale:</b> You want observations and rewards to be roughly in the range of -1 to 1. </li>
             <li><b>Incorrect binding args:</b> Ensure your binding sets the same args as your .c file does. Call your init function if you have one.</b>
         </ul>
