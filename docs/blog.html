@@ -10,6 +10,9 @@
     <main class="content">
         <nav class="nav-box">
             <ul>
+                <li><a href="#post-12">PufferLib 3.0: Better Reinforcement Learning at 4M sps</a></li>
+                <li><a href="#post-11">Puffing Up PPO</a></li>
+                <li><a href="#post-10">Stronger Hyperparameters with Protein</a></li>
                 <li><a href="#post-9">PufferLib 2.0: Reinforcement Learning at 1M sps</a></li>
                 <li><a href="#post-8">Reinforcement Learning Quickstart Guide</a></li>
                 <li><a href="#post-7">PufferLib 1.0: Now Stable</a></li>
@@ -21,6 +24,56 @@
                 <li><a href="#post-1">PufferLib 0.2: Ready to Take on the Big Fish</a></li>
             </ul>
         </nav>
+            <article id="post-12" class="blog-post">
+                <header class="post-header">
+                    <h1>PufferLib 3.0: Better Reinforcement Learning at 4,000,000 Steps/Second</h1>
+                </header>
+
+                <p>Sane and robust reinforcement learning is here! Our latest benchmarks train at up to 4M steps/second on a single RTX 5090. Here's a 30 second demo during which we solve Breakout from scratch:</p>
+
+                <p>The core training code is <1000 lines and we've spent a long time making it easy to follow. All our code is free and open source at puffer.ai, complete with documentation, a pip package, and docker images. Join discord for help or to get involved with development. We'll be posting a new article with details every day this week. For now, here are some highlights:</p>
+                <p>
+
+                <h2>New Environments</h2>
+                <p>We're adding 8 first-party environments to Ocean for a total of 20. Play them here online!</p>
+
+                <h2>Hyperparameter Tuning that Works</h2>
+
+                <p>Power up your RL with Protein, our new hyperparameter tuning algorithm! It's a heavily modified version of ImbueAI's CARBS that has set SOTA out-of-the-box for multiple clients. We've run tens of thousands of experiments with it across Ocean and third-party environments over the course of development. Here's Protein tuning a ludicrously hard maze environment:</p>
+
+                <h2>Algorithmic Breakthroughs</h2>
+                <p>Up until this release, we were just making existing methods faster. Not anymore! Our new trainer solves problems out-of-the-box that 2.0 couldn't solve in a 200 run sweep. The default set of hyperparameters solves most of the easier environments that used to require their own sweeps, too!</p>
+
+                <h2>PufferEnv C API</h2>
+                <p>It's easier than ever to build your own high-perf reinforcement learning environment. Our C API is an analog to Gymnasium with optimizations that propagate through Python. Native PufferEnvs simulate observations directly into shared memory batches with zero redundant copy operations. Two tutorial environments and a starter template are now available in our docs.</p>
+
+                <h2>Hire Puffer</h2>
+                <p>RL is hard. We make it easier. Hire us to get our eyes on your RL problem, assistance in fast simulation, prioritized feature development, and more. Priority service contracts start at 10k/mo, with larger contracts available for fixed deliverables. DM here or email jsuarez🐡puffer🐡ai.</p>
+            </article>
+            <article id="post-11" class="blog-post">
+                <header class="post-header">
+                    <h1>Puffing Up PPO</h1>
+                </header>
+
+                <p>Our day-to-day reinforcement learning work feels like a different field thanks to our new training algorithm. It often solves new environments out-of-the-box in seconds with default hyperparameters, and we're open-sourcing it with PufferLib 3.0. Star the project on GitHub to support our work!</p>
+
+                <h2>A Hard Benchmark</h2>
+                <p>We use arcade envs like Pong, Breakout, and Enduro for a lot of our early experiments. These are great because we can train a ~150k parameter MLP-LSTM at 2-4M steps/second (~10B steps per hour). We also use harder game environments like Neural MMO to test ~2-3M parameter networks at 500k-1M steps/second. In this release, we wanted a pure benchmark task with intuitive, easily scalable difficulty to complement our game environments. So we made Puffer Maze! We can generate any size maze we like and train on 11x11 crops of tiles at >1M steps/second with a 2M parameter model. If you're familiar with the literature, you'll know that RL isn't great at mazes, and most of the papers that use them are about hacking exploration bonuses. Our setting is a ludicrously sparse problem in which the agent only gets a reward at the very end.</p>
+
+                <h2>Mordernizing the Optimizer</h2>
+                <p>Our previous releases had a high-performance but algorithmically vanilla PPO implementation using Adam. This update uses Muon, which initially didn't seem to make much of a difference, but when we ran full sweeps, there was an immediate step-change in capabilities. The hyperparameters we  found for Breakout not only solved the environment ~30% faster, but they also worked on nearly every other env in Ocean! Before this update, we would run a ~200 experiment hyperparameter sweep on each and every environment in order to get good baselines. We also swapped linear learning rate annealing for cosine annealing. This was a more minor detail: while having some form of annealing matters tremendously, we found that the method used doesn't matter much when swept alongside other hyperparameters. But cosine annealing produces more consistent learning curves during sweeps, which helps fit a model to hyperparameters.</p>
+
+                <h2>Trajectory Segment Filtering</h2>
+                <p><a href="https://machinelearning.apple.com/research/robust-autonomy-emerges">Apple's self-driving RL paper</a> filtered out training data with uninformative advantage estimates. We've wanted to adopt this for a while, but the naive implementation breaks LSTMs. Our solution was to apply filtering to entire trajectory segments based on the sum of the advantage estimate over the entire segment of usually 64 observations. As an additional improvement, we apply <a href="https://arxiv.org/pdf/1511.05952">prioritized experience replay</a> instead of filtering over a fixed range. Neither of these techniques helps with every environment, but it can be a massive improvement if rewards are sparse. Prioritized replay is equal to uniform sampling with alpha=0 and beta_0=1, and we sweep both these coefficients, so we can easily see how much prioritized replay matters for any given environment.</p>
+
+                <h2>Experience the Puffer Advantage</h2>
+                <p>PPO was the algorithm OpenAI used to beat top pros at DoTA in 2019 and is probably the most widely used on-policy RL algorithm today. Half of what makes PPO good is clipping updates to avoid going too far off-policy. The other half is <a href="https://arxiv.org/pdf/1506.02438">generalized advantage estimation</a>, which scales rewards based on a fancy exponentially decaying average of n-step bootstrap estimates. In simpler terms: it determines how much a dollar today is worth vs. a dollar tomorrow.</p>
+
+                <p>The other really well-known on-policy algorithm is IMPALA. This one gets confused a lot, because it also introduced a ResNet-based architecture in the same paper. So when people say they are using IMPALA, half the time, they are just doing PPO with a ResNet and not actually using the algorithm. But when they are, the key to IMPALA is VTrace, which corrects off-policy updates. It essentially takes the clipping ratio used in PPO and uses it inside of the advantage function per-step, instead of just at the end.</p>
+
+                <p>Our original idea was to combine VTrace with trajectory segment filtering in PufferLib to keep around high-value data from epoch to epoch. That was way too off-policy and didn't work at all. But in the process, we spent a lot of time staring at the math... and realized GAE and VTrace are virtually identical! So we put them together and boom, Puffer Advantage! All the reference implementations we found for GAE and VTrace were pretty slow, so this release ships with a custom CUDA kernel. Puffer Advantage is equal to GAE when you set both clip coefficients to infinity and equal to VTrace with lambda=1, so our method is a strict generalization of both.</p>
+            </article>
+
             <article id="post-9" class="blog-post">
                 <header class="post-header">
                     <h1>PufferLib 2.0: Reinforcement Learning at 1,000,000 Steps/Second</h1>
@@ -70,7 +123,7 @@
 
                 <h2>Things I use a lot</h2>
                 <p><strong>PPO:</strong> This is my go-to algorithm. It's simple and solved DoTA. Actually, it's simpler than most people appreciate. The way to think about PPO is vanilla policy gradients + GAE. That's just fancy exponential reward discounting with a value function baseline. Then, it adds policy clipping. This just means each weight can't change too much on any single update. Clipping lets PPO use the same batch of observations for multiple gradient updates. But if your environment is really fast, there's not much reason to do that, since new data is free. So it's just a simple and effective sample efficiency hack. Read Costa's 37 PPO details blog if you really want to understand the algorithm.</p>
-                <p><strong>Hyperparameter Intuition:</strong> I'll cover these for PPO, but several are common across many algorithms. Learning rate, gamma, and lambda are the most important. You always sweep learning rate. Gamma and lambda are GAE parameters that relate to the effective horizon of your task. I like to think about the effective horizon of my task. For instance, in Pong, you don't need to look ahead more than a couple of seconds. If the framerate is 15, then there are 30 frames in 2 seconds, so I might try 1 - 1/30 = 0.97 as a starting point. Lamba is usually set a bit below gamma, so I would try 0.95. This should at least give you a decent starting point for an automated sweep. I leave clipping parameters at 0.1 or 0.2. Tuning these lower will cause aggressive "on rails" runs that learn well for a while before diverging. Batch size, minibatch size, and number of environments should be set based on hardware. For my fast environments with small networks, batch size 4096 is hardware efficient, so I use 4096 environments. Then I multiply by 128 to get the batch size. The reason for this is to allow GAE to compute discounted returns over 128-length trajectory segments. Decrease this if your environment has very short horizons or increase it for longer ones. I set minibatch size to be a quarter of batch size by default, but I also set this one based on GPU memory. Update epochs is 1 for fast environments or 3-4 for slow environments. You can go higher, but then you have to also worry about KL targets.</p>
+                <p><strong>Hyperparameter Intuition:</strong> I'll cover these for PPO, but several are common across many algorithms. Learning rate, gamma, and lambda are the most important. You always sweep learning rate. Gamma and lambda are GAE parameters that relate to the effective horizon of your task. I like to think about the effective horizon of my task. For instance, in Pong, you don't need to look ahead more than a couple of seconds. If the framerate is 15, then there are 30 frames in 2 seconds, so I might try 1 - 1/30 = 0.97 as a starting point. Lambda is usually set a bit below gamma, so I would try 0.95. This should at least give you a decent starting point for an automated sweep. I leave clipping parameters at 0.1 or 0.2. Tuning these lower will cause aggressive "on rails" runs that learn well for a while before diverging. Batch size, minibatch size, and number of environments should be set based on hardware. For my fast environments with small networks, batch size 4096 is hardware efficient, so I use 4096 environments. Then I multiply by 128 to get the batch size. The reason for this is to allow GAE to compute discounted returns over 128-length trajectory segments. Decrease this if your environment has very short horizons or increase it for longer ones. I set minibatch size to be a quarter of batch size by default, but I also set this one based on GPU memory. Update epochs is 1 for fast environments or 3-4 for slow environments. You can go higher, but then you have to also worry about KL targets.</p>
                 <p><strong>CARBS:</strong> A really good hyperparameter tuning algorithm from ImbueAI. We have bindings in PufferLib, and it is way better than standard random or bayes. We're still learning how best to configure this, but even if you do it wrong, it's still usually pretty good. Don't sweep clip coefficients like I mentioned above, otherwise you get some pretty nutty runs.</p>
                 <p><strong>Common Architectures:</strong> I use an LSTM by default because it's fast and PufferLib makes adding one trivial. This replaces the main hidden layer, so networks can be as simple as fc-relu-lstm-fc-atn/val with 128-512 hidden dim. For 2d data, I will usually use a stack of 2-3 convolution layers with relus as an encoder. Avoid redundant fully connected layers when combining data from multiple sources, such as flat and 2d data. Deeper networks are not always better in RL, and they can sometimes be much harder to train. Also, know that RL tends to be more data hungry than other areas of AI, so you are often better off running more samples on a smaller network. That presumes your problem has a fast simulator. Feel free to experiment more here if you don't. The resnet architecture from the Impala paper is a decent slower one.</p>
                 <p><strong>Normalize your data:</strong> Observations should be divided into discrete and continuous. One-hot or embed discrete data. Divide continuous data by its maximum value per channel. Do not do this using mean stats. Just say "max health is 100 so I will divide by 100" etc. Do the same for rewards.</p>
