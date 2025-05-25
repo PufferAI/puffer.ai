@@ -229,7 +229,7 @@ env.done                                                          # True if all 
 
         <pre><code>puffer train puffer_squared</code></pre>
 
-        <p> We suggest writing your whole environment in C first. Compile with script/build_ocean.sh. <env_name> local to enable address sanitizer. This will catch most indexing and overflow bugs. If your env works in C but not when you bind to Python, you can usually get a stack track as follows:</p>
+        <p> We suggest writing your whole environment in C first. Compile with scripts/build_ocean.sh. <env_name> local to enable address sanitizer. This will catch most indexing and overflow bugs. If your env works in C but not when you bind to Python, you can usually get a stack track as follows:</p>
 
         <pre><code>DEBUG=1 python setup.py build_ext --inplace --force
 CUDA_VISIBLE_DEVICES=None LD_PRELOAD=$(gcc -print-file-name=libasan.so) python3.12 -m pufferlib.pufferl train <env_name> --train.device cpu --vec.backend Serial</code></pre>
