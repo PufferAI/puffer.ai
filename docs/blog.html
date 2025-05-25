@@ -96,25 +96,25 @@
                 <h2>CARBS</h2>
                 <p>There's already a detailed manuscript on arXiv, but it's pretty dense, so read this section if you aren't already familiar with the algorithm. CARBS starts by defining the Pareto frontier as the subset of experiments where no other experiment is both better and faster, that is, higher score y and lower cost c.</p>
 
-                <p>$$\text{PF} = \{ i \in [1:t] \ \text{s.t.} \ \{ y_{i}>y_{j}\,\lor\,c_{i}<c_{j} \} \ \forall j \neq i \}$$</p>
+                <p>$$ \text{PF} = \{ i \in [1:t] \mid y_{i} > y_{j} \lor c_{i} < c_{j}, \ \forall j \neq i $$</p>
 
                 <p>In practice, CARBS starts out by running a few random hyperparameter sets to seed the Pareto front. From there, it picks new candidate hyperparameters with a normal sample around existing Pareto-optimal hyperparameters and downweights them based on distance.</p>
 
                 <p>$$P_{\mathrm{search}}\left(\mathbf{x}\right)=\max_{i\in \rm{PF}}\left[\mathrm{exp}\left(-\frac{\left|\mathbf{x}_{i}-\mathbf{x}\right|^2}{2\sigma_{\mathrm{search}}^2}\right)\right]$$</p>
 
                 <p>Suppose we generate a few thousand candidates. To help pick the best one, CARBS trains three Gaussian Processes.</p>
-
-                <p>$$&\mathcal{GP}_{y} \ \leftarrow\max_{\theta}\left[p\left(y|\{\mathbf{x}_{i},y_{i}\}_{i\in\left[1:t\right]},k_{\theta}=k_{\mathrm{lin}}+k_{\mathrm{Mat}}\right)\right]$$</p>
-                <p>&\mathcal{GP}_{c} \   \leftarrow\max_{\theta}\left[p\left(c|\{\mathbf{x}_{i},c_{i}\}_{i\in\left[1:t\right]},k_{\theta}=k_{\mathrm{lin}}+k_{\mathrm{Mat}}\right)\right]</p>
-                <p>&\mathcal{GP}_{\mathrm{pf}} \leftarrow\max_{\theta}\left[p\left(y|\{c_{i},y_{i}\}_{i\in PF},k_{\theta}=k_{\mathrm{RBF}}\right)\right]</p>
+                
+                <p>$$\mathcal{GP}_{y} \leftarrow \max_{\theta} \left[ p\left(y | \{\mathbf{x}_{i}, y_{i}\}_{i \in [1:t]}, k_{\theta} = k_{\mathrm{lin}} + k_{\mathrm{Mat}}\right) \right]$$</p>
+                <p>$$\mathcal{GP}_{c} \leftarrow \max_{\theta} \left[ p\left(c | \{\mathbf{x}_{i}, c_{i}\}_{i \in [1:t]}, k_{\theta} = k_{\mathrm{lin}} + k_{\mathrm{Mat}}\right) \right]$$</p>
+                <p>$$\mathcal{GP}_{\mathrm{pf}} \leftarrow \max_{\theta} \left[ p\left(y | \{c_{i}, y_{i}\}_{i \in PF}, k_{\theta} = k_{\mathrm{RBF}}\right) \right]$$</p>
 
                 <p>These are just basic supervised learning problems. The first two map a vector of hyperparameters to the score and cost of the experiment. The last is a bit trickier: it maps the cost of each Pareto point to its score. The idea is that, if you tell CARBS how long you have to run an experiment, it should know how good the result can be. Now to actually select the points, CARBS uses these GPs to define an acquisition function:</p>
 
-                <p>\alpha_{\mathrm{EI-th}}\left(\mathbf{x}\right)=\mathop{\mathbb{E}}_{\mathcal{GP}_{y}}\left[\mathrm{ReLU}\left(\mathcal{GP}_{y}\left(\mathbf{x}\right)-\max\left(\tilde{y}_{\mathrm{pf}}\left(\mathbf{x}\right),\tilde{y}_{\mathrm{th}}\right)\right)\right]$$</p>
+                <p>$$\alpha_{\mathrm{EI-th}}\left(\mathbf{x}\right) = \mathbb{E}_{\mathcal{GP}_{y}} \left[ \mathrm{ReLU}\left( \mathcal{GP}_{y}\left(\mathbf{x}\right) - \max\left( \tilde{y}_{\mathrm{pf}}\left(\mathbf{x}\right), \tilde{y}_{\mathrm{th}} \right) \right) \right]$$</p>
 
                 <p>This is run on each of the candidate hyperparameter vectors x that we got from P_search. If you ignore the second max for a moment and just use y_pf, then this is the difference between predicted score under GP_y and how well GP_pf  thinks we can possibly do with any experiment that costs GPc(x). In practice, there's an extra term y_th to control exploration that we'll talk about soon. For now, just take the max of this function and you have your CARBS hyperparameter suggestion.</p>
 
-                <<h2>...Are bad for you?</h2>
+                <h2>...Are bad for you?</h2>
                 <p>This algorithm steamrolled ProcGen, so it's clearly pretty good. But the longer you look at it, the more problems you notice. First of all, P_search biases predictions to be close to existing Pareto points. Typically, you want longer and longer experiments over time as you become more confident in the results. So to counteract P_search keeping total timesteps (and therefore the run length) close to an existing point, there needs to be a counterbalance towards higher cost experiments. This is where y_th comes in. CARBS samples a random cost between the min and max pareto point and take a max with the existing sample y_pf. This punishes low-cost samples across the board</p>
 
                 <p>More problems come from explicitly modeling the Pareto frontier with y_pf. Suppose that all three Gaussian processes are perfect models. CARBS will then define GPy(x) - y_pf = 0. Since the acquisition function is 0 everywhere, you just end up with random sampling. This is true even if you don't actually have good experiments across the frontier. So even if CARBS fits a perfect log-linear scaling law to your problem, it won't actually try to run those more expensive experiments. And GP_pf  is very sensitive, because it is only trained with the Pareto-optimal subset of hyperparameters. A lucky seed can throw it off, and the only remedy in CARBS is to periodically resample Pareto points, which requires rerunning old experiments 20% of the time by default. If you have even 5 Pareto points, you're going to have to wait 25 experiments on average before you maybe get an opportunity to correct one lucky seed.</p>
@@ -142,6 +142,11 @@
                 <p>How fast can you solve Breakout with really good hyperparameters? We ran CARBS vs. random search, a pareto genetic algorithm (similar to Protein but without the GPs), and CARBS.</p>
 
                 <p>We also wrote some synthetic tasks to evaluate various methods. There is only one parameter to fit, but score is either a linear, logarithmic, or percentile function of cost. The costs for the log and percentile tasks have 20% noise to make it harder. We evaluated a random search that takes normally distributed samples from hyperparam default means, a pareto genetic algorithm that works similarly to Protein but without the gaussian processes, and Protein. The source for all of the methos is in pufferlib/sweeps.py. The synthetic benchmarks to reproduce our experiments are in tests. Here are the results:</p>
+
+                <div class="image-container">
+                    <img src="assets/sweep_synthetic_ablations.png" alt="Ocean">
+                    <figcaption>Algorithm comparisons on synthetic tasks</figcaption>
+                </div>
 
                 <p>Random sampling fails because it never evaluates high-cost parameters. Pareto genetic sometimes works if you give it enough runs, but it can get stuck if the Pareto points are too densely distributed (this caused it to fail the log task on this run). Protein solves them all, and in fewer experiments!</p>
 
