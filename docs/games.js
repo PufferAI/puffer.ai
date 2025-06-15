@@ -25,7 +25,7 @@ Actions: Discrete. Move, sprint, attack, use item, buy, sell`,
         height: 704,
     },
     moba: {
-        title: "Puffer MOBA",
+        title: "MOBA",
         description: `A Multiplayer Online Battle Arena (MOBA) inspired by DoTA and OpenAI Five. By Joseph Suarez.
 
 This is a 5v5 mirror match with 5 unique characters, each with three unique skills. Your objective is to destroy the enemy base on the other side of the map. There game map has three lanes, each of which contains three towers that will automatically attach nearby enemies. Waves of minions will spawn from each team's base and travel down each lane, fighting each other and towers along the way. In the current version, enemy units are controlled by a simple scripted AI. This environment can also be trained with self-play.
@@ -43,8 +43,27 @@ Actions: Multi-discrete. Move, use skills`,
         width: 1312,
         height: 736,
     },
+    tower_climb: {
+        title: "Tower Climb",
+        description: `A tower climber based on the Japanese puzzle game Catherine. By Spencer Cheng.
+
+Push and pull blocks to create a path to the objective at the top. You can climb, cling, and shimmy along blocks.
+
+Controls:
+    Move: Arrow keys
+    Camera: WASD
+    Grab Block: Space
+
+Observations: 3D crop of nearby blocks, 1D vector of self data. Continuous.
+Actions: Discrete. Move, grab block.`,
+        thumbnail: "assets/tower_climb_thumbnail.png",
+        path: "assets/tower_climb/game.html",
+        width: 1008,
+        height: 900,
+    },
+ 
     tactics: {
-        title: "Puffer Tactics",
+        title: "Tactics",
         description: `A turn-based tactical combat game inspired by the popular MMO Dofus. By Nathan Lichtlé.
 
 Combat is similar to CRPGs, D&D, and other tactical turn-based games played on a grid. This environment is missing scripted opponent AI and a trained policy.
@@ -84,6 +103,22 @@ Actions: Discrete. Move`,
         width: 1280,
         height: 720,
     },
+    convert: {
+        title: "Convert",
+        description: `1000 agents in your browser! By Joseph Suarez.
+
+Puffers need to convert to a new color by touching a start that maches their current color. Star our GitHub repo to help feed the puffers!
+
+Controls: N/A
+
+Observations: 1D continuous array. Distance to nearest star of each color, own heading, reward, relative position, and color.
+
+Actions: Multidiscrete. Turn, accelerate`,
+        thumbnail: "assets/convert_thumbnail.png",
+        path: "assets/convert/game.html",
+        width: 1920,
+        height: 1080,
+    },
     enduro: {
         title: "Enduro",
         description: `A fast version of the classic Atari game. By Daniel Addis.
@@ -101,6 +136,57 @@ Actions: Discrete. Move, accelerate, brake`,
         path: "assets/enduro/game.html",
         width: 304,
         height: 420,
+    },
+    tetris: {
+        title: "Tetris",
+        description: `A fast version of the classic Atari game. By Hadrien Crassous.
+
+Score points by clearing rows.
+
+Controls:
+    Move: A/D or Left/Right
+    Rotate: W or Up
+    Soft drop: S or Down
+    Hard drop: Space
+    Stash piece: C
+
+Observations: 1d vector (continuous)
+Actions: Discrete. Move, rotate, soft/hard drop, stash`,
+        thumbnail: "assets/tetris_thumbnail.png",
+        path: "assets/tetris/game.html",
+        width: 384,
+        height: 928,
+    },
+    freeway: {
+        title: "Freeway",
+        description: `A fast version of the classic Atari game. By Hadrien Crassous.
+
+Score points by crossing the road.
+
+Controls: Up/Down or W/S to move
+
+Observations: 1d vector (continuous)
+Actions: Discrete. Move up/down`,
+        thumbnail: "assets/freeway_thumbnail.png",
+        path: "assets/freeway/game.html",
+        width: 1216,
+        height: 720,
+    },
+    pacman: {
+        title: "Pacman",
+        description: `A fast version of the classic arcade game. By Gabe.
+
+Score points by eating dots and ghosts. But not when they're eating you!
+
+Controls:
+    Move: WASD or Arrow keys
+
+Observations: 1d game state vector (continuous)
+Actions: Move`,
+        thumbnail: "assets/pacman_thumbnail.png",
+        path: "assets/pacman/game.html",
+        width: 560,
+        height: 660,
     },
     breakout: {
         title: "Breakout",
@@ -133,6 +219,23 @@ Actions: Discrete. Move`,
         width: 620,
         height: 640,
     },
+    blastar: {
+        title: "Blastar",
+        description: `A fast version of Elon Musk's video game. By Daniel Addis.
+
+Shoot the ship. Sometimes it shoots you. Instantly. Yes, that's how it works. Try getting closer.
+
+Controls:
+    Move: WASD or Arrow keys
+    Fire: Space
+
+Observations: 1d game state vector (continuous)
+Actions: Discrete. Move, Shoot`,
+        thumbnail: "assets/blastar_thumbnail.png",
+        path: "assets/blastar/game.html",
+        width: 640,
+        height: 480,
+    },
     tripletriad: {
 	    title: "Triple Triad",
 	    description: `A card-based minigame from Final Fantasy. By Spencer Cheng.
@@ -164,8 +267,8 @@ Observations: 1D flat crop of nearby tiles (continuous)
 Actions: Discrete. Move, turn, load/drop box`,
         thumbnail: "assets/rware_thumbnail.png",
         path: "assets/rware/game.html",
-        width: 640,
-        height: 704,
+        width: 1280,
+        height: 640,
     },
     trash_pickup: {
         title: "Trash Pickup",
@@ -176,8 +279,8 @@ Observations: 3D crop of nearby tiles (one-hot)
 Actions: Discrete. Move`,
         thumbnail: "assets/trash_pickup_thumbnail.png",
         path: "assets/trash_pickup/game.html",
-        width: 400,
-        height: 460,
+        width: 800,
+        height: 860,
     },
     connect4: {
         title: "Connect4",
@@ -193,6 +296,62 @@ Actions: Discrete. Play piece`,
         path: "assets/connect4/game.html",
         width: 672,
         height: 576,
+    },
+    cartpole: {
+        title: "CartPole",
+        description: `The classic RL toy problem. By Daniel Addis.
+
+Keep the pole standing
+
+Controls: Right/D
+
+Observations: 1D state (continuous)
+Actions: Discrete. Left/Right`,
+        thumbnail: "assets/cartpole_thumbnail.png",
+        path: "assets/cartpole/game.html",
+        width: 600,
+        height: 200,
+    },
+    target: {
+        title: "Target",
+        description: `Commented reference multiagent environment for new developers. Feed the puffer a star on GitHub to help us for free! By Joseph Suarez.
+
+Observations: distance to all stars and other agents, own heading, reward, and position. Continuous vector.
+Actions: Multidiscrete: acceleration x and y.`,
+        thumbnail: "assets/target_thumbnail.png",
+        path: "assets/target/game.html",
+        width: 1080,
+        height: 720,
+    },
+    squared: {
+        title: "Squared",
+        description: `Commented reference environment. By Joseph Suarez.
+
+Go to the red square.
+
+Controls: WASD or Arrow keys
+
+Observations: 2D tile grid (discrete)
+Actions: Discrete. Up/Down/Left/Right`,
+        thumbnail: "assets/squared_thumbnail.png",
+        path: "assets/squared/game.html",
+        width: 704,
+        height: 704,
+    },
+    template: {
+        title: "Template",
+        description: `Commented template for your own environments. By Joseph Suarez.
+
+Go to the red square.
+
+Controls: A/D or Left/Right
+
+Observations: 1 if the goal is to the right, -1 if to the left
+Actions: Discrete. Left/Right`,
+        thumbnail: "assets/template_thumbnail.png",
+        path: "assets/template/game.html",
+        width: 1080,
+        height: 720,
     },
 };
 
@@ -227,6 +386,21 @@ Controls:
         path: "assets/robocode/game.html",
         width: 768,
         height: 576,
+    },
+    cpr: {
+        title: "Common Pool Resource",
+        description: `Common pool resource, also known as tragedy of the commons. By MX2000.
+
+Collect resources, but not too many, or they won't grow back.
+
+Controls: WASD or Arrow keys
+
+Observations: 2D crop of local tiles (discrete)
+Actions: Discrete. Up/Down/Left/Right`,
+        thumbnail: "assets/cpr_thumbnail.png",
+        path: "assets/cpr/game.html",
+        width: 1024,
+        height: 1024,
     },
 }
 

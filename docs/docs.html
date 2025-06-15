@@ -242,7 +242,7 @@ CUDA_VISIBLE_DEVICES=None LD_PRELOAD=$(gcc -print-file-name=libasan.so) python3.
         <ul>
             <li><b>Zero or incorrect observations/actions:</b> Ensure the data type and shapes used in the Python spaces and observation/action buffers match the types you've defined in C</li>
             <li><b>Incorrect or missing resets:</b> Your environment should handle its own resets internally. For envs that never reset, it is often useful to respawn agents if they are stuck (e.g. no reward for 500 steps)</li>
-            <li><b>Not zeroing reward or terminals:</b> If you don't zero out rewards, they will retain their value from the previous step. Ditto for terminals. Zero them at the start of c_step to be safe. A single memset will do it for multiagent envs</li>
+            <li><b>Not zeroing observations, rewards, or terminals:</b> If you don't zero out rewards, they will retain their value from the previous step. Ditto for terminals. Zero them at the start of c_step to be safe. A single memset will do it for multiagent envs. If you are not setting every element of every obs (i.e. one-hots), make sure to clear those too.</li>
             <li><b>Manually inspect data scale:</b> You want observations and rewards to be roughly in the range of -1 to 1. </li>
             <li><b>Incorrect binding args:</b> Ensure your binding sets the same args as your .c file does. Call your init function if you have one.</b>
         </ul>
