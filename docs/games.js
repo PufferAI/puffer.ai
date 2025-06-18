@@ -24,6 +24,35 @@ Actions: Discrete. Move, sprint, attack, use item, buy, sell`,
         width: 960,
         height: 704,
     },
+    impulse_wars: {
+        title: "Impulse Wars",
+        description: `A top-down 2D physics-based shooter. By capnspacehook.
+
+Controls: 
+Observations:
+Actions:`,
+        thumbnail: "assets/impulse_wars_thumbnail.png",
+        path: "assets/impulse_wars/game.html",
+        width: 1920,
+        height: 1080,
+    },
+    drive: {
+        title: "Drive",
+        description: `Driving simulator with real-world map data. By Spencer Cheng.
+
+Controls:
+    Move: WASD or Arrow keys
+    1s person: Hold space
+    Number keys: Switch cars
+    Observation overlay: Left shift
+
+Observations: Partially observed local state (continuous)
+Actions: Multidiscrete (accelerate, turn)`,
+        thumbnail: "assets/gpudrive_thumbnail.png",
+        path: "assets/gpudrive/game.html",
+        width: 1080,
+        height: 720,
+    },
     moba: {
         title: "MOBA",
         description: `A Multiplayer Online Battle Arena (MOBA) inspired by DoTA and OpenAI Five. By Joseph Suarez.
@@ -43,6 +72,23 @@ Actions: Multi-discrete. Move, use skills`,
         width: 1312,
         height: 736,
     },
+    terraform: {
+        title: "Terraform",
+        description: `Terraform the earth with bulldozers. By Spencer Cheng.
+
+Controls:
+    Move: WASD or Arrow keys
+    Fill bucket: Space
+    Empty bucket: Left Shift
+    Observation overlay: H
+
+Observations: Partially observed local state (continuous)
+Actions: Discrete. Move, fill/empty bucket`,
+        thumbnail: "assets/terraform_thumbnail.png",
+        path: "assets/terraform/game.html",
+        width: 1080,
+        height: 720,
+    },
     tower_climb: {
         title: "Tower Climb",
         description: `A tower climber based on the Japanese puzzle game Catherine. By Spencer Cheng.
@@ -61,21 +107,16 @@ Actions: Discrete. Move, grab block.`,
         width: 1008,
         height: 900,
     },
- 
-    tactics: {
-        title: "Tactics",
-        description: `A turn-based tactical combat game inspired by the popular MMO Dofus. By Nathan Lichtlé.
+    drone: {
+        title: "Drone",
+        description: `Four motor thrust based drone simulation. By Sam Turner and Finlay Sanders.
 
-Combat is similar to CRPGs, D&D, and other tactical turn-based games played on a grid. This environment is missing scripted opponent AI and a trained policy.
-
-Controls:
-    Move: Click
-    Select skill: Number keys
-    Use skill: Click`,
-        thumbnail: "assets/tactical_thumbnail.png",
-        path: "assets/tactical/game.html",
-        width: 1200,
-        height: 900,
+Observations: Own mechanics and orientation, relative distance to goal
+Actions: Continuous thrust per motor`,
+        thumbnail: "assets/drone_thumbnail.png",
+        path: "assets/drone/game.html",
+        width: 1080,
+        height: 720,
     },
     go: {
         title: "Go",
@@ -356,6 +397,21 @@ Actions: Discrete. Left/Right`,
 };
 
 const wip = {
+    tactics: {
+        title: "Tactics",
+        description: `A turn-based tactical combat game inspired by the popular MMO Dofus. By Nathan Lichtlé.
+
+Combat is similar to CRPGs, D&D, and other tactical turn-based games played on a grid. This environment is missing scripted opponent AI and a trained policy.
+
+Controls:
+    Move: Click
+    Select skill: Number keys
+    Use skill: Click`,
+        thumbnail: "assets/tactical_thumbnail.png",
+        path: "assets/tactical/game.html",
+        width: 1200,
+        height: 900,
+    },
     tcg: {
         title: "TCG",
         description: `Prototype of a trading card game inspired by MTG. By Joseph Suarez.
