@@ -4,12 +4,21 @@
     <meta charset="UTF-8">
     <title>PufferLib Blog</title>
     <link rel="stylesheet" href="styles.css">
+    <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+    </script>
+    <script type="text/javascript"
+      src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
 </head>
 <body>
 
     <main class="content">
         <nav class="nav-box">
             <ul>
+                <li><a href="#post-12">PufferLib 3.0: Better Reinforcement Learning at 4M sps</a></li>
+                <li><a href="#post-11">Puffing Up PPO</a></li>
+                <li><a href="#post-10">Stronger Hyperparameters with Protein</a></li>
                 <li><a href="#post-9">PufferLib 2.0: Reinforcement Learning at 1M sps</a></li>
                 <li><a href="#post-8">Reinforcement Learning Quickstart Guide</a></li>
                 <li><a href="#post-7">PufferLib 1.0: Now Stable</a></li>
@@ -21,6 +30,138 @@
                 <li><a href="#post-1">PufferLib 0.2: Ready to Take on the Big Fish</a></li>
             </ul>
         </nav>
+            <article id="post-12" class="blog-post">
+                <header class="post-header">
+                    <h1>PufferLib 3.0: Better Reinforcement Learning at 4,000,000 Steps/Second</h1>
+                </header>
+
+                <p>Sane and robust reinforcement learning is here! Our latest benchmarks train at up to 4M steps/second on a single RTX 5090. Here's a 30 second demo during which we solve Breakout from scratch:</p>
+
+                <p>The core training code is <1000 lines and we've spent a long time making it easy to follow. All our code is free and open source at puffer.ai, complete with documentation, a pip package, and docker images. Join discord for help or to get involved with development. We'll be posting a new article with details every day this week. For now, here are some highlights:</p>
+                <p>
+
+                <h2>New Environments</h2>
+                <p>We're adding 8 first-party environments to Ocean for a total of 20. Play them here online!</p>
+
+                <h2>Hyperparameter Tuning that Works</h2>
+
+                <p>Power up your RL with Protein, our new hyperparameter tuning algorithm! It's a heavily modified version of ImbueAI's CARBS that has set SOTA out-of-the-box for multiple clients. We've run tens of thousands of experiments with it across Ocean and third-party environments over the course of development. Here's Protein tuning a ludicrously hard maze environment:</p>
+
+                <h2>Algorithmic Breakthroughs</h2>
+                <p>Up until this release, we were just making existing methods faster. Not anymore! Our new trainer solves problems out-of-the-box that 2.0 couldn't solve in a 200 run sweep. The default set of hyperparameters solves most of the easier environments that used to require their own sweeps, too!</p>
+
+                <h2>PufferEnv C API</h2>
+                <p>It's easier than ever to build your own high-perf reinforcement learning environment. Our C API is an analog to Gymnasium with optimizations that propagate through Python. Native PufferEnvs simulate observations directly into shared memory batches with zero redundant copy operations. Two tutorial environments and a starter template are now available in our docs.</p>
+
+                <h2>Hire Puffer</h2>
+                <p>RL is hard. We make it easier. Hire us to get our eyes on your RL problem, assistance in fast simulation, prioritized feature development, and more. Priority service contracts start at 10k/mo, with larger contracts available for fixed deliverables. DM here or email jsuarez🐡puffer🐡ai.</p>
+            </article>
+            <article id="post-11" class="blog-post">
+                <header class="post-header">
+                    <h1>Puffing Up PPO</h1>
+                </header>
+
+                <p>Our day-to-day reinforcement learning work feels like a different field thanks to our new training algorithm. It often solves new environments out-of-the-box in seconds with default hyperparameters, and we're open-sourcing it with PufferLib 3.0. Star the project on GitHub to support our work!</p>
+
+                <h2>A Hard Benchmark</h2>
+                <p>We use arcade envs like Pong, Breakout, and Enduro for a lot of our early experiments. These are great because we can train a ~150k parameter MLP-LSTM at 2-4M steps/second (~10B steps per hour). We also use harder game environments like Neural MMO to test ~2-3M parameter networks at 500k-1M steps/second. In this release, we wanted a pure benchmark task with intuitive, easily scalable difficulty to complement our game environments. So we made Puffer Maze! We can generate any size maze we like and train on 11x11 crops of tiles at >1M steps/second with a 2M parameter model. If you're familiar with the literature, you'll know that RL isn't great at mazes, and most of the papers that use them are about hacking exploration bonuses. Our setting is a ludicrously sparse problem in which the agent only gets a reward at the very end.</p>
+
+                <h2>Mordernizing the Optimizer</h2>
+                <p>Our previous releases had a high-performance but algorithmically vanilla PPO implementation using Adam. This update uses Muon, which initially didn't seem to make much of a difference, but when we ran full sweeps, there was an immediate step-change in capabilities. The hyperparameters we  found for Breakout not only solved the environment ~30% faster, but they also worked on nearly every other env in Ocean! Before this update, we would run a ~200 experiment hyperparameter sweep on each and every environment in order to get good baselines. We also swapped linear learning rate annealing for cosine annealing. This was a more minor detail: while having some form of annealing matters tremendously, we found that the method used doesn't matter much when swept alongside other hyperparameters. But cosine annealing produces more consistent learning curves during sweeps, which helps fit a model to hyperparameters.</p>
+
+                <h2>Trajectory Segment Filtering</h2>
+                <p><a href="https://machinelearning.apple.com/research/robust-autonomy-emerges">Apple's self-driving RL paper</a> filtered out training data with uninformative advantage estimates. We've wanted to adopt this for a while, but the naive implementation breaks LSTMs. Our solution was to apply filtering to entire trajectory segments based on the sum of the advantage estimate over the entire segment of usually 64 observations. As an additional improvement, we apply <a href="https://arxiv.org/pdf/1511.05952">prioritized experience replay</a> instead of filtering over a fixed range. Neither of these techniques helps with every environment, but it can be a massive improvement if rewards are sparse. Prioritized replay is equal to uniform sampling with alpha=0 and beta_0=1, and we sweep both these coefficients, so we can easily see how much prioritized replay matters for any given environment.</p>
+
+                <h2>Experience the Puffer Advantage</h2>
+                <p>PPO was the algorithm OpenAI used to beat top pros at DoTA in 2019 and is probably the most widely used on-policy RL algorithm today. Half of what makes PPO good is clipping updates to avoid going too far off-policy. The other half is <a href="https://arxiv.org/pdf/1506.02438">generalized advantage estimation</a>, which scales rewards based on a fancy exponentially decaying average of n-step bootstrap estimates. In simpler terms: it determines how much a dollar today is worth vs. a dollar tomorrow.</p>
+
+                <p>The other really well-known on-policy algorithm is IMPALA. This one gets confused a lot, because it also introduced a ResNet-based architecture in the same paper. So when people say they are using IMPALA, half the time, they are just doing PPO with a ResNet and not actually using the algorithm. But when they are, the key to IMPALA is VTrace, which corrects off-policy updates. It essentially takes the clipping ratio used in PPO and uses it inside of the advantage function per-step, instead of just at the end.</p>
+
+                <p>Our original idea was to combine VTrace with trajectory segment filtering in PufferLib to keep around high-value data from epoch to epoch. That was way too off-policy and didn't work at all. But in the process, we spent a lot of time staring at the math... and realized GAE and VTrace are virtually identical! So we put them together and boom, Puffer Advantage! All the reference implementations we found for GAE and VTrace were pretty slow, so this release ships with a custom CUDA kernel. Puffer Advantage is equal to GAE when you set both clip coefficients to infinity and equal to VTrace with lambda=1, so our method is a strict generalization of both.</p>
+            </article>
+
+            <article id="post-11" class="blog-post">
+                <header class="post-header">
+                    <h1>Stronger Hyperparameters with Protein</h1>
+                </header>
+
+                <p>Power up your hyperparameter sweeps with Protein, PufferAI's new algorithm based on ImbueAI's CARBS. The original method stands for Cost AwaRe Bayesian Search because it models the Pareto frontier of cost (usually wall-clock time or steps) and score (your environment's performance metric). Our method modifies CARBS to:</p>
+
+                <p><b>Fix major edge cases.</b> A big motivation for our new algorithm was that CARBS can be show to fail in very simple synthetic tests where any reasonable algorithm should succeed. For example, if CARBS has a confident but wrong model of the Pareto frontier, it degenerates to random sampling. It is very susceptible to noise in individual Pareto points (like lucky seeds) and in the Gaussian Processes it uses to model cost and score.</p>
+
+                <p><b>Fix data normalization.</b> Gaussian processes expect normally distributed data. Performance decays quite rapidly if you feed in big numbers. CARBS is missing normalization in a couple of places, so you can have it work great on some environments and not at all on others.</p>
+
+                <p><b>Simplify the algorithm:</b> CARBS is over 2,500 lines. The PufferLib sweep file is ~500. This is in keeping with our focus on simplicity in all things, and it makes reasoning about the code much easier.</p>
+
+                <h2>CARBS</h2>
+                <p>There's already a detailed manuscript on arXiv, but it's pretty dense, so read this section if you aren't already familiar with the algorithm. CARBS starts by defining the Pareto frontier as the subset of experiments where no other experiment is both better and faster, that is, higher score y and lower cost c.</p>
+
+                <p>$$ \text{PF} = \{ i \in [1:t] \mid y_{i} > y_{j} \lor c_{i} < c_{j}, \ \forall j \neq i $$</p>
+
+                <p>In practice, CARBS starts out by running a few random hyperparameter sets to seed the Pareto front. From there, it picks new candidate hyperparameters with a normal sample around existing Pareto-optimal hyperparameters and downweights them based on distance.</p>
+
+                <p>$$P_{\mathrm{search}}\left(\mathbf{x}\right)=\max_{i\in \rm{PF}}\left[\mathrm{exp}\left(-\frac{\left|\mathbf{x}_{i}-\mathbf{x}\right|^2}{2\sigma_{\mathrm{search}}^2}\right)\right]$$</p>
+
+                <p>Suppose we generate a few thousand candidates. To help pick the best one, CARBS trains three Gaussian Processes.</p>
+                
+                <p>$$\mathcal{GP}_{y} \leftarrow \max_{\theta} \left[ p\left(y | \{\mathbf{x}_{i}, y_{i}\}_{i \in [1:t]}, k_{\theta} = k_{\mathrm{lin}} + k_{\mathrm{Mat}}\right) \right]$$</p>
+                <p>$$\mathcal{GP}_{c} \leftarrow \max_{\theta} \left[ p\left(c | \{\mathbf{x}_{i}, c_{i}\}_{i \in [1:t]}, k_{\theta} = k_{\mathrm{lin}} + k_{\mathrm{Mat}}\right) \right]$$</p>
+                <p>$$\mathcal{GP}_{\mathrm{pf}} \leftarrow \max_{\theta} \left[ p\left(y | \{c_{i}, y_{i}\}_{i \in PF}, k_{\theta} = k_{\mathrm{RBF}}\right) \right]$$</p>
+
+                <p>These are just basic supervised learning problems. The first two map a vector of hyperparameters to the score and cost of the experiment. The last is a bit trickier: it maps the cost of each Pareto point to its score. The idea is that, if you tell CARBS how long you have to run an experiment, it should know how good the result can be. Now to actually select the points, CARBS uses these GPs to define an acquisition function:</p>
+
+                <p>$$\alpha_{\mathrm{EI-th}}\left(\mathbf{x}\right) = \mathbb{E}_{\mathcal{GP}_{y}} \left[ \mathrm{ReLU}\left( \mathcal{GP}_{y}\left(\mathbf{x}\right) - \max\left( \tilde{y}_{\mathrm{pf}}\left(\mathbf{x}\right), \tilde{y}_{\mathrm{th}} \right) \right) \right]$$</p>
+
+                <p>This is run on each of the candidate hyperparameter vectors x that we got from P_search. If you ignore the second max for a moment and just use y_pf, then this is the difference between predicted score under GP_y and how well GP_pf  thinks we can possibly do with any experiment that costs GPc(x). In practice, there's an extra term y_th to control exploration that we'll talk about soon. For now, just take the max of this function and you have your CARBS hyperparameter suggestion.</p>
+
+                <h2>...Are bad for you?</h2>
+                <p>This algorithm steamrolled ProcGen, so it's clearly pretty good. But the longer you look at it, the more problems you notice. First of all, P_search biases predictions to be close to existing Pareto points. Typically, you want longer and longer experiments over time as you become more confident in the results. So to counteract P_search keeping total timesteps (and therefore the run length) close to an existing point, there needs to be a counterbalance towards higher cost experiments. This is where y_th comes in. CARBS samples a random cost between the min and max pareto point and take a max with the existing sample y_pf. This punishes low-cost samples across the board</p>
+
+                <p>More problems come from explicitly modeling the Pareto frontier with y_pf. Suppose that all three Gaussian processes are perfect models. CARBS will then define GPy(x) - y_pf = 0. Since the acquisition function is 0 everywhere, you just end up with random sampling. This is true even if you don't actually have good experiments across the frontier. So even if CARBS fits a perfect log-linear scaling law to your problem, it won't actually try to run those more expensive experiments. And GP_pf  is very sensitive, because it is only trained with the Pareto-optimal subset of hyperparameters. A lucky seed can throw it off, and the only remedy in CARBS is to periodically resample Pareto points, which requires rerunning old experiments 20% of the time by default. If you have even 5 Pareto points, you're going to have to wait 25 experiments on average before you maybe get an opportunity to correct one lucky seed.</p>
+
+                <h2>Power up with Protein!</h2>
+                <p>Our algorithm keeps GP_y and GP_c. Protein eliminates P_search and GP_pf, and it replaces the acquisition function with the following:</p>
+
+                <p>$$w(x) = \text{GP}_y(x) \cdot \left(1 - \left| \alpha U - \text{GP}_c(x) \right| \right), \quad U \sim \mathcal{U}(0, 1)$$</p>
+
+                <p>Alpha is fixed to 1.25 in our experiments. So this method picks a random cost between 0 and 1.25 and then scores candidate points x by penalizing their predicted score GP_y(x) by the predicted distance from that cost. We normalize scores between 0 and 1 and log costs between 0 and 1.25, so the predicted target cost can be up to ~77% (25% in log space) more expensive than the most expensive point. But we're still sampling around Pareto points only, so runs cannot become arbitrarily expensive without expanding the Pareto front.</p>
+
+                <p>Protein is a simpler algorithm than CARBS, but it is robust in ways that CARBS isn't. For example, Protein doesn't care that much if you get a lucky experiment because it doesn't rely on a model of the Pareto frontier. If Protein perfectly fits both GPs, 1/5 (alpha / (1 + alpha)) of experiments will target expanding the frontier to higher-cost regions. It also doesn't get stuck in low-cost regions that are difficult to model, which is a problem we saw with CARBS.</p>
+
+                <p>A few other optimizations we made that mattered quite a lot:</p>
+                <ul>
+                    <li>Instead of using only the final cost and score of an experiment, we downsample the training curve to 10 points and use them all as training data for both GPs.</li>
+                    <li>CARBS seeds with several random trials. We instead use a single run with a reasonable set of defaults. Because this gives us 10 pareto points, we don't have to waste our first 10-20 experiments of every sweep.</li>
+                    <li>We neatly normalize the search space of each hyperparameter between -1 and 1 to keep data in the domain expected by GPs.</li>
+                    <li>We set the mean function for GPc to 1. This makes it overestimate how long unconfident samples will take during scoring.</li>
+                </ul>
+
+                <p>The core logic for Protein is under 100 lines, so if you want to know every detail, read the code!</p>
+
+                <h2>Speedrunning RL</h2>
+                <p>How fast can you solve Breakout with really good hyperparameters? We ran CARBS vs. random search, a pareto genetic algorithm (similar to Protein but without the GPs), and CARBS.</p>
+
+                <p>We also wrote some synthetic tasks to evaluate various methods. There is only one parameter to fit, but score is either a linear, logarithmic, or percentile function of cost. The costs for the log and percentile tasks have 20% noise to make it harder. We evaluated a random search that takes normally distributed samples from hyperparam default means, a pareto genetic algorithm that works similarly to Protein but without the gaussian processes, and Protein. The source for all of the methos is in pufferlib/sweeps.py. The synthetic benchmarks to reproduce our experiments are in tests. Here are the results:</p>
+
+                <div class="image-container">
+                    <img src="assets/sweep_synthetic_ablations.png" alt="Ocean">
+                    <figcaption>Algorithm comparisons on synthetic tasks</figcaption>
+                </div>
+
+                <p>Random sampling fails because it never evaluates high-cost parameters. Pareto genetic sometimes works if you give it enough runs, but it can get stuck if the Pareto points are too densely distributed (this caused it to fail the log task on this run). Protein solves them all, and in fewer experiments!</p>
+
+                <h2>Catabolic Variations</h2>
+                <p>We tried dozens of different scoring functions, normalization techniques, and objectives before settling on the current method. Here are some things that didn't work:</p>
+
+                <p><b>Fancy scoring normalization:</b> It is common for hyperparameter sweep algorithms to apply some sort of scaling transformation to the target metric. But reinforcement learning score curves are quite varied! Breakout is scored from 0-864 points, where 550 isn't much different from 570, and 860-864 is just a matter of consistently hitting the last brick or two. Some environments use win-rate as a metric, so 0.999 is 10x better than 0.99. Other environments like Enduro are endless and have virtually linear learning curves with ever-improving scores. In our synthetic tasks, it was quite easy to improve one shape of curve at the expense of the others, but simply normalizing the min and max scores from 0 to 1 was the best overall.</p>
+
+                <p><b>Anything relying on a difference between GPs:</b> We found that the trained GPs are at most directionally correct and quite noisy, with meaningless learned variances. This was the main reason we scrapped GP_pf.</p>
+
+                <p><b>Anything relying on specific Pareto points:</b> One early variant attempted to maximize the distance between the next experiment and existing pareto points in cost space. It could be shown to converge to binary search under perfect GPs, which is a really nice property to have. Unfortunately, relying on an individual Pareto point once again creates instability to lucky seeds. The method worked great on initial synthetic tests but collapsed when we introduced noisy score estimates.</p>
+
+                <p><b>Maximizing information gain:</b> Another early idea was to reward Protein based on the improvement made per compute spent. We could only make this work with a known learning curve shape, because the meaning of relative changes in score varies wildly per environment. This is still one of my favorite ideas, but it would require substantial rethinking and perhaps online curvature estimation.</b>
+            </article>
+
             <article id="post-9" class="blog-post">
                 <header class="post-header">
                     <h1>PufferLib 2.0: Reinforcement Learning at 1,000,000 Steps/Second</h1>
@@ -70,7 +211,7 @@
 
                 <h2>Things I use a lot</h2>
                 <p><strong>PPO:</strong> This is my go-to algorithm. It's simple and solved DoTA. Actually, it's simpler than most people appreciate. The way to think about PPO is vanilla policy gradients + GAE. That's just fancy exponential reward discounting with a value function baseline. Then, it adds policy clipping. This just means each weight can't change too much on any single update. Clipping lets PPO use the same batch of observations for multiple gradient updates. But if your environment is really fast, there's not much reason to do that, since new data is free. So it's just a simple and effective sample efficiency hack. Read Costa's 37 PPO details blog if you really want to understand the algorithm.</p>
-                <p><strong>Hyperparameter Intuition:</strong> I'll cover these for PPO, but several are common across many algorithms. Learning rate, gamma, and lambda are the most important. You always sweep learning rate. Gamma and lambda are GAE parameters that relate to the effective horizon of your task. I like to think about the effective horizon of my task. For instance, in Pong, you don't need to look ahead more than a couple of seconds. If the framerate is 15, then there are 30 frames in 2 seconds, so I might try 1 - 1/30 = 0.97 as a starting point. Lamba is usually set a bit below gamma, so I would try 0.95. This should at least give you a decent starting point for an automated sweep. I leave clipping parameters at 0.1 or 0.2. Tuning these lower will cause aggressive "on rails" runs that learn well for a while before diverging. Batch size, minibatch size, and number of environments should be set based on hardware. For my fast environments with small networks, batch size 4096 is hardware efficient, so I use 4096 environments. Then I multiply by 128 to get the batch size. The reason for this is to allow GAE to compute discounted returns over 128-length trajectory segments. Decrease this if your environment has very short horizons or increase it for longer ones. I set minibatch size to be a quarter of batch size by default, but I also set this one based on GPU memory. Update epochs is 1 for fast environments or 3-4 for slow environments. You can go higher, but then you have to also worry about KL targets.</p>
+                <p><strong>Hyperparameter Intuition:</strong> I'll cover these for PPO, but several are common across many algorithms. Learning rate, gamma, and lambda are the most important. You always sweep learning rate. Gamma and lambda are GAE parameters that relate to the effective horizon of your task. I like to think about the effective horizon of my task. For instance, in Pong, you don't need to look ahead more than a couple of seconds. If the framerate is 15, then there are 30 frames in 2 seconds, so I might try 1 - 1/30 = 0.97 as a starting point. Lambda is usually set a bit below gamma, so I would try 0.95. This should at least give you a decent starting point for an automated sweep. I leave clipping parameters at 0.1 or 0.2. Tuning these lower will cause aggressive "on rails" runs that learn well for a while before diverging. Batch size, minibatch size, and number of environments should be set based on hardware. For my fast environments with small networks, batch size 4096 is hardware efficient, so I use 4096 environments. Then I multiply by 128 to get the batch size. The reason for this is to allow GAE to compute discounted returns over 128-length trajectory segments. Decrease this if your environment has very short horizons or increase it for longer ones. I set minibatch size to be a quarter of batch size by default, but I also set this one based on GPU memory. Update epochs is 1 for fast environments or 3-4 for slow environments. You can go higher, but then you have to also worry about KL targets.</p>
                 <p><strong>CARBS:</strong> A really good hyperparameter tuning algorithm from ImbueAI. We have bindings in PufferLib, and it is way better than standard random or bayes. We're still learning how best to configure this, but even if you do it wrong, it's still usually pretty good. Don't sweep clip coefficients like I mentioned above, otherwise you get some pretty nutty runs.</p>
                 <p><strong>Common Architectures:</strong> I use an LSTM by default because it's fast and PufferLib makes adding one trivial. This replaces the main hidden layer, so networks can be as simple as fc-relu-lstm-fc-atn/val with 128-512 hidden dim. For 2d data, I will usually use a stack of 2-3 convolution layers with relus as an encoder. Avoid redundant fully connected layers when combining data from multiple sources, such as flat and 2d data. Deeper networks are not always better in RL, and they can sometimes be much harder to train. Also, know that RL tends to be more data hungry than other areas of AI, so you are often better off running more samples on a smaller network. That presumes your problem has a fast simulator. Feel free to experiment more here if you don't. The resnet architecture from the Impala paper is a decent slower one.</p>
                 <p><strong>Normalize your data:</strong> Observations should be divided into discrete and continuous. One-hot or embed discrete data. Divide continuous data by its maximum value per channel. Do not do this using mean stats. Just say "max health is 100 so I will divide by 100" etc. Do the same for rewards.</p>
