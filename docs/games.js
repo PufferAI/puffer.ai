@@ -79,8 +79,8 @@ Actions: Multi-discrete. Move, use skills`,
 Controls:
     Move: WASD or Arrow keys
     Fill bucket: Space
-    Empty bucket: Left Shift
-    Observation overlay: H
+    Empty bucket: Enter
+    Observation overlay: Control (while holding left shift)
 
 Observations: Partially observed local state (continuous)
 Actions: Discrete. Move, fill/empty bucket`,
@@ -146,7 +146,7 @@ Actions: Discrete. Move`,
     },
     convert: {
         title: "Convert",
-        description: `1000 agents in your browser! By Joseph Suarez.
+        description: `512 agents in your browser! By Joseph Suarez.
 
 Puffers need to convert to a new color by touching a start that maches their current color. Star our GitHub repo to help feed the puffers!
 

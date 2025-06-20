@@ -11,11 +11,11 @@
         <nav class="nav-box">
             <ul>
                 <li><a href="#post-1">Installation</a></li>
-                <li><a href="#post-2">Training Demo</a></li>
-                <li><a href="#post-3">Vectorization</a></li>
-                <li><a href="#post-4">Emulation</a></li>
-                <li><a href="#post-5">Policies</a></li>
-                <li><a href="#post-6">Ocean Environments</a></li>
+                <li><a href="#post-2">Cheat Sheet</a></li>
+                <li><a href="#post-3">Examples</a></li>
+                <li><a href="#post-4">About PufferLib</a></li>
+                <li><a href="#post-5">Writing an Environment</a></li>
+                <li><a href="#post-6">FAQ</a></li>
                 <li><a href="#post-7">Third Party Environments</a></li>
             </ul>
         </nav>
@@ -23,7 +23,7 @@
         <p>PufferLib is a library for sane and simple reinforcement learning at millions of steps per second. Our key features are:</p>
                 <ul>
                     <li><strong>Ocean:</strong> 20+ environments from simple arcade games to massively multiagent sims</li>
-                    <li><strong>PuffeRL:</strong> Train at millions of steps/second with our algoritm in a single ~1000 line script</li>
+                    <li><strong>PuffeRL:</strong> Train at millions of steps/second with our algorithm in a single ~1000 line script</li>
                     <li><strong>Protein:</strong> Our algorithm for automatic hyperparameter and reward tuning</li>
                     <li><strong>Vectorization:</strong> Ultra fast synchronous and asynchronous parallel simulation</li>
                     <li><strong>Emulation:</strong> Use Gymnasium and PettingZoo environments with PufferLib</li>
@@ -46,13 +46,12 @@
 
             <ul>
                 <li><strong>Install nvcc</strong> for faster training. We ship a custom advantage function kernel, and you'll only get the CPU version without it.</li>
-                <li><strong>Use <span style="color:cyan">--no-build-isolation</span></strong> to prevent pip from fetching a different Torch version during kernel compilation.
-                <li><strong>Omit <span style="color:cyan">[train]</span></strong> if you just want our environments/wrappers without PyTorch</li>
+                <li><strong>Use <span style="color:cyan">--no-build-isolation</span></strong> to prevent pip from fetching a different PyTorch version during kernel compilation.
                 <li><strong>Install environments</strong> with <span style="color:cyan">[atari,procgen]</span> etc. Ocean is included by default.</li>
                 <li><strong><span style="color:red">Avoid Conda</span></strong> because it builds slow env code. Use UV if you really want venvs instead of containers.</li>
             </ul>
 
-            <pre><code>pip install pufferlib[train] --no-build-isolation</code></pre>
+            <pre><code>pip install pufferlib --no-build-isolation</code></pre>
 
             <h2>Docker</h2>
             <p><a href="https://github.com/pufferai/puffertank" target="_blank">PufferTank</a> is a prebuilt GPU Docker image for PufferLib. We use it for all our dev. VSCode users can install the Dev Container plugin + Docker Desktop and just open the repo. You can also set up with CLI as below. Neovim (btw) is preinstalled.</p>
@@ -85,7 +84,7 @@ puffer eval puffer_breakout --wandb --load-id id                  # Load a model
 puffer sweep puffer_breakout --neptune --tag tag_name             # Run a hyperparameter sweep tracked with Neptune
 puffer sweep puffer_breakout --wandb --tag tag_name               # Run a hyperparameter sweep tracked with Weights and Biases
 
-# TODO: Add DDP Example
+torchrun --standalone --nnodes=1 --nproc-per-node=6 -m pufferlib.pufferl train puffer_nmmo3  # Distributed training
 
 
 # PuffeRL
@@ -144,7 +143,7 @@ env.possible_agents                                               # List of poss
 env.done                                                          # True if all agents are done
 </code></pre>
         </article>
-        <article id="post-2" class="blog-post">
+        <article id="post-3" class="blog-post">
             <header class="post-header">
                 <h1>Examples</h1>
             </header>
@@ -167,7 +166,7 @@ env.done                                                          # True if all 
             <p><a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/ocean/torch.py">Custom Models:</a> A collection of architectures used for our Ocean environments
         </article>
 
-       <article id="post-3" class="blog-post">
+       <article id="post-4" class="blog-post">
            <header class="post-header">
                <h1>About PufferLib</h1>
            </header>
@@ -202,7 +201,7 @@ env.done                                                          # True if all 
 </article>
 
     </article>
-    <article id="post-6" class="blog-post">
+    <article id="post-5" class="blog-post">
         <header class="post-header">
             <h1>Writing Your Own 1M+ SPS Environment</h1>
         </header>
@@ -256,12 +255,13 @@ grep -rin --include=*.{h,c,py} template pufferlib/ocean/template</code></pre>
 
 
     </article>
-            <article id="post-7" class="blog-post">
+            <article id="post-6" class="blog-post">
                 <header class="post-header">
                     <h1>FAQ</h1>
                 </header>
 
                 <p><b>Why is it called PufferLib?</b> Would you have rathered yet another minimal tech logo? Here, have a pufferfish 🐡
+                <p><b>I'm new to RL. How do I contribute?</b> Start by building a simple new environment in C and getting it to train. I review environment PRs from new contributors live on stream.</p>
                 <p><b>How do I export gifs?</b> We have this build in to the demo for most envs. There's not an easy way to get frames from Ocean envs, but you can use F12 for screenshots and control+F12 to record a gif.
                 <p><b>Multiprocessing erroring/hanging on Mac:</b> Your OS doesn't like to run subprocesses without __main__
 

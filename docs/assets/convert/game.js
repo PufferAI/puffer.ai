@@ -31,7 +31,7 @@ if (ENVIRONMENT_IS_NODE) {
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: /tmp/tmpjo78563e.js
+// include: /tmp/tmp0iwvp1ml.js
 
   Module['expectedDataFileDownloads'] ??= 0;
   Module['expectedDataFileDownloads']++;
@@ -214,21 +214,21 @@ Module['FS_createPath']("/resources", "shared", true, true);
 
   })();
 
-// end include: /tmp/tmpjo78563e.js
-// include: /tmp/tmpwlow9r64.js
+// end include: /tmp/tmp0iwvp1ml.js
+// include: /tmp/tmptxcq1tnz.js
 
     // All the pre-js content up to here must remain later on, we need to run
     // it.
     if ((typeof ENVIRONMENT_IS_WASM_WORKER != 'undefined' && ENVIRONMENT_IS_WASM_WORKER) || (typeof ENVIRONMENT_IS_PTHREAD != 'undefined' && ENVIRONMENT_IS_PTHREAD) || (typeof ENVIRONMENT_IS_AUDIO_WORKLET != 'undefined' && ENVIRONMENT_IS_AUDIO_WORKLET)) Module['preRun'] = [];
     var necessaryPreJSTasks = Module['preRun'].slice();
-  // end include: /tmp/tmpwlow9r64.js
-// include: /tmp/tmptcaex7fe.js
+  // end include: /tmp/tmptxcq1tnz.js
+// include: /tmp/tmphncihu81.js
 
     if (!Module['preRun']) throw 'Module.preRun should exist because file support used it; did a pre-js delete it?';
     necessaryPreJSTasks.forEach((task) => {
       if (Module['preRun'].indexOf(task) < 0) throw 'All preRun tasks that exist before user pre-js code should remain after; did you replace Module or modify Module.preRun?';
     });
-  // end include: /tmp/tmptcaex7fe.js
+  // end include: /tmp/tmphncihu81.js
 
 
 var arguments_ = [];
@@ -1856,6 +1856,13 @@ async function createWasm() {
   write(stream, buffer, offset, length, position, canOwn) {
           // The data buffer should be a typed array view
           assert(!(buffer instanceof ArrayBuffer));
+          // If the buffer is located in main memory (HEAP), and if
+          // memory can grow, we can't hold on to references of the
+          // memory buffer, as they may get invalidated. That means we
+          // need to do copy its contents.
+          if (buffer.buffer === HEAP8.buffer) {
+            canOwn = false;
+          }
   
           if (!length) return 0;
           var node = stream.node;
@@ -7695,14 +7702,87 @@ async function createWasm() {
     };
   var _emscripten_glWaitSync = _glWaitSync;
 
-  var abortOnCannotGrowMemory = (requestedSize) => {
-      abort(`Cannot enlarge memory arrays to size ${requestedSize} bytes (OOM). Either (1) compile with -sINITIAL_MEMORY=X with X higher than the current value ${HEAP8.length}, (2) compile with -sALLOW_MEMORY_GROWTH which allows increasing the size at runtime, or (3) if you want malloc to return NULL (0) instead of this abort, compile with -sABORTING_MALLOC=0`);
+  
+  var getHeapMax = () =>
+      // Stay one Wasm page short of 4GB: while e.g. Chrome is able to allocate
+      // full 4GB Wasm memories, the size will wrap back to 0 bytes in Wasm side
+      // for any code that deals with heap sizes, which would require special
+      // casing all heap size related code to treat 0 specially.
+      2147483648;
+  
+  var alignMemory = (size, alignment) => {
+      assert(alignment, "alignment argument is required");
+      return Math.ceil(size / alignment) * alignment;
+    };
+  
+  var growMemory = (size) => {
+      var b = wasmMemory.buffer;
+      var pages = ((size - b.byteLength + 65535) / 65536) | 0;
+      try {
+        // round size grow request up to wasm page size (fixed 64KB per spec)
+        wasmMemory.grow(pages); // .grow() takes a delta compared to the previous size
+        updateMemoryViews();
+        return 1 /*success*/;
+      } catch(e) {
+        err(`growMemory: Attempted to grow heap from ${b.byteLength} bytes to ${size} bytes, but got error: ${e}`);
+      }
+      // implicit 0 return to save code size (caller will cast "undefined" into 0
+      // anyhow)
     };
   var _emscripten_resize_heap = (requestedSize) => {
       var oldSize = HEAPU8.length;
       // With CAN_ADDRESS_2GB or MEMORY64, pointers are already unsigned.
       requestedSize >>>= 0;
-      abortOnCannotGrowMemory(requestedSize);
+      // With multithreaded builds, races can happen (another thread might increase the size
+      // in between), so return a failure, and let the caller retry.
+      assert(requestedSize > oldSize);
+  
+      // Memory resize rules:
+      // 1.  Always increase heap size to at least the requested size, rounded up
+      //     to next page multiple.
+      // 2a. If MEMORY_GROWTH_LINEAR_STEP == -1, excessively resize the heap
+      //     geometrically: increase the heap size according to
+      //     MEMORY_GROWTH_GEOMETRIC_STEP factor (default +20%), At most
+      //     overreserve by MEMORY_GROWTH_GEOMETRIC_CAP bytes (default 96MB).
+      // 2b. If MEMORY_GROWTH_LINEAR_STEP != -1, excessively resize the heap
+      //     linearly: increase the heap size by at least
+      //     MEMORY_GROWTH_LINEAR_STEP bytes.
+      // 3.  Max size for the heap is capped at 2048MB-WASM_PAGE_SIZE, or by
+      //     MAXIMUM_MEMORY, or by ASAN limit, depending on which is smallest
+      // 4.  If we were unable to allocate as much memory, it may be due to
+      //     over-eager decision to excessively reserve due to (3) above.
+      //     Hence if an allocation fails, cut down on the amount of excess
+      //     growth, in an attempt to succeed to perform a smaller allocation.
+  
+      // A limit is set for how much we can grow. We should not exceed that
+      // (the wasm binary specifies it, so if we tried, we'd fail anyhow).
+      var maxHeapSize = getHeapMax();
+      if (requestedSize > maxHeapSize) {
+        err(`Cannot enlarge memory, requested ${requestedSize} bytes, but the limit is ${maxHeapSize} bytes!`);
+        return false;
+      }
+  
+      // Loop through potential heap size increases. If we attempt a too eager
+      // reservation that fails, cut down on the attempted size and reserve a
+      // smaller bump instead. (max 3 times, chosen somewhat arbitrarily)
+      for (var cutDown = 1; cutDown <= 4; cutDown *= 2) {
+        var overGrownHeapSize = oldSize * (1 + 0.2 / cutDown); // ensure geometric growth
+        // but limit overreserving (default to capping at +96MB overgrowth at most)
+        overGrownHeapSize = Math.min(overGrownHeapSize, requestedSize + 100663296 );
+  
+        var newSize = Math.min(maxHeapSize, alignMemory(Math.max(requestedSize, overGrownHeapSize), 65536));
+  
+        var t0 = _emscripten_get_now();
+        var replacement = growMemory(newSize);
+        var t1 = _emscripten_get_now();
+        dbg(`Heap resize call from ${oldSize} to ${newSize} took ${(t1 - t0)} msecs. Success: ${!!replacement}`);
+        if (replacement) {
+  
+          return true;
+        }
+      }
+      err(`Failed to grow the heap from ${oldSize} bytes to ${newSize} bytes, not enough memory!`);
+      return false;
     };
 
   /** @suppress {checkTypes} */
@@ -10707,8 +10787,6 @@ if (Module['wasmBinary']) wasmBinary = Module['wasmBinary'];
   'getTempRet0',
   'setTempRet0',
   'zeroMemory',
-  'getHeapMax',
-  'growMemory',
   'inetPton4',
   'inetNtop4',
   'inetPton6',
@@ -10722,7 +10800,6 @@ if (Module['wasmBinary']) wasmBinary = Module['wasmBinary'];
   'autoResumeAudioContext',
   'getDynCaller',
   'asmjsMangle',
-  'alignMemory',
   'HandleAllocator',
   'getNativeTypeSize',
   'addOnInit',
@@ -10854,7 +10931,8 @@ missingLibrarySymbols.forEach(missingLibrarySymbol)
   'stackRestore',
   'ptrToString',
   'exitJS',
-  'abortOnCannotGrowMemory',
+  'getHeapMax',
+  'growMemory',
   'ENV',
   'setStackLimits',
   'ERRNO_CODES',
@@ -10877,6 +10955,7 @@ missingLibrarySymbols.forEach(missingLibrarySymbol)
   'callUserCallback',
   'maybeExit',
   'asyncLoad',
+  'alignMemory',
   'mmapAlloc',
   'wasmTable',
   'noExitRuntime',
@@ -11122,48 +11201,48 @@ function checkIncomingModuleAPI() {
   ignoredModuleProp('fetchSettings');
 }
 var ASM_CONSTS = {
-  34456: () => { if (document.fullscreenElement) return 1; },  
- 34502: () => { return document.getElementById('canvas').width; },  
- 34554: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 34622: () => { document.exitFullscreen(); },  
- 34649: () => { setTimeout(function() { Module.requestFullscreen(false, false); }, 100); },  
- 34722: () => { if (document.fullscreenElement) return 1; },  
- 34768: () => { return document.getElementById('canvas').width; },  
- 34820: () => { return screen.width; },  
- 34845: () => { document.exitFullscreen(); },  
- 34872: () => { setTimeout(function() { Module.requestFullscreen(false, true); setTimeout(function() { canvas.style.width="unset"; }, 100); }, 100); },  
- 35005: () => { return window.innerWidth; },  
- 35031: () => { return window.innerHeight; },  
- 35058: () => { if (document.fullscreenElement) return 1; },  
- 35104: () => { return document.getElementById('canvas').width; },  
- 35156: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 35224: () => { if (document.fullscreenElement) return 1; },  
- 35270: () => { return document.getElementById('canvas').width; },  
- 35322: () => { return screen.width; },  
- 35347: () => { return window.innerWidth; },  
- 35373: () => { return window.innerHeight; },  
- 35400: () => { if (document.fullscreenElement) return 1; },  
- 35446: () => { return document.getElementById('canvas').width; },  
- 35498: () => { return screen.width; },  
- 35523: () => { document.exitFullscreen(); },  
- 35550: () => { if (document.fullscreenElement) return 1; },  
- 35596: () => { return document.getElementById('canvas').width; },  
- 35648: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 35716: () => { document.exitFullscreen(); },  
- 35743: ($0) => { document.getElementById('canvas').style.opacity = $0; },  
- 35801: () => { return screen.width; },  
- 35826: () => { return screen.height; },  
- 35852: () => { return window.screenX; },  
- 35879: () => { return window.screenY; },  
- 35906: ($0) => { navigator.clipboard.writeText(UTF8ToString($0)); },  
- 35959: ($0) => { document.getElementById("canvas").style.cursor = UTF8ToString($0); },  
- 36030: () => { document.getElementById('canvas').style.cursor = 'none'; },  
- 36087: ($0, $1, $2, $3) => { try { navigator.getGamepads()[$0].vibrationActuator.playEffect('dual-rumble', { startDelay: 0, duration: $3, weakMagnitude: $1, strongMagnitude: $2 }); } catch (e) { try { navigator.getGamepads()[$0].hapticActuators[0].pulse($2, $3); } catch (e) { } } },  
- 36343: ($0) => { document.getElementById('canvas').style.cursor = UTF8ToString($0); },  
- 36414: () => { if (document.fullscreenElement) return 1; },  
- 36460: () => { return window.innerWidth; },  
- 36486: () => { return window.innerHeight; },  
- 36513: () => { if (document.pointerLockElement) return 1; }
+  34392: () => { if (document.fullscreenElement) return 1; },  
+ 34438: () => { return document.getElementById('canvas').width; },  
+ 34490: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 34558: () => { document.exitFullscreen(); },  
+ 34585: () => { setTimeout(function() { Module.requestFullscreen(false, false); }, 100); },  
+ 34658: () => { if (document.fullscreenElement) return 1; },  
+ 34704: () => { return document.getElementById('canvas').width; },  
+ 34756: () => { return screen.width; },  
+ 34781: () => { document.exitFullscreen(); },  
+ 34808: () => { setTimeout(function() { Module.requestFullscreen(false, true); setTimeout(function() { canvas.style.width="unset"; }, 100); }, 100); },  
+ 34941: () => { return window.innerWidth; },  
+ 34967: () => { return window.innerHeight; },  
+ 34994: () => { if (document.fullscreenElement) return 1; },  
+ 35040: () => { return document.getElementById('canvas').width; },  
+ 35092: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 35160: () => { if (document.fullscreenElement) return 1; },  
+ 35206: () => { return document.getElementById('canvas').width; },  
+ 35258: () => { return screen.width; },  
+ 35283: () => { return window.innerWidth; },  
+ 35309: () => { return window.innerHeight; },  
+ 35336: () => { if (document.fullscreenElement) return 1; },  
+ 35382: () => { return document.getElementById('canvas').width; },  
+ 35434: () => { return screen.width; },  
+ 35459: () => { document.exitFullscreen(); },  
+ 35486: () => { if (document.fullscreenElement) return 1; },  
+ 35532: () => { return document.getElementById('canvas').width; },  
+ 35584: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 35652: () => { document.exitFullscreen(); },  
+ 35679: ($0) => { document.getElementById('canvas').style.opacity = $0; },  
+ 35737: () => { return screen.width; },  
+ 35762: () => { return screen.height; },  
+ 35788: () => { return window.screenX; },  
+ 35815: () => { return window.screenY; },  
+ 35842: ($0) => { navigator.clipboard.writeText(UTF8ToString($0)); },  
+ 35895: ($0) => { document.getElementById("canvas").style.cursor = UTF8ToString($0); },  
+ 35966: () => { document.getElementById('canvas').style.cursor = 'none'; },  
+ 36023: ($0, $1, $2, $3) => { try { navigator.getGamepads()[$0].vibrationActuator.playEffect('dual-rumble', { startDelay: 0, duration: $3, weakMagnitude: $1, strongMagnitude: $2 }); } catch (e) { try { navigator.getGamepads()[$0].hapticActuators[0].pulse($2, $3); } catch (e) { } } },  
+ 36279: ($0) => { document.getElementById('canvas').style.cursor = UTF8ToString($0); },  
+ 36350: () => { if (document.fullscreenElement) return 1; },  
+ 36396: () => { return window.innerWidth; },  
+ 36422: () => { return window.innerHeight; },  
+ 36449: () => { if (document.pointerLockElement) return 1; }
 };
 var wasmImports = {
   /** @export */
