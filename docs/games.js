@@ -26,15 +26,28 @@ Actions: Discrete. Move, sprint, attack, use item, buy, sell`,
     },
     impulse_wars: {
         title: "Impulse Wars",
-        description: `A top-down 2D physics-based shooter. By capnspacehook.
+        description: `A top-down 2D physics-based shooter, based on Retrograde Arena. By Andrew LeFevre.
 
-Controls: 
-Observations:
-Actions:`,
+Use weapons and physics to push your opponents into a red death walls to kill them. Yellow walls are bouncy, blue walls are nothing special.
+
+Pickup green weapon tiles to switch weapons. Movement is slow, but you can use recoil to move faster, dodge, and more, but it must be managed carefully.
+
+The white ring inside your player is an energy meter, you can use it to brake or to charge bursts, a devastating explosion that can push players and projectiles away. If your burst touches a solid wall it'll push you away from the wall.
+
+This game is best played with a controller, but mouse and keyboard works.
+
+Controls: LEFT CONTROL to toggle human play, NOT shift like the other environments.
+    Move: WASD or left stick on controller
+    Aim: Mouse or right stick on controller
+    Shoot/charge shot: Left click or bottom right trigger on controller
+    Burst/charge burst: Right click or top right trigger on controller
+    Brake: Space or bottom left trigger on controller
+Observations: 2D crop of nearby tiles (discrete), 1D vector of nearby entities and player data (continuous)
+Actions: Multidiscrete (move, aim, shoot, burst)`,
         thumbnail: "assets/impulse_wars_thumbnail.png",
         path: "assets/impulse_wars/game.html",
-        width: 1920,
-        height: 1080,
+        width: 1280,
+        height: 720,
     },
     drive: {
         title: "Drive",
@@ -278,8 +291,8 @@ Actions: Discrete. Move, Shoot`,
         height: 480,
     },
     tripletriad: {
-	    title: "Triple Triad",
-	    description: `A card-based minigame from Final Fantasy. By Spencer Cheng.
+        title: "Triple Triad",
+        description: `A card-based minigame from Final Fantasy. By Spencer Cheng.
 
 When a card is placed next to an opponent's card, the numbers of both cards on that edge will be compared. The higher number card captures the lower number card, converting its color. At the end of the game, the player with the most cards of their own color on the board wins.
 
@@ -289,10 +302,10 @@ Controls:
 
 Observations: 1D vector (continuous)
 Actions: Discrete. Select card, place card`,
-	    thumbnail: "assets/tripletriad_thumbnail.png",
-	    path: "assets/tripletriad/game.html",
-	    width: 990,
-	    height: 690,
+        thumbnail: "assets/tripletriad_thumbnail.png",
+        path: "assets/tripletriad/game.html",
+        width: 990,
+        height: 690,
     },
     rware: {
         title: "RWare",
