@@ -87,7 +87,12 @@ function randomizeGame() {
 document.addEventListener('DOMContentLoaded', () => {
     initializeGames();
     const demoGame = document.querySelector('.featured-game');
+
     if (demoGame) {
-        randomizeGame();
+        // Load specific env if specified in URL params
+        const env = new URLSearchParams(window.location.search).get("env");
+
+        if (env != null && env in games) loadGame(games[env]);
+        else randomizeGame();
     }
 });
