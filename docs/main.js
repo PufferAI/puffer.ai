@@ -1,15 +1,15 @@
 function resizeGame() {
     const container = document.querySelector('.featured-game-container');
     const iframe = document.querySelector('.featured-game');
-    
+
     // Set specific dimensions that maintain aspect ratio
     container.style.width = 'calc(81vw)';  // Using viewport width
     container.style.height = '81vh';       // Using viewport height
-    
+
     // Set same dimensions for iframe
     iframe.style.width = '100%';
     iframe.style.height = '100%';
-    
+
     console.log('Container resized:', {
         containerWidth: container.clientWidth,
         containerHeight: container.clientHeight,
@@ -36,7 +36,7 @@ function loadGame(game) {
     // Set container size
     container.style.width = `${game.width}px`;
     container.style.height = `${game.height}px`;
-    
+
     // Set iframe size
     featured.style.width = `${game.width}px`;
     featured.style.height = `${game.height}px`;
@@ -74,7 +74,7 @@ function initializeGames() {
     const wip_grid = document.querySelector('.wip-grid');
     if (!wip_grid) return;
     wip_grid.innerHTML = Object.entries(wip).map(([key, game]) => `
-        <div class="game-card" onclick="loadGame(wip['${key}'])">
+        <div class="game-card" onclick="onClickEnv(wip['${key}'])">
             <div class="game-thumbnail">
                 <img src="${game.thumbnail}" alt="${game.title}">
             </div>
