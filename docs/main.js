@@ -19,6 +19,16 @@ function resizeGame() {
     });
 }
 
+function onClickEnv(game) {
+    loadGame(game)
+
+    // scroll till game visible
+    const container = document.querySelector('.featured-game-container');
+    if(container){
+        container.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
+    }
+
+}
 function loadGame(game) {
     const container = document.querySelector('.featured-game-container');
     const featured = document.querySelector('.featured-game');
@@ -53,7 +63,7 @@ function initializeGames() {
     const grid = document.querySelector('.games-grid');
     if (!grid) return;
     grid.innerHTML = Object.entries(games).map(([key, game]) => `
-        <div class="game-card" onclick="loadGame(games['${key}'])">
+        <div class="game-card" onclick="onClickEnv(games['${key}'])">
             <div class="game-thumbnail">
                 <img src="${game.thumbnail}" alt="${game.title}">
             </div>
