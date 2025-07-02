@@ -242,6 +242,20 @@ Actions: Move`,
         width: 560,
         height: 660,
     },
+    twentyfortyeight: {
+        title: "2048",
+        description: `A fast version of the classic game. By Yannik.
+
+Score points by merging same-valued tiles to make a bigger number.
+
+Controls: WASD or Arrow keys to slide tiles
+Observations: 1d game state vector (continuous)
+Actions: Slide tiles`,
+        thumbnail: "assets/2048_thumbnail.png",
+        path: "assets/2048/game.html",
+        width: 400,
+        height: 450,
+    },
     breakout: {
         title: "Breakout",
         description: `A fast version of the classic Atari game. By Noah Farr with physics enhancements by David (dmoore101).
