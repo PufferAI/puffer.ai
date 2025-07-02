@@ -69,7 +69,8 @@ cd puffertank
 python -m pufferlib.pufferl [train|eval|sweep] env_name [OPTIONS] # Equivalent command from source
 
 puffer train puffer_breakout --help                               # Get help on a specific environment
-puffer train puffer_breakout --train.learning-rate 0.001          # Set train params
+puffer train puffer_breakout --train.device cpu                   # Set device
+puffer train puffer_breakout --train.learning-rate 0.001          # Set other train params
 puffer train puffer_breakout --env.vision 3                       # Set env params
 puffer train puffer_breakout --vec.backend Serial                 # Set vec params
 puffer train puffer_breakout --neptune --tag tag_name             # Track with Neptune
