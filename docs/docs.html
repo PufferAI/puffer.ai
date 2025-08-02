@@ -9,6 +9,7 @@
 <body>
     <main class="content">
         <nav class="nav-box">
+            <p>On this page</p>
             <ul>
                 <li><a href="#post-1">Installation</a></li>
                 <li><a href="#post-2">Cheat Sheet</a></li>
@@ -176,7 +177,7 @@ env.done                                                          # True if all 
 
                 <h2>Emulation</h2>
                 <p>Complex environments may have heirarchical observations and actions, variable numbers of agents, and other quirks that make them difficult to work with and incompatible with standard reinforcement learning libraries. This was the initial motivation for PufferLib. The idea is to make every environment <i>emulate</i> the structure of simpler environments that most original RL tooling was written for. We flatten Gym/Gymnasium/PettingZoo spaces in our wrappers and unflatten them just in time for the model forward pass. This means you don't have to keep track of structured data during vectorization, in your experience buffers, or anywhere else, allowing for simpler and faster code. We also apply extra compatibility checks and pad multiagent environments to a fixed agent count. Under the hood, our wrappers maintain the Gym/Gymnasium/PettingZoo API using a stricter subset of available spaces, so you can still use them with other libraries outside of PufferLib.</p>
- 
+
                 <h2>Vectorization</h2>
                 <p>In RL, vectorization refers to the process of simulating multiple copies of an environment in parallel. Our Multiprocessing backend is fast -- much faster than Gymnasium's in most cases. Atari runs 50-60% faster synchronous and 5x faster async by our latest benchmark, and some environments like NetHack can be 10x faster even synchronous, with no API changes. Our vectorization works on almost any Gym/Gymnasium/PettingZoo environment after applying our 1-line emulation wrapper. PufferLib outperforms other vectorization implementations using the following optimizations:</p>
             <ul>

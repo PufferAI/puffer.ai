@@ -137,17 +137,26 @@ a:hover {
 .nav-box {
     background: var(--background);
     padding: 1rem;
-    margin-bottom: 2rem;
     border-radius: 8px;
-}
+    max-width: 20rem;
+    float: right;
 
-.nav-box ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
+    * {
+        display: flex;
+    }
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        flex-direction: column;
+    }
+    p {
+        font-weight: 600;
+        margin-block: 0 0.5rem;
+    }
+    a {
+        padding-block: 0.5rem;
+    }
 }
 
 /* Reusable content container */
@@ -171,13 +180,6 @@ a:hover {
 .image-container figcaption {
     color: var(--highlight);
     margin-top: 0.5rem;
-}
-
-/* Basic responsive rules */
-@media (max-width: 768px) {
-    .nav-box ul {
-        flex-direction: column;
-    }
 }
 
 pre {
