@@ -211,19 +211,21 @@ Actions: Discrete. Move, rotate, soft/hard drop, stash`,
         width: 384,
         height: 928,
     },
-    freeway: {
-        title: "Freeway",
-        description: `A fast version of the classic Atari game. By Hadrien Crassous.
+    whisker_racer: {
+        title: "Race",
+        description: `A fast version of the classic CarRacing environment. By Kinvert.
 
-Score points by crossing the road.
+Race around the track and don't run into walls.
 
-Controls: Up/Down or W/S to move
+Controls:
+    Steer: A/D or Left/Right
+    Shift perspective: Shift + M
 
-Observations: 1d vector (continuous)
-Actions: Discrete. Move up/down`,
-        thumbnail: "assets/freeway_thumbnail.png",
-        path: "assets/freeway/game.html",
-        width: 1216,
+Observations: 1d vector (continuous). Uses whiskers as collision checks.
+Actions: Discrete and continuous steering supported`,
+        thumbnail: "assets/whisker_racer_thumbnail.png",
+        path: "assets/whisker_racer/game.html",
+        width: 1080,
         height: 720,
     },
     pacman: {
@@ -255,6 +257,21 @@ Actions: Slide tiles`,
         path: "assets/2048/game.html",
         width: 400,
         height: 450,
+    },
+    freeway: {
+        title: "Freeway",
+        description: `A fast version of the classic Atari game. By Hadrien Crassous.
+
+Score points by crossing the road.
+
+Controls: Up/Down or W/S to move
+
+Observations: 1d vector (continuous)
+Actions: Discrete. Move up/down`,
+        thumbnail: "assets/freeway_thumbnail.png",
+        path: "assets/freeway/game.html",
+        width: 1216,
+        height: 720,
     },
     breakout: {
         title: "Breakout",
