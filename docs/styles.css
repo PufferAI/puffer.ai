@@ -5,7 +5,7 @@
     --text: #f1f1f1;
     --content-max-width: 1280px;
     --content-padding: 40px;
-    --header-height: 180px;
+    --header-height: 4rem;
 }
 
 body {

@@ -4,20 +4,38 @@
     <meta charset="UTF-8" />
     <title>Puffing Up Reinforcement Learning</title>
     <style>
-        :root {
-            --header-height: 4rem;
-        }
-
         .site-header {
             display: flex;
-            max-width: 1200px;
-            height: var(--header-height);
-            margin: 0 auto;
-            
+            max-width: var(--content-max-width);
+            margin-inline: auto;
+            box-sizing: border-box;
+
             background-color: var(--foreground);
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            > * {
+                height: var(--header-height);
+            }
+
+            @media (width < 62rem) {
+                flex-direction: column;
+                > :not(.title) {
+                    padding-inline: var(--content-padding);
+                }
+                > .title > a {
+                    padding-inline: var(--content-padding);
+                }
+            }
+            @media (width >= 62rem) {
+                position: sticky;
+                top: 0;
+                z-index: 10;
+
+                > .title > a {
+                    padding-inline-start: var(--content-padding);
+                }
+                > :last-child {
+                    padding-inline-end: var(--content-padding);
+                }
+            }
         }
 
         .title {
