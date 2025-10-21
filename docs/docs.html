@@ -31,12 +31,6 @@
 
                 <p>These docs will get you started. Join the <a href="https://discord.gg/puffer" target="_blank">Discord</a> to get help and report bugs. If you're new to RL, building and contributing a new env is the best way to learn, and we review PRs live.</p>
 
-		<h2>Livestream</h2>
-		<p>Have your questions answered instantly on X/Twitch/YouTube <strong>whenever the dev stream below is live</strong>.</p>
-		<center>
-		    <iframe width="854" height="480" src="https://www.youtube.com/embed/live_stream?channel=UCl7NA-PqHS2E0F29I6wJIXA" frameborder="0" allowfullscreen></iframe>
-		</center>
-
             </header>
         </article>
 
@@ -45,16 +39,17 @@
                 <h1>Installation</h1>
             </header>
 
-            <h2>Pip</h2>
+            <h2>(UV) Pip</h2>
+
+            <pre><code>(uv) pip install pufferlib
+(uv) pip install -e . # From source</code></pre>
 
             <ul>
                 <li><strong>Install nvcc</strong> for faster training. We ship a custom advantage function kernel, and you'll only get the CPU version without it.</li>
-                <li><strong>Use <span style="color:cyan">--no-build-isolation</span></strong> to prevent pip from fetching a different PyTorch version during kernel compilation.
-                <li><strong>Install environments</strong> with <span style="color:cyan">[atari,procgen]</span> etc. Ocean is included by default.</li>
-                <li><strong><span style="color:red">Avoid Conda</span></strong> because it builds slow env code. Use UV if you really want venvs instead of containers.</li>
+                <li><strong>Getting PyTorch CUDA version incompatibilities? Try installing with <span style="color:cyan">--no-build-isolation</span></strong>.
+                <li><strong>Install 3rd party environments</strong> with <span style="color:cyan">[atari,procgen]</span> etc. Ocean is included by default.</li>
+                <li><strong><span style="color:red">Avoid Conda</span></strong> because it builds slow env code.</li>
             </ul>
-
-            <pre><code>pip install pufferlib --no-build-isolation</code></pre>
 
             <h2>Docker</h2>
             <p><a href="https://github.com/pufferai/puffertank" target="_blank">PufferTank</a> is a prebuilt GPU Docker image for PufferLib. We use it for all our dev. VSCode users can install the Dev Container plugin + Docker Desktop and just open the repo. You can also set up with CLI as below. Neovim (btw) is preinstalled.</p>
