@@ -144,6 +144,19 @@ Actions: Discrete. Place a stone, pass`,
         width: 950,
         height: 512,
     },
+    slimevolley: {
+        title: "Slime Volley",
+        description: `A classic RL environment originally by an unknown author and popularized by David Ha (hardmaru). This version contributed by Joao Abrantes.
+
+Controls: A/D or Left/Right, W/Up/Space to jump
+
+Observations: 1D vector (continuous)
+Actions: Multidiscrete. Move, jump`,
+        thumbnail: "assets/slimevolley_thumbnail.png",
+        path: "assets/slimevolley/game.html",
+        width: 1200,
+        height: 500,
+    },
     snake: {
         title: "Multiagent Snake",
         description: `Play with one snake or thousands. By Joseph Suarez.
