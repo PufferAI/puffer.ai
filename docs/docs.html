@@ -202,10 +202,10 @@ env.done                                                          # True if all 
     </article>
     <article id="post-5" class="blog-post">
         <header class="post-header">
-            <h1>Writing Your Own 1M+ SPS Environment</h1>
+            <h1>Tutorial: Writing Your Own Environment at 1M+ SPS (steps/second/core)!</h1>
         </header>
 
-        <p>Ocean environments are written with the PufferEnv API. It's a vector format very similar to Gymnasium's VectorEnv, but with native multiagent support. Writing your own is a great way to learn and a great way to contribute to PufferLib. PR something cool to have it reviewed live on stream! Here's a pure Python environment using this format: <a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/ocean/pysquared/pysquared.py">pysquared.py</a></p>
+        <p>Ocean environments are written with the PufferEnv API. It's a vector format very similar to Gymnasium's VectorEnv, but with native multiagent support. Writing your own is a great way to learn and a great way to contribute to PufferLib. Follow this guide and then copy the <a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/ocean/target">template</a> as a starting point. PR something cool to have it reviewed live on stream! Here's a pure Python environment using this format: <a href="https://github.com/PufferAI/PufferLib/blob/3.0/pufferlib/ocean/pysquared/pysquared.py">pysquared.py</a></p>
 
         <p> If you're familiar with Gymnasium/PettingZoo, you'll notice that this is almost identical. The main difference is that observations, actions, rewards, etc. are initialized from this <i>buf</i> object. All operations happen in-place to avoid creating and copying redundant arrays. Our vectorization passes in slices of shared memory during multiprocessing, so your environment is storing observations directly to a batch on the main process. Note that this means calling <i>step</i> again will overwrite your observations etc. from the previous call.</p>
 
