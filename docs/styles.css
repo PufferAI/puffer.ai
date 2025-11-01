@@ -164,6 +164,7 @@ a:hover {
     max-width: var(--content-max-width);
     margin: 0 auto;
     padding: var(--content-padding);
+    box-sizing: border-box;
 }
 
 /* Reusable image component */
