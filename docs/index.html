@@ -76,12 +76,17 @@
 <body>
     <main class="main-content">
         <div class="title-content">
-            <p>PufferLib is a fast and sane reinforcement learning library that can train tiny, super-human models in seconds. The included learning algorithm, hyperparameter tuning, and simulation methods are the product of our own research. All our tools are free and open source. Companies can purchase priority service from $10k/month for extended support and tailored advice. We also offer custom simulation engineering, dedicated R&amp;D, and fixed-deliverables for larger projects. Contact jsuarez🐡puffer🐡ai.</p>
+            <p>PufferLib is a fast and sane reinforcement learning library that can train tiny, super-human models in seconds. The included learning algorithm, hyperparameter tuning, and simulation methods are the product of our own research. All our tools are free and open source. Need a high performance environment for your application? We build them professionally and offer training + extended support. Contact jsuarez🐡puffer🐡ai.</p>
 
             <p>The demo below is running live 100% client side in your browser. Hold shift to take control!</p>
       </div>
 
         <div class="demo-showcase">
+            <div class="demo-controls">
+                <button class="control-button" onclick="randomizeGame()">
+                    ⚄ Try Another Env
+                </button>
+            </div>
             <div class="featured-game-container">
                 <iframe src="assets/pong/game.html" class="featured-game" title="Featured Game"></iframe>
             </div>
@@ -90,25 +95,38 @@
                 <p class="game-description">
                     A classic reimagined: Play against our reinforcement learned agent or watch AI vs AI matches. Running at 1M+ steps per second directly in your browser.
                 </p>
-                <div class="demo-controls">
-                    <button class="control-button" onclick="randomizeGame()">
-                        ⚄ Try Another Env
-                    </button>
-                </div>
             </div>
         </div>
 
         <section class="citation">
-            <h2 class="section-header">Citation</h2>
-            <pre><code>@misc{suarez2024pufferlibmakingreinforcementlearning,
-      title={PufferLib: Making Reinforcement Learning
-          Libraries and Environments Play Nice},
-      author={Joseph Suarez},
-      year={2024},
-      eprint={2406.12905},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2406.12905},
+            <h2 class="section-header">BibTeX</h2>
+            Repo / RLC Best Paper 2025 / Original Whitepaper
+            <pre><code>@misc{pufferlib,
+    title        = {{PufferLib}: Fast and Sane Simplifying Reinforcement Learning for Complex Game Environments},
+    author       = {Joseph Suarez},
+    howpublished = {\url{https://github.com/PufferAI/PufferLib}},
+    year         = {2024},
+    note         = {GitHub repository}
+}
+
+@article{suarez2025pufferlib,
+  title   = {{PufferLib} 2.0: {R}einforcement Learning at 1M steps/s},
+  author  = {Suarez, Joseph},
+  journal = {Reinforcement Learning Journal},
+  volume  = {6},
+  pages   = {1378--1388},
+  year    = {2025}
+}
+
+@misc{suarez2024pufferlibmakingreinforcementlearning,
+    title={PufferLib: Making Reinforcement Learning
+        Libraries and Environments Play Nice},
+    author={Joseph Suarez},
+    year={2024},
+    eprint={2406.12905},
+    archivePrefix={arXiv},
+    primaryClass={cs.LG},
+    url={https://arxiv.org/abs/2406.12905},
 }</code></pre>
         </section>
 
@@ -119,16 +137,24 @@
                 <span>Founder & Head Puffer. Writes a lot of code.</span>
             </div>
             <div class="contributor">
-                <strong><a href="https://github.com/drubinstein">David Rubinstein</a></strong>
-                <span>Several performance improvements w/ torch compilation, lead pokerl contributor.</span>
+                <strong>Spencer Cheng</strong>
+                <span>Go, Connect4, TripleTriad, RWare, Tower Climb</span>
             </div>
             <div class="contributor">
                 <strong>Kyoung Whan Choe (최경환)</strong>
                 <span>Mujoco bindings, Testing and bug fixes.</span>
             </div>
             <div class="contributor">
-                <strong>Spencer Cheng</strong>
-                <span>Go, Connect4, TripleTriad, RWare, Tower Climb</span>
+                <strong>Peru</strong>
+                <span>4.0 Environment vectorization, kernel dev</span>
+            </div>
+            <div class="contributor">
+                <strong>Jonah</strong>
+                <span>kernel dev</span>
+            </div>
+            <div class="contributor">
+                <strong><a href="https://github.com/drubinstein">David Rubinstein</a></strong>
+                <span>Several performance improvements w/ torch compilation, lead pokerl contributor.</span>
             </div>
             <div class="contributor">
                 <strong>Andrew LeFevre</strong>

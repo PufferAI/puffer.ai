@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PufferLib Constellation</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root {
+            --border-radius: 8px;
+            --spacing-lg: 4rem;
+            --spacing-md: 2rem;
+            --spacing-sm: 1rem;
+            --thumbnail-height: 150px;  /* Fixed thumbnail height */
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            color: var(--text);
+            background: var(--foreground);
+        }
+        .main-content {
+            max-width: 1920;
+            margin: 0 auto;
+            padding: var(--spacing-md);
+        }
+        .section-header {
+            margin: var(--spacing-lg) 0 var(--spacing-sm);
+            font-size: 2rem;
+            color: var(--text);
+        }
+        .section-description {
+            margin-bottom: var(--spacing-md);
+            line-height: 1.6;
+            max-width: 800px;
+        }
+
+        .games-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+            margin: var(--spacing-md) 0;
+            justify-content: center;
+        }
+
+        .wip-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+            margin: var(--spacing-md) 0;
+            justify-content: center;
+        }
+
+        .game-card {
+            cursor: pointer;
+            transition: transform 0.2s;
+            text-align: center;
+            background: black;
+            border-radius: var(--border-radius);
+            border: 2px var(--highlight) solid;
+            overflow: hidden;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .game-thumbnail {
+            height: var(--thumbnail-height);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .game-thumbnail img {
+            height: 100%;
+            width: auto;
+        }
+
+        .game-card .game-title {
+            padding: var(--spacing-sm);
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--highlight);
+        }
+    </style>
+</head>
+<body>
+    <main class="main-content">
+        <iframe src="assets/constellation/game.html" class="featured-game" title="Constellation"></iframe>
+        <h2 class="section-header">Constellation</h2>
+        <p class="section-description">
+            Our experiment visualization toolkit. Includes all the baselines from 4.0!
+        </p>
+    </main>
+    <script src="header.js"></script>
+</body>
+</html>

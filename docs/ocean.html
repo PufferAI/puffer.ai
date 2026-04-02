@@ -87,6 +87,11 @@
 </head>
 <body>
     <main class="main-content">
+        <div class="demo-controls">
+            <button class="control-button" onclick="randomizeGame()">
+                ⚄ Try Another Env
+            </button>
+        </div>
         <div class="demo-showcase">
             <div class="featured-game-container">
                 <iframe src="assets/pong/game.html" class="featured-game" title="Featured Game - Pong"></iframe>
@@ -96,16 +101,11 @@
                 <p class="game-description">
                     A classic reimagined: Play against our reinforcement learned agent or watch AI vs AI matches. Running at 1M+ steps per second directly in your browser.
                 </p>
-                <div class="demo-controls">
-                    <button class="control-button" onclick="randomizeGame()">
-                        ⚄ Try Another Env
-                    </button>
-                </div>
             </div>
         </div>
         <h2 class="section-header">Ocean</h2>
         <p class="section-description">
-            Our growing collection of 1st party environments. Most run 1M+ agent steps per second per CPU core. They are implemented in pure C. Watch our trained agents play in your browser or press shift to take control. No hosting, it's all running locally!
+            Our growing collection of 1st party environments. Most run millions of agent steps per second. They are implemented in pure C. Watch our trained agents play in your browser or press shift to take control. No hosting, it's all running locally!
         </p>
         <div class="games-grid">
             <!-- Games populated by JavaScript -->
