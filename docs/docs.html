@@ -31,20 +31,19 @@
 cd puffertank
 ./docker.sh test</code></pre>
 
-            PufferLib uses CUDA, cuBLAS, NCCL, and Nsight. If that sounds annoying to set up, use our Docker. Need a different CUDA base or system packages? The <a href="https://github.com/PufferAI/PufferTank/blob/4.0/puffertank.dockerfile">Dockerfile</a> is really simple. Edit it and run <b>./docker.sh build -d puffertank.dockerfile</b>
+            PufferLib uses CUDA, cuBLAS, NCCL, and Nsight. If that sounds annoying to set up, use our Docker. <b>Use ssh -X</b> on setup for remote work or graphics won't work. Need a different CUDA base or system packages? The <a href="https://github.com/PufferAI/PufferTank/blob/4.0/puffertank.dockerfile">Dockerfile</a> is really simple. Edit it and run <b>./docker.sh build -d puffertank.dockerfile</b>
 
             <h2>UV</h2>
-
-            <pre><code>git clone https://github.com/pufferai/pufferlib
-uv pip install -e .</code></pre>
-            If you really hate docker, yoink our system deps from the <a href="https://github.com/PufferAI/PufferTank/blob/4.0/puffertank.dockerfile">Dockerfile</a>
+            <pre><code>curl https://raw.githubusercontent.com/PufferAI/PufferTank/refs/heads/4.0/install.sh | sh</code></pre>
+            Requires CUDA. If you don't want to deal with CUDA deps, use the Dockerfile.
 
             <h2>Installation Test</h2>
 
             <pre><code>bash build.sh breakout
 puffer train breakout
 pufer eval breakout --load-model-path latest</code></pre>
-            Trains a policy. 3-5 seconds on an RTX 5090. Eval requires a graphical interface. The docker works over ssh with -X.
+            Trains a policy. 3-5 seconds on an RTX 5090. Eval requires a graphical interface. Works over ssh -X. Docker over ssh requires -X when you first run the container. Running without -X and reconnecting with -X will not work.
+
         </article>
 
         <article id="post-2" class="blog-post">
@@ -56,14 +55,14 @@ python -m pufferlib.pufferl [train|eval|sweep] env_name [OPTIONS] # Equivalent c
 
 # Building PufferLib
 bash build.sh ENV_NAME                                   # Build training for a specific environment
-bash build.sh ENV_NAME --precision float                 # Use fp32 backend (default is bf16)
+bash build.sh ENV_NAME --float                           # Use fp32 backend (default is bf16)
 bash build.sh ENV_NAME --profile                         # Build our profiling tools
 bash build.sh ENV_NAME --[local|fast|web]                # Build debug/optimized/web env standalones, no training
 bash build.sh constellation --[local|fast|web]           # Build Constellation experiment dashboard
 
 # Examples
 puffer train breakout --train.learning-rate 0.001        # Set other train params
-puffer train breakout --env.vision 3                     # Set env params
+puffer train breakout --env.frameskip 3                  # Set env params
 puffer train breakout --vec.num-threads 4                # Set vec params
 puffer train breakout --wandb --tag tag_name             # Track with Weights and Biases
 puffer eval breakout                                     # Render the env with a random agent
@@ -76,7 +75,7 @@ puffer sweep breakout --sweep.gpus N                     # Sweep with 6 GPUs
 puffer train nmmo3 --train.gpus N                        # Distributed training
 
 # Torch
-bash build.sh ENV_NAME --precision float                 # Torch is not stable in bf16
+bash build.sh ENV_NAME --float                           # Torch is not stable in bf16
 bash build.sh ENV_NAME --cpu                             # Mostly for Mac users. Expect under 200k sps.
 
 # Torch Distributed - you should really, really use our native backend if you are going to scale
@@ -125,6 +124,7 @@ puffer train env_name</code></pre>
 
         <ul>
             <li><b>Zero or incorrect observations/actions:</b> Ensure you have defined your observation and action metadata (space/size/type) correctly in your binding.c. Note that observation buffers are not zeroed for you every step, so if you are only writing information to specific indicies (i.e. one-hots), be sure you are zeroing them. One memset is usually the quickest.</li>
+            <li><b>NaN losses:</b> If your losses NaN after 1 epoch, your environment almost certainly has data corruption. You are writing to memory that does not match the obs/action sizes you have defined, or you have defined them using the wrong types. If your losses NaN after a longer time, it may be hyperparameters.</li>
             <li><b>Incorrect or missing resets:</b> Your environment should handle its own resets internally. For envs that never reset, it is often useful to respawn agents if they are stuck (e.g. no reward for 500 steps). If every rollout has the same number of timesteps, you should stagger your environments on init.</li>
             <li><b>Not zeroing observations:</b> If you are writing over your observation buffers but only write to some elements each step, If you don't zero out rewards, they will retain their value from the previous step. Ditto for terminals. Zero them at the start of c_step to be safe. A single memset will do it for multiagent envs. If you are not setting every element of every obs (i.e. one-hots), make sure to clear those too.</li>
             <li><b>Manually inspect data scale:</b> You want observations and rewards to be roughly in the range of -1 to 1. 0 to 1 is fine. -5 to 5 is kind of fine. Randomly having one obs with magnitude 1000 is not.</li>
