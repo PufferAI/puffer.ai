@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>PufferLib Docs</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <main class="content">
+        <p>PufferLib is a fast and sane reinforcement learning library. Our key features are:</p>
+                <ul>
+                    <li><strong>PuffeRL:</strong> 20,000,000 step/second training in only ~5k lines of CUDA. Torch version up to 5,000,000.</li>
+                    <li><strong>Ocean:</strong> 20+ environments from simple arcade games to massively multiagent sims</li>
+                    <li><strong>Constellation:</strong> Performant experiment local + web visualization toolkit in C</li>
+                    <li><strong>Protein:</strong> Our algorithm for automatic hyperparameter and reward tuning</li>
+                </ul>
+
+                <p>These docs will get you started. Join the <a href="https://discord.gg/puffer" target="_blank">Discord</a> to get help and report bugs. If you're new to RL, building and contributing a new env is the best way to learn, and we review PRs live.</p>
+
+            </header>
+        </article>
+
+        <article id="post-1" class="blog-post">
+            <header class="post-header">
+                <h1>Installation</h1>
+            </header>
+
+            <h2>Docker</h2>
+            <pre><code>git clone https://github.com/pufferai/puffertank
+cd puffertank
+./docker.sh test</code></pre>
+
+            PufferLib uses CUDA, cuBLAS, NCCL, and Nsight. If that sounds annoying to set up, use our Docker. <b>Use ssh -X</b> on setup for remote work or graphics won't work. Need a different CUDA base or system packages? The <a href="https://github.com/PufferAI/PufferTank/blob/4.0/puffertank.dockerfile">Dockerfile</a> is really simple. Edit it and run <b>./docker.sh build -d puffertank.dockerfile</b>
+
+            <h2>UV</h2>
+            <pre><code>curl https://raw.githubusercontent.com/PufferAI/PufferTank/refs/heads/4.0/install.sh | sh</code></pre>
+            Requires CUDA. If you don't want to deal with CUDA deps, use the Dockerfile.
+
+            <h2>Installation Test</h2>
+
+            <pre><code>bash build.sh breakout
+puffer train breakout
+pufer eval breakout --load-model-path latest</code></pre>
+            Trains a policy. 3-5 seconds on an RTX 5090. Eval requires a graphical interface. Works over ssh -X. Docker over ssh requires -X when you first run the container. Running without -X and reconnecting with -X will not work.
+
+        </article>
+
+        <article id="post-2" class="blog-post">
+            <header class="post-header">
+                <h1>Cheat Sheet</h1>
+            </header>
+            <pre><code>puffer [train|eval|sweep] env_name [OPTIONS]                      # PufferLib CLI, available from package
+python -m pufferlib.pufferl [train|eval|sweep] env_name [OPTIONS] # Equivalent command from source
+
+# Building PufferLib
+bash build.sh ENV_NAME                                   # Build training for a specific environment
+bash build.sh ENV_NAME --float                           # Use fp32 backend (default is bf16)
+bash build.sh ENV_NAME --profile                         # Build our profiling tools
+bash build.sh ENV_NAME --[local|fast|web]                # Build debug/optimized/web env standalones, no training
+bash build.sh constellation --[local|fast|web]           # Build Constellation experiment dashboard
+
+# Examples
+puffer train breakout --train.learning-rate 0.001        # Set other train params
+puffer train breakout --env.frameskip 3                  # Set env params
+puffer train breakout --vec.num-threads 4                # Set vec params
+puffer train breakout --wandb --tag tag_name             # Track with Weights and Biases
+puffer eval breakout                                     # Render the env with a random agent
+puffer eval breakout --load-model-path path/model_file   # Load a trained model
+puffer eval breakout --load-model-path latest            # Load the latest model (ls -lt experiments | head)
+
+# Distributed training and Sweeps
+puffer sweep breakout                                    # Run a hyperparameter sweep
+puffer sweep breakout --sweep.gpus N                     # Sweep with 6 GPUs
+puffer train nmmo3 --train.gpus N                        # Distributed training
+
+# Torch
+bash build.sh ENV_NAME --float                           # Torch is not stable in bf16
+bash build.sh ENV_NAME --cpu                             # Mostly for Mac users. Expect under 200k sps.
+
+# Torch Distributed - you should really, really use our native backend if you are going to scale
+torchrun --standalone --nnodes=1 --nproc-per-node=6 -m pufferlib.pufferl train nmmo3 --slowly
+
+</code></pre>
+        </article>
+       <article id="post-4" class="blog-post">
+           <header class="post-header">
+               <h1>About PufferLib</h1>
+           </header>
+
+           <p>The PufferLib 4.0 native backend is ~1500 lines of Python and ~5000 lines of CUDA C. A PyTorch backend is provided as an additional ~1000 lines of Python for quick prototyping and as a fallback. Fork the project and edit directly. There is no prebuilt package blackboxing functionality. Everything is written as simply and transparently as possible. If you're new to low-level dev, it's much easier than you think. Give the environment tutorial a try!</p>
+
+           <p><b>Memory Management:</b> Tensors in PufferLib are just structs with a shape and a data pointer. Every tensor registers its size with an allocator at init time. After all tensors are registered, the allocator sums up the sizes and does a single allocation of continuous memory. There are separate allocators for weights, gradients, and activations. No tensors are created or reallocated afterwards. Static memory improves performance, simplifies cudagraph tracing, and cleans up profile timelines. Since weights and gradients are contiguous, we can apply updates to them in a single kernel without looping over tensors.</p>
+
+           <p><b>Tracing:</b> Cudagraphs capture and replay GPU operations in order to reduce kernel launch overhead. At the start of each run, PufferLib runs a few warm up epochs on empty rollout buffers. It then separately traces both the rollout forward pass and the entire train minibatch + loss + policy update. We bloat memory a bit by tracing separate cudagraphs for each step during rollouts in order to avoid an extra data copy for intermediate graph buffers.</p>
+
+           <p><b>Vectorization:</b> Environment instances are chunked into buffers, each of which is associated with a rollout worker on a separate CUDA stream. Within each buffer, environment execution is parallelized with OMP threading. Rollout workers are independent of each other but each process the same number of environment steps per epoch. Each buffer asyncrhonously queues data transfers to/from the GPU and uses pinned memory.</p>
+
+           <p><b>Kernels:</b> The main consideration for performance is fusing small elementwise operations to reduce memory bandwidth. For most of our kernels, the efficiency of the compute load is secondary. The MinGRU kernels are load-bearing and have received more attention to performance. The learnable workload of MinGRU is a set of linear layers implemented as cuBLAS matmuls. None of our kernels include complex operations with tensor cores.</p>
+
+           <p><b>Algorithm:</b> PufferLib implements a PPO-variant with improvements based on our own research. The main improvements are our use of Muon, a custom advantage function combining GAE and VTrace, and prioritized replay over trajectory segments collected from the current epoch using absolute advantage.
+
+           <p><b>PufferNet:</b> Our default model architecture combines MinGRU, an RNN that is parallelizable over the time dimension, with highway nets, a fancy residual that replaces expensive normalization layers. It's equal to or better than an LSTM on every environment we've tested and much faster.
+
+           <p><b>Sweeps:</b> The fundamental unit of compute in PufferLib is a hyperparameter sweep, not a single experiment. <b>Protein</b> is a tuning algorithm based on our own research. It combines Gaussian processes with a simple genetic algorithm over the Pareto-frontier defined by cost (experiment wall-clock time) and score. This is the main thing we haven't ported over to CUDA C yet.
+
+
+    </article>
+    <article id="post-5" class="blog-post">
+        <header class="post-header">
+            <h1>Tutorial: Writing Your Own Environment at Millions of SPS (steps/second)!</h1>
+        </header>
+
+        <p>Ocean environments are written in C. It's very simple C. Like first 2 weeks of an intro systems course C. Follow this guide and then copy <a href="https://github.com/PufferAI/PufferLib/blob/4.0/ocean/squared">Squared</a> (single-agent) or <a href="https://github.com/PufferAI/PufferLib/blob/4.0/ocean/target">Target</a> (multi-agent) to use as templates for your own environment. Both have detailed comments that walk you through the requirements. Find/replace the demo name with your environment name.</p>
+
+        <p>The .h file contains core environment logic. The .c file contains a standalone demo. Only the .h file is compiled when you run <b>puffer build env_name</b>. The standalone is compiled with <b>puffer build env_name --local</b> or <b>--fast</b> for the optimized build. Observations, actions, rewards, and terminals are each allocated as big chunks of memory that are contiguous across all (usually thousands) of environment instances.</p>
+
+        <p>Create a .ini file in the <b>config/</b> directory with the settings for your environment. Copy the one for Squared or Target as a starting point. Your environment is now available for training just like any other Ocean environment:</p>
+
+        <pre><code>puffer build env_name
+puffer train env_name</code></pre>
+
+        <p>Use the <b>--local</b> compilation option for testing while writing your environment. It enables address sanitizer and will catch will catch most indexing and overflow bugs. Here's a checklist of common bugs if your env is not training:</p>
+
+        <ul>
+            <li><b>Zero or incorrect observations/actions:</b> Ensure you have defined your observation and action metadata (space/size/type) correctly in your binding.c. Note that observation buffers are not zeroed for you every step, so if you are only writing information to specific indicies (i.e. one-hots), be sure you are zeroing them. One memset is usually the quickest.</li>
+            <li><b>NaN losses:</b> If your losses NaN after 1 epoch, your environment almost certainly has data corruption. You are writing to memory that does not match the obs/action sizes you have defined, or you have defined them using the wrong types. If your losses NaN after a longer time, it may be hyperparameters.</li>
+            <li><b>Incorrect or missing resets:</b> Your environment should handle its own resets internally. For envs that never reset, it is often useful to respawn agents if they are stuck (e.g. no reward for 500 steps). If every rollout has the same number of timesteps, you should stagger your environments on init.</li>
+            <li><b>Not zeroing observations:</b> If you are writing over your observation buffers but only write to some elements each step, If you don't zero out rewards, they will retain their value from the previous step. Ditto for terminals. Zero them at the start of c_step to be safe. A single memset will do it for multiagent envs. If you are not setting every element of every obs (i.e. one-hots), make sure to clear those too.</li>
+            <li><b>Manually inspect data scale:</b> You want observations and rewards to be roughly in the range of -1 to 1. 0 to 1 is fine. -5 to 5 is kind of fine. Randomly having one obs with magnitude 1000 is not.</li>
+            <li><b>Incorrect binding args:</b> Ensure your binding sets the same args as your .c file. Call your init function if you have one.</b>
+        </ul>
+
+
+    </article>
+    <article id="post-6" class="blog-post">
+        <header class="post-header">
+            <h1>FAQ</h1>
+        </header>
+
+        <p><b>Why is it called PufferLib?</b> Would you have rathered yet another minimal tech logo? Here, have a pufferfish 🐡
+        <p><b>I'm new to RL. How do I contribute?</b> Start by building a simple new environment in C and getting it to train. I review environment PRs from new contributors live on stream.</p>
+        <p><b>How do I export screenshots/gifs?</b> F12 for screenshots, control+F12 for gifs. This is built in to raylib.
+        <p><b>Where did all the Python/third-party stuff go?</b> It was all 100x+ slower than PufferLib is now. We do plan on hooking the C/C++ for Atari, NetHack, and maybe ProcGen into our low-level interface when we have time.</p>
+
+    </article>
+    </div>
+    </main>
+    <script src="header.js"></script>
+    <link rel="stylesheet" href="highlight.css">
+    <script src="highlight.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
