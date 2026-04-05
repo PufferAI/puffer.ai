@@ -26,7 +26,7 @@ Actions: Discrete. Move, sprint, attack, use item, buy, sell`,
     },
     drive: {
         title: "Drive",
-        description: `Driving simulator with real-world map data. By Spencer Cheng.
+        description: `Driving simulator with real-world map data. Port by Spencer Cheng. Active collab with NYU.
 
 Controls:
     Move: WASD or Arrow keys
@@ -36,8 +36,8 @@ Controls:
 
 Observations: Partially observed local state (continuous)
 Actions: Multidiscrete (accelerate, turn)`,
-        thumbnail: "assets/gpudrive_thumbnail.png",
-        path: "assets/gpudrive/game.html",
+        thumbnail: "assets/drive_thumbnail.png",
+        path: "assets/drive/game.html",
         width: 1080,
         height: 720,
     },
