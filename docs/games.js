@@ -24,31 +24,6 @@ Actions: Discrete. Move, sprint, attack, use item, buy, sell`,
         width: 960,
         height: 704,
     },
-    impulse_wars: {
-        title: "Impulse Wars",
-        description: `A top-down 2D physics-based shooter, based on Retrograde Arena. By Andrew LeFevre.
-
-Use weapons and physics to push your opponents into a red death walls to kill them. Yellow walls are bouncy, blue walls are nothing special.
-
-Pickup green weapon tiles to switch weapons. Movement is slow, but you can use recoil to move faster, dodge, and more, but it must be managed carefully.
-
-The white ring inside your player is an energy meter, you can use it to brake or to charge bursts, a devastating explosion that can push players and projectiles away. If your burst touches a solid wall it'll push you away from the wall.
-
-This game is best played with a controller, but mouse and keyboard works.
-
-Controls: LEFT CONTROL to toggle human play, NOT shift like the other environments.
-    Move: WASD or left stick on controller
-    Aim: Mouse or right stick on controller
-    Shoot/charge shot: Left click or bottom right trigger on controller
-    Burst/charge burst: Right click or top right trigger on controller
-    Brake: Space or bottom left trigger on controller
-Observations: 2D crop of nearby tiles (discrete), 1D vector of nearby entities and player data (continuous)
-Actions: Multidiscrete (move, aim, shoot, burst)`,
-        thumbnail: "assets/impulse_wars_thumbnail.png",
-        path: "assets/impulse_wars/game.html",
-        width: 1280,
-        height: 720,
-    },
     drive: {
         title: "Drive",
         description: `Driving simulator with real-world map data. By Spencer Cheng.
@@ -131,6 +106,18 @@ Actions: Continuous thrust per motor`,
         width: 1080,
         height: 720,
     },
+    maze: {
+        title: "Maze",
+        description: `Procedurally generated mazes with sparse reward. By Joseph Suarez.
+
+Observations: Local crop of tiles
+Actions: Discrete turn and move`,
+        thumbnail: "assets/maze_thumbnail.png",
+        path: "assets/maze/game.html",
+        width: 752,
+        height: 752,
+    },
+ 
     go: {
         title: "Go",
         description: `The ancient board game of territory control. By Spencer Cheng.
@@ -142,7 +129,7 @@ Actions: Discrete. Place a stone, pass`,
         thumbnail: "assets/go_thumbnail.png",
         path: "assets/go/game.html",
         width: 950,
-        height: 512,
+        height: 750,
     },
     slimevolley: {
         title: "Slime Volley",
@@ -267,7 +254,7 @@ Controls: WASD or Arrow keys to slide tiles
 Observations: 1d game state vector (continuous)
 Actions: Slide tiles`,
         thumbnail: "assets/2048_thumbnail.png",
-        path: "assets/2048/game.html",
+        path: "assets/g2048/game.html",
         width: 400,
         height: 450,
     },
@@ -454,6 +441,31 @@ Actions: Discrete. Left/Right`,
 };
 
 const wip = {
+    impulse_wars: {
+        title: "Impulse Wars",
+        description: `A top-down 2D physics-based shooter, based on Retrograde Arena. By Andrew LeFevre.
+
+Use weapons and physics to push your opponents into a red death walls to kill them. Yellow walls are bouncy, blue walls are nothing special.
+
+Pickup green weapon tiles to switch weapons. Movement is slow, but you can use recoil to move faster, dodge, and more, but it must be managed carefully.
+
+The white ring inside your player is an energy meter, you can use it to brake or to charge bursts, a devastating explosion that can push players and projectiles away. If your burst touches a solid wall it'll push you away from the wall.
+
+This game is best played with a controller, but mouse and keyboard works.
+
+Controls: LEFT CONTROL to toggle human play, NOT shift like the other environments.
+    Move: WASD or left stick on controller
+    Aim: Mouse or right stick on controller
+    Shoot/charge shot: Left click or bottom right trigger on controller
+    Burst/charge burst: Right click or top right trigger on controller
+    Brake: Space or bottom left trigger on controller
+Observations: 2D crop of nearby tiles (discrete), 1D vector of nearby entities and player data (continuous)
+Actions: Multidiscrete (move, aim, shoot, burst)`,
+        thumbnail: "assets/impulse_wars_thumbnail.png",
+        path: "assets/impulse_wars/game.html",
+        width: 1280,
+        height: 720,
+    },
     tactics: {
         title: "Tactics",
         description: `A turn-based tactical combat game inspired by the popular MMO Dofus. By Nathan Lichtlé.
