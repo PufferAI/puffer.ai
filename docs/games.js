@@ -106,6 +106,20 @@ Actions: Continuous thrust per motor`,
         width: 1080,
         height: 720,
     },
+    twentyfortyeight: {
+        title: "2048",
+        description: `A fast version of the classic game. By Yannik.
+
+Score points by merging same-valued tiles to make a bigger number.
+
+Controls: WASD or Arrow keys to slide tiles
+Observations: 1d game state vector (continuous)
+Actions: Slide tiles`,
+        thumbnail: "assets/2048_thumbnail.png",
+        path: "assets/g2048/game.html",
+        width: 400,
+        height: 450,
+    },
     maze: {
         title: "Maze",
         description: `Procedurally generated mazes with sparse reward. By Joseph Suarez.
@@ -117,7 +131,26 @@ Actions: Discrete turn and move`,
         width: 752,
         height: 752,
     },
- 
+    tetris: {
+        title: "Tetris",
+        description: `A fast version of the classic Atari game. By Hadrien Crassous.
+
+Score points by clearing rows.
+
+Controls:
+    Move: A/D or Left/Right
+    Rotate: W or Up
+    Soft drop: S or Down
+    Hard drop: Space
+    Stash piece: C
+
+Observations: 1d vector (continuous)
+Actions: Discrete. Move, rotate, soft/hard drop, stash`,
+        thumbnail: "assets/tetris_thumbnail.png",
+        path: "assets/tetris/game.html",
+        width: 384,
+        height: 928,
+    },
     go: {
         title: "Go",
         description: `The ancient board game of territory control. By Spencer Cheng.
@@ -191,26 +224,6 @@ Actions: Discrete. Move, accelerate, brake`,
         width: 304,
         height: 420,
     },
-    tetris: {
-        title: "Tetris",
-        description: `A fast version of the classic Atari game. By Hadrien Crassous.
-
-Score points by clearing rows.
-
-Controls:
-    Move: A/D or Left/Right
-    Rotate: W or Up
-    Soft drop: S or Down
-    Hard drop: Space
-    Stash piece: C
-
-Observations: 1d vector (continuous)
-Actions: Discrete. Move, rotate, soft/hard drop, stash`,
-        thumbnail: "assets/tetris_thumbnail.png",
-        path: "assets/tetris/game.html",
-        width: 384,
-        height: 928,
-    },
     whisker_racer: {
         title: "Race",
         description: `A fast version of the classic CarRacing environment. By Kinvert.
@@ -243,20 +256,6 @@ Actions: Move`,
         path: "assets/pacman/game.html",
         width: 560,
         height: 660,
-    },
-    twentyfortyeight: {
-        title: "2048",
-        description: `A fast version of the classic game. By Yannik.
-
-Score points by merging same-valued tiles to make a bigger number.
-
-Controls: WASD or Arrow keys to slide tiles
-Observations: 1d game state vector (continuous)
-Actions: Slide tiles`,
-        thumbnail: "assets/2048_thumbnail.png",
-        path: "assets/g2048/game.html",
-        width: 400,
-        height: 450,
     },
     freeway: {
         title: "Freeway",
