@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>PufferLib Constellation</title>
     <link rel="stylesheet" href="styles.css">
@@ -42,6 +43,20 @@
             margin: var(--spacing-md) 0;
             justify-content: center;
         }
+	.constellation-wrap {
+	    display: flex;
+	    flex-direction: column;
+	    align-items: center;
+	    width: 100%;
+	}
+
+	.featured-game {
+	    width: min(90vw, 100%);
+	    aspect-ratio: 16/9;
+	    height:auto;
+	    display:block;
+	    border: none;
+	}
 
         .wip-grid {
             display: flex;
@@ -83,15 +98,36 @@
             font-size: 1.1rem;
             color: var(--highlight);
         }
+	.rotate-notice {
+	    display: none;
+	    text-align: center;
+	    padding: 12px 16px;
+	    margin-bottom: 10px;
+	    font-size: 14px;
+	    background: rgba(0,0,0,0.7);
+	    color: white;
+	    border-radius: 8px;
+	}
+
+	/* Show ONLY on mobile + portrait */
+	@media (max-width: 768px) and (orientation: portrait) {
+	    .rotate-notice {
+		display: block;
+	    }
+	}
     </style>
 </head>
 <body>
     <main class="main-content">
-        <div style="display: flex; flex-direction: column; align-items: center;">
+        <div class = "contellation-wrap">
+	    <div class="rotate-notice">
+		Constellation is best viewed in landscape mode — rotate your device for the full experience.
+	    </div>
             <iframe src="assets/constellation/game.html" class="featured-game" title="Constellation"></iframe>
-            <h2 class="section-header" style="width: 1920px; max-width: 100%;">Constellation</h2>
-            <p class="section-description" style="width: 1920px; max-width: 100%;">
-                Our experiment visualization toolkit. Includes all the baselines from 4.0!
+            <h2 class="section-header" style="margin: 0;width: 1920px; max-width: 100%;">Constellation</h2>
+            <p class="section-description" style="margin: 0;width: 1920px; max-width: 100%;">
+	    Our experiment visualization toolkit. Includes all the baselines from 4.0!<br>
+		Right click to view a data point. Click drop downs to change axes / apply filters. Have fun!
             </p>
         </div>
     </main>
