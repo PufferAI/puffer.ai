@@ -120,7 +120,7 @@ torchrun --standalone --nnodes=1 --nproc-per-node=6 -m pufferlib.pufferl train n
         <pre><code>puffer build env_name
 puffer train env_name</code></pre>
 
-        <p>Use the <b>--local</b> compilation option for testing while writing your environment. It enables address sanitizer and will catch will catch most indexing and overflow bugs. Here's a checklist of common bugs if your env is not training:</p>
+        <p>Use the <b>--local</b> compilation option for testing while writing your environment. It enables address sanitizer and will catch most indexing and overflow bugs. Here's a checklist of common bugs if your env is not training:</p>
 
         <ul>
             <li><b>Zero or incorrect observations/actions:</b> Ensure you have defined your observation and action metadata (space/size/type) correctly in your binding.c. Note that observation buffers are not zeroed for you every step, so if you are only writing information to specific indicies (i.e. one-hots), be sure you are zeroing them. One memset is usually the quickest.</li>
