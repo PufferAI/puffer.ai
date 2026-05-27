@@ -1,0 +1,4 @@
+docs/assets/osrs/*.part* binary
+docs/assets/osrs/**/*.bin binary
+docs/assets/osrs/**/*.part* binary
+docs/assets/osrs/*.wasm binary

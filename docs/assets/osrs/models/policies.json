@@ -1,0 +1,32 @@
+[
+  {
+    "name": "inferno",
+    "path": "models/osrs_inferno_xbeeukiz.bin",
+    "bytes": 8599552,
+    "sha256": "80fe61ac552a743818839b71816944c3497abfd0514821ea2754b6c56824302f",
+    "hidden_size": 512,
+    "num_layers": 2,
+    "encounter": "inferno",
+    "default_wave": 69
+  },
+  {
+    "name": "zulrah",
+    "path": "models/osrs_zulrah_best_1779475720116.bin",
+    "bytes": 503808,
+    "sha256": "e5f9b1f400408e0c5eb9372eb722aeee11f2e4faa57caa12faaecabae36961f5",
+    "hidden_size": 128,
+    "num_layers": 2,
+    "encounter": "zulrah",
+    "default_tier": 0
+  },
+  {
+    "name": "pvp",
+    "path": "models/osrs_pvp_n46vl1vo_repro.bin",
+    "bytes": 103628800,
+    "sha256": "7f0a0fdf68d1c21b6f7c17d262cd815c38e540af7c69385ec6a4fbf63c23d58b",
+    "hidden_size": 2048,
+    "num_layers": 2,
+    "encounter": "pvp",
+    "opponent_type": 26
+  }
+]
