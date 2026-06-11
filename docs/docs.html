@@ -113,11 +113,11 @@ torchrun --standalone --nnodes=1 --nproc-per-node=6 -m pufferlib.pufferl train n
 
         <p>Ocean environments are written in C. It's very simple C. Like first 2 weeks of an intro systems course C. Follow this guide and then copy <a href="https://github.com/PufferAI/PufferLib/blob/4.0/ocean/squared">Squared</a> (single-agent) or <a href="https://github.com/PufferAI/PufferLib/blob/4.0/ocean/target">Target</a> (multi-agent) to use as templates for your own environment. Both have detailed comments that walk you through the requirements. Find/replace the demo name with your environment name.</p>
 
-        <p>The .h file contains core environment logic. The .c file contains a standalone demo. Only the .h file is compiled when you run <b>puffer build env_name</b>. The standalone is compiled with <b>puffer build env_name --local</b> or <b>--fast</b> for the optimized build. Observations, actions, rewards, and terminals are each allocated as big chunks of memory that are contiguous across all (usually thousands) of environment instances.</p>
+        <p>The .h file contains core environment logic. The .c file contains a standalone demo. Only the .h file is compiled when you run <b>bash build.sh env_name</b>. The standalone is compiled with <b>puffer build env_name --local</b> or <b>--fast</b> for the optimized build. Observations, actions, rewards, and terminals are each allocated as big chunks of memory that are contiguous across all (usually thousands) of environment instances.</p>
 
         <p>Create a .ini file in the <b>config/</b> directory with the settings for your environment. Copy the one for Squared or Target as a starting point. Your environment is now available for training just like any other Ocean environment:</p>
 
-        <pre><code>puffer build env_name
+        <pre><code>bash build.sh env_name
 puffer train env_name</code></pre>
 
         <p>Use the <b>--local</b> compilation option for testing while writing your environment. It enables address sanitizer and will catch most indexing and overflow bugs. Here's a checklist of common bugs if your env is not training:</p>
