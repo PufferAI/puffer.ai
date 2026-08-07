@@ -35,7 +35,7 @@ cd puffertank
 
             <h2>UV</h2>
             <pre><code>curl https://raw.githubusercontent.com/PufferAI/PufferTank/refs/heads/4.0/install.sh | sh</code></pre>
-            Requires CUDA. If you don't want to deal with CUDA deps, use the Dockerfile.
+            Requires CUDA 13.0 or higher, see <a href="#post-3">Native CUDA Setup (No Docker)</a> below to get started. If you don't want to deal with CUDA deps, use the Dockerfile.
 
             <h2>Installation Test</h2>
 
@@ -43,6 +43,44 @@ cd puffertank
 puffer train breakout
 puffer eval breakout --load-model-path latest</code></pre>
             Trains a policy. 3-5 seconds on an RTX 5090. Eval requires a graphical interface. Works over ssh -X. Docker over ssh requires -X when you first run the container. Running without -X and reconnecting with -X will not work.
+
+        </article>
+
+        <article id="post-3" class="blog-post">
+            <header class="post-header">
+                <h1>Native CUDA Setup (No Docker)</h1>
+            </header>
+
+            <p>Build the native CUDA backend directly on your host, without the Docker image. The Docker base (<code>nvcr.io/nvidia/cuda:13.0.x-cudnn-devel</code>) bundles three things a bare CUDA toolkit install lacks: the matching toolkit version, NCCL, and cuDNN. Installing those manually is the whole trick. Tested on Ubuntu 24.04 + NVIDIA GeForce RTX 4090. PufferLib 4.0 targets CUDA 13; match that unless you have a reason not to.</p>
+
+            <p><b>1.</b> Confirm <code>nvidia-smi</code> reports a CUDA Version of 13.0 or higher in the top-right (the max toolkit your driver can run).</p>
+            <pre><code>nvidia-smi</code></pre>
+
+            <p><b>2.</b> Add NVIDIA's CUDA apt repo (Ubuntu's default repos lack the toolkit, cuDNN, and a current NCCL). For 22.04, swap <code>ubuntu2404</code> for <code>ubuntu2204</code>.</p>
+            <pre><code>wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb
+sudo dpkg -i cuda-keyring_1.1-1_all.deb
+sudo apt-get update</code></pre>
+
+            <p><b>3.</b> Install the toolkit, NCCL, and cuDNN.</p>
+            <pre><code>sudo apt-get install -y cuda-toolkit-13-0 libnccl2 libnccl-dev cudnn9-cuda-13</code></pre>
+
+            <p><b>4.</b> Point your shell at the toolkit, then re-activate your venv (sourcing <code>~/.bashrc</code> may deactivate it).</p>
+            <pre><code>echo 'export PATH=/usr/local/cuda-13.0/bin:$PATH' >> ~/.bashrc
+echo 'export CUDA_HOME=/usr/local/cuda-13.0' >> ~/.bashrc
+source ~/.bashrc
+source .venv/bin/activate
+nvcc --version   # should report release 13.0</code></pre>
+
+            <p><b>5.</b> Install PyTorch for CUDA 13 and confirm it sees the GPU.</p>
+            <pre><code>uv pip install torch --index-url https://download.pytorch.org/whl/cu130
+python -c "import torch; print(torch.version.cuda, torch.cuda.is_available())"</code></pre>
+
+            <p><b>6.</b> Build and train.</p>
+            <pre><code>bash build.sh breakout
+            puffer train breakout
+            </code></pre>
+
+            <p><b>Troubleshooting.</b> <code>nccl.h: No such file or directory</code> &rarr; NCCL missing, install <code>libnccl2 libnccl-dev</code>. <code>class type not suitable for use with designators</code> &rarr; toolkit older than 13.0, install <code>cuda-toolkit-13-0</code> and repoint <code>PATH</code>/<code>CUDA_HOME</code>. <code>/usr/bin/ld: cannot find -lcudnn</code> &rarr; cuDNN missing, install <code>cudnn9-cuda-13</code>. If <code>-lcudnn</code> is still missing after install, run <code>export LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LIBRARY_PATH && sudo ldconfig</code>. If <code>torch.cuda.is_available()</code> is <code>False</code> or reports the wrong CUDA, reinstall torch with <code>--index-url https://download.pytorch.org/whl/cu130</code>.</p>
 
         </article>
 
@@ -113,11 +151,11 @@ torchrun --standalone --nnodes=1 --nproc-per-node=6 -m pufferlib.pufferl train n
 
         <p>Ocean environments are written in C. It's very simple C. Like first 2 weeks of an intro systems course C. Follow this guide and then copy <a href="https://github.com/PufferAI/PufferLib/blob/4.0/ocean/squared">Squared</a> (single-agent) or <a href="https://github.com/PufferAI/PufferLib/blob/4.0/ocean/target">Target</a> (multi-agent) to use as templates for your own environment. Both have detailed comments that walk you through the requirements. Find/replace the demo name with your environment name.</p>
 
-        <p>The .h file contains core environment logic. The .c file contains a standalone demo. Only the .h file is compiled when you run <b>puffer build env_name</b>. The standalone is compiled with <b>puffer build env_name --local</b> or <b>--fast</b> for the optimized build. Observations, actions, rewards, and terminals are each allocated as big chunks of memory that are contiguous across all (usually thousands) of environment instances.</p>
+        <p>The .h file contains core environment logic. The .c file contains a standalone demo. Only the .h file is compiled when you run <b>bash build.sh env_name</b>. The standalone is compiled with <b>puffer build env_name --local</b> or <b>--fast</b> for the optimized build. Observations, actions, rewards, and terminals are each allocated as big chunks of memory that are contiguous across all (usually thousands) of environment instances.</p>
 
         <p>Create a .ini file in the <b>config/</b> directory with the settings for your environment. Copy the one for Squared or Target as a starting point. Your environment is now available for training just like any other Ocean environment:</p>
 
-        <pre><code>puffer build env_name
+        <pre><code>bash build.sh env_name
 puffer train env_name</code></pre>
 
         <p>Use the <b>--local</b> compilation option for testing while writing your environment. It enables address sanitizer and will catch most indexing and overflow bugs. Here's a checklist of common bugs if your env is not training:</p>
