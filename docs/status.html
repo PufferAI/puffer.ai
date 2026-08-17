@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PufferLib 5.0 — Train Status</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .status-wrap { max-width: 1280px; margin: 0 auto; padding: 2rem; }
+        .lede { max-width: 800px; color: #d8d8d8; }
+        .meta { color: #9ad; font-size: 0.95rem; margin: 0.5rem 0 1.5rem; }
+        .pills { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 1rem 0 1.5rem; }
+        .pill {
+            background: #000;
+            border: 1px solid #00bbbb;
+            border-radius: 999px;
+            padding: 0.25rem 0.8rem;
+            font-size: 0.9rem;
+        }
+        .pill b { color: #00bbbb; }
+        table.status {
+            width: 100%;
+            border-collapse: collapse;
+            font-variant-numeric: tabular-nums;
+            font-size: 0.92rem;
+        }
+        table.status th, table.status td {
+            text-align: left;
+            padding: 0.55rem 0.6rem;
+            border-bottom: 1px solid #143333;
+            vertical-align: top;
+        }
+        table.status th {
+            color: #00bbbb;
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+        table.status tr:hover td { background: #0a2222; }
+        .st { font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.04em; }
+        .st-done { color: #3dd68c; }
+        .st-training, .st-building { color: #f5c542; }
+        .st-pending { color: #889999; }
+        .st-skipped { color: #f0a050; }
+        .st-crashed { color: #ff6b6b; }
+        .num { font-family: Consolas, monospace; }
+        .note { color: #aaa; font-size: 0.82rem; max-width: 28rem; white-space: pre-wrap; word-break: break-word; }
+        .web-ok { color: #3dd68c; }
+        .web-no { color: #667; }
+        .err { color: #ff8a8a; font-family: Consolas, monospace; font-size: 0.78rem; white-space: pre-wrap; }
+        .review-block { margin-top: 3.5rem; padding-top: 1.5rem; border-top: 2px solid #664400; }
+        .review-block h2 { color: #f0a050; font-size: 1.4rem; margin: 0 0 0.4rem; }
+        .review-block .review-lede { color: #c9a36a; max-width: 720px; margin-bottom: 1rem; }
+        table.status tr.review-row td { background: #1a1408; }
+        .st-review { color: #f0a050; }
+    </style>
+</head>
+<body>
+    <main class="status-wrap">
+        <h1>5.0 Prerelease Train Status</h1>
+        <p class="lede">
+            Single-GPU training of every Ocean env on an 8× RTX 5090 box.
+            Breakout is the only <code>--gpu</code> env. A job is skipped if estimated
+            remaining train time is over an hour after a few seconds of SPS.
+            Web builds and policy weights are copied here as runs finish.
+        </p>
+        <div class="meta" id="meta">Loading status…</div>
+        <div class="pills" id="pills"></div>
+        <table class="status" id="table">
+            <thead>
+                <tr>
+                    <th data-k="env">Env</th>
+                    <th data-k="status">Status</th>
+                    <th data-k="uptime_s">Uptime</th>
+                    <th data-k="sps">SPS</th>
+                    <th data-k="perf">Perf</th>
+                    <th data-k="score">Score</th>
+                    <th data-k="web_built">Web</th>
+                    <th data-k="note">Notes</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <section class="review-block" id="review">
+            <h2>Unfinished / review</h2>
+            <p class="review-lede">
+                Toys, unfinished ports, and one-offs. Not scored against the
+                0.95 bar and not part of the main Ocean chart.
+            </p>
+            <table class="status" id="review-table">
+                <thead>
+                    <tr>
+                        <th>Env</th>
+                        <th>Status</th>
+                        <th>Uptime</th>
+                        <th>SPS</th>
+                        <th>Perf</th>
+                        <th>Score</th>
+                        <th>Web</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+    </main>
+    <script src="header.js"></script>
+    <script>
+        const fmtNum = (v, digits = 2) => {
+            if (v === null || v === undefined || Number.isNaN(v)) return "—";
+            const n = Number(v);
+            const abs = Math.abs(n);
+            if (abs >= 1e9) return (n / 1e9).toFixed(2) + "B";
+            if (abs >= 1e6) return (n / 1e6).toFixed(2) + "M";
+            if (abs >= 1e3) return (n / 1e3).toFixed(2) + "K";
+            if (abs >= 100) return n.toFixed(1);
+            return n.toFixed(digits);
+        };
+        const fmtDur = (sec) => {
+            if (sec === null || sec === undefined || Number.isNaN(sec)) return "—";
+            const s = Number(sec);
+            if (s < 1) return (s * 1000).toFixed(0) + "ms";
+            if (s < 60) return s.toFixed(2) + "s";
+            if (s < 3600) {
+                const m = Math.floor(s / 60);
+                return m + "m " + (s - m * 60).toFixed(1) + "s";
+            }
+            const h = Math.floor(s / 3600);
+            const m = Math.floor((s % 3600) / 60);
+            return h + "h " + m + "m";
+        };
+        let rows = [];
+        let reviewRows = [];
+        let sortKey = "status";
+        let sortDir = 1;
+        const statusOrder = { training: 0, building: 1, pending: 2, done: 3, skipped: 4, crashed: 5, review: 6 };
+        const REVIEW_ENVS = new Set([
+            "chain_mdp", "memory", "template", "onestateworld", "tmaze",
+            "shared_pool", "checkers", "benchmark",
+            "boids", "scape", "matsci", "tactical", "onlyfish",
+        ]);
+
+        function noteOf(rec) {
+            if (rec.reason) return rec.reason;
+            if (rec.error) return rec.error;
+            if (rec.note) return rec.note;
+            const bits = [];
+            if (rec.checkpoint) bits.push(rec.checkpoint);
+            if (rec.gpu !== undefined && rec.gpu !== null) bits.push("gpu " + rec.gpu);
+            if (rec.steps) bits.push(fmtNum(rec.steps, 0) + " steps");
+            return bits.join(" · ");
+        }
+
+        function rowHtml(r, review) {
+            const web = r.web_built
+                ? `<a class="web-ok" href="assets/${r.env}/game.html">play</a>`
+                : `<span class="web-no">—</span>`;
+            const extra = r.error_tail
+                ? `<div class="err">${escapeHtml(r.error_tail).slice(-500)}</div>`
+                : "";
+            const st = review ? "review" : (r.status || "pending");
+            const stLabel = review ? "review" : (r.status || "pending");
+            return `<tr class="${review ? "review-row" : ""}">
+                <td><b>${r.env}</b></td>
+                <td class="st st-${st}">${stLabel}</td>
+                <td class="num">${fmtDur(r.uptime_s)}</td>
+                <td class="num">${fmtNum(r.sps, 0)}</td>
+                <td class="num">${r.perf == null ? "—" : Number(r.perf).toFixed(3)}</td>
+                <td class="num">${fmtNum(r.score, 3)}</td>
+                <td>${web}</td>
+                <td class="note">${escapeHtml(noteOf(r))}${extra}</td>
+            </tr>`;
+        }
+
+        function render() {
+            const tb = document.querySelector("#table tbody");
+            const sorted = rows.slice().sort((a, b) => {
+                const ka = a[sortKey], kb = b[sortKey];
+                if (sortKey === "status") {
+                    return (statusOrder[a.status] - statusOrder[b.status]) * sortDir
+                        || a.env.localeCompare(b.env);
+                }
+                if (sortKey === "env" || sortKey === "note" || sortKey === "web_built") {
+                    return String(ka ?? "").localeCompare(String(kb ?? "")) * sortDir;
+                }
+                const na = Number(ka), nb = Number(kb);
+                const aOk = !Number.isNaN(na) && ka !== null && ka !== undefined;
+                const bOk = !Number.isNaN(nb) && kb !== null && kb !== undefined;
+                if (!aOk && !bOk) return a.env.localeCompare(b.env);
+                if (!aOk) return 1;
+                if (!bOk) return -1;
+                return (na - nb) * sortDir;
+            });
+            tb.innerHTML = sorted.map((r) => rowHtml(r, false)).join("");
+            const rtb = document.querySelector("#review-table tbody");
+            rtb.innerHTML = reviewRows.length
+                ? reviewRows.map((r) => rowHtml(r, true)).join("")
+                : `<tr class="review-row"><td colspan="8" class="note">No envs marked for review.</td></tr>`;
+        }
+
+        function escapeHtml(s) {
+            return String(s ?? "").replace(/[&<>"']/g, (c) => ({
+                "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+            }[c]));
+        }
+
+        function summarize(envs) {
+            const counts = { done: 0, training: 0, building: 0, pending: 0, skipped: 0, crashed: 0 };
+            for (const e of envs) counts[e.status] = (counts[e.status] || 0) + 1;
+            const pills = document.getElementById("pills");
+            pills.innerHTML = Object.entries(counts)
+                .filter(([, n]) => n)
+                .map(([k, n]) => `<div class="pill"><b>${n}</b> ${k}</div>`)
+                .join("");
+        }
+
+        async function load() {
+            const res = await fetch("assets/train_status.json?ts=" + Date.now(), { cache: "no-store" });
+            if (!res.ok) {
+                document.getElementById("meta").textContent = "status json not ready yet";
+                return;
+            }
+            const data = await res.json();
+            let fixes = {};
+            try {
+                const fr = await fetch("assets/train_fixes.json?ts=" + Date.now(), { cache: "no-store" });
+                if (fr.ok) fixes = (await fr.json()).envs || {};
+            } catch (e) { /* overlay optional */ }
+            const merged = { ...(data.envs || {}) };
+            for (const [name, rec] of Object.entries(fixes)) {
+                merged[name] = { ...(merged[name] || {}), ...rec, env: name };
+            }
+            const all = Object.entries(merged).map(([name, rec]) => ({ env: name, ...rec }));
+            rows = all.filter((r) => !REVIEW_ENVS.has(r.env) && r.review !== true);
+            reviewRows = all.filter((r) => REVIEW_ENVS.has(r.env) || r.review === true);
+            document.getElementById("meta").textContent =
+                `Updated ${data.updated || "?"} · ${data.host || ""} · commit ${data.commit || "?"} · ${data.note || ""}`;
+            summarize(rows);
+            render();
+        }
+
+        document.querySelectorAll("th[data-k]").forEach((th) => {
+            th.addEventListener("click", () => {
+                const k = th.dataset.k;
+                if (sortKey === k) sortDir *= -1;
+                else { sortKey = k; sortDir = 1; }
+                render();
+            });
+        });
+
+        load();
+        setInterval(load, 8000);
+    </script>
+</body>
+</html>

@@ -19,6 +19,14 @@ function resizeGame() {
     });
 }
 
+function envQuality(game) {
+    return (game && game.quality) || "cyan";
+}
+
+function qualityClass(game) {
+    return "quality-" + envQuality(game);
+}
+
 function onClickEnv(game) {
     loadGame(game)
 
@@ -57,13 +65,16 @@ function loadGame(game) {
     document.querySelector('.game-info .game-title').textContent = game.title;
     document.querySelector('.game-description').style.whiteSpace = 'pre-wrap';
     document.querySelector('.game-description').textContent = game.description;
+
+    container.classList.remove("quality-gold", "quality-silver", "quality-cyan");
+    container.classList.add(qualityClass(game));
 }
 
 function initializeGames() {
     const grid = document.querySelector('.games-grid');
     if (!grid) return;
     grid.innerHTML = Object.entries(games).map(([key, game]) => `
-        <div class="game-card" onclick="onClickEnv(games['${key}'])">
+        <div class="game-card ${qualityClass(game)}" onclick="onClickEnv(games['${key}'])">
             <div class="game-thumbnail">
                 <img src="${game.thumbnail}" alt="${game.title}">
             </div>
@@ -71,16 +82,32 @@ function initializeGames() {
         </div>
     `).join('');
 
+    const toy_grid = document.querySelector('.toy-grid');
+    if (toy_grid && typeof toy !== 'undefined') {
+        toy_grid.innerHTML = Object.entries(toy).map(([key, game]) => `
+            <div class="game-card ${qualityClass(game)}" onclick="onClickEnv(toy['${key}'])">
+                <div class="game-thumbnail">
+                    <img src="${game.thumbnail}" alt="${game.title}">
+                </div>
+                <span class="game-title">${game.title}</span>
+            </div>
+        `).join('');
+    }
+
     const wip_grid = document.querySelector('.wip-grid');
     if (!wip_grid) return;
     wip_grid.innerHTML = Object.entries(wip).map(([key, game]) => `
-        <div class="game-card" onclick="onClickEnv(wip['${key}'])">
+        <div class="game-card ${qualityClass(game)}" onclick="onClickEnv(wip['${key}'])">
             <div class="game-thumbnail">
                 <img src="${game.thumbnail}" alt="${game.title}">
             </div>
             <span class="game-title">${game.title}</span>
         </div>
     `).join('');
+}
+
+function allGames() {
+    return Object.assign({}, games, typeof toy !== 'undefined' ? toy : {}, wip);
 }
 
 function randomizeGame() {
@@ -102,7 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Load specific env if specified in URL params
         const env = new URLSearchParams(window.location.search).get("env");
 
-        if (env != null && env in games) loadGame(games[env]);
+        const catalog = allGames();
+        if (env != null && env in catalog) loadGame(catalog[env]);
         else randomizeGame();
     }
 });
