@@ -1,4 +1,31 @@
 const games = {
+    inferno: {
+        title: "OSRS Inferno",
+        description: `Old School RuneScape Inferno simulator. By Valtteri Valo.
+
+A full TzKal-Zuk encounter with pillars, Jad, healers, and blob attacks. Toggle human play with Left Control. Click to move, pray, and use inventory.
+
+Observations: compact entity state
+Actions: Discrete movement, prayer, inventory, and target selection`,
+        thumbnail: "assets/inferno_thumbnail.png",
+        path: "assets/inferno/game.html",
+        width: 1280,
+        height: 720,
+    },
+    colosseum: {
+        title: "OSRS Colosseum",
+        description: `Old School RuneScape Fortis Colosseum simulator. By Valtteri Valo.
+
+Wave combat in the Colosseum arena. Toggle human play with Left Control. Click to move, pray, and use inventory.
+
+Observations: compact entity state
+Actions: Discrete movement, prayer, inventory, and target selection`,
+        thumbnail: "assets/colosseum_thumbnail.png",
+        path: "assets/colosseum/game.html",
+        width: 1280,
+        height: 720,
+    },
+
     nmmo3: {
         title: "Neural MMO 3",
         quality: "gold",
