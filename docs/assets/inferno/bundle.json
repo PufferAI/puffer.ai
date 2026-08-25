@@ -6,8 +6,8 @@
       "size": 69132643
     },
     "game.html": {
-      "sha256": "529f422c7a9afe3b99f2d1f31314e8907794a3a2b7caa19a334faed51941cb71",
-      "size": 5182
+      "sha256": "e65a61ce736b61f7f751e2d9e9f7f3ad18ed012be514e0a751092d8f5667c4b6",
+      "size": 5306
     },
     "game.js": {
       "sha256": "6ad90941950e7d5746d650db2cb62316d531bb0ccf433cae7fd06fef0a8dd6e3",
@@ -33,6 +33,6 @@
     "num_layers": 2,
     "path": "models/policy.bin"
   },
-  "source_commit": "4b5a55af5cad5ffbd78b71ec374d1381de441172",
-  "version": "2998fe15f8ceb3f7"
+  "source_commit": "8c2fe72b67f59dcad5df5db007ff0850aebe9f65",
+  "version": "67e3e9b0ea887179"
 }

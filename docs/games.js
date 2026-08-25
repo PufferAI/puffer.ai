@@ -9,8 +9,8 @@ Observations: compact entity state
 Actions: Discrete movement, prayer, inventory, and target selection`,
         thumbnail: "assets/inferno_thumbnail.png",
         path: "assets/inferno/game.html",
-        width: 1280,
-        height: 720,
+        width: 1240,
+        height: 882,
     },
     colosseum: {
         title: "OSRS Colosseum",
@@ -22,8 +22,8 @@ Observations: compact entity state
 Actions: Discrete movement, prayer, inventory, and target selection`,
         thumbnail: "assets/colosseum_thumbnail.png",
         path: "assets/colosseum/game.html",
-        width: 1280,
-        height: 720,
+        width: 1240,
+        height: 882,
     },
 
     nmmo3: {
