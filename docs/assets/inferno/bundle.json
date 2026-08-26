@@ -6,20 +6,20 @@
       "size": 69132643
     },
     "game.html": {
-      "sha256": "2ad3798159bb94c34529e40d946918b6a8d77c64d83e055d43269f0d596a2b1c",
-      "size": 5306
+      "sha256": "43f4b7f44f144839dcb4f25e3cde5a6bbcb84f0402313f6fd288ff686fd77974",
+      "size": 5942
     },
     "game.js": {
-      "sha256": "6ad90941950e7d5746d650db2cb62316d531bb0ccf433cae7fd06fef0a8dd6e3",
+      "sha256": "96aa70016382dca8addddb3c42c9bea40c0c92cf1f7eae01de295702d1f7be13",
       "size": 1647914
     },
     "game.wasm": {
-      "sha256": "3248642d0003129d500e047c2397f9ff6fccd3ab31e56299da3c823c3e7cfb33",
-      "size": 1595205
+      "sha256": "46d619a6eb5aac88f31a589a17ee3b91e2d8b69f4ad37d287cc627f19396fa02",
+      "size": 1595252
     },
     "game.wasm.map": {
-      "sha256": "b65811282fe33312546d829e4c6ab1c9eb4e948c1e1890282baa394f2d9ef680",
-      "size": 723931
+      "sha256": "abe9741f40e20986f78d7770e44d527cb303015a6788a9d20a7ee0e6c9db3442",
+      "size": 723944
     },
     "models/policy.bin": {
       "sha256": "2904d43deaedddd7dc72eb2b6de4ae30f80c6d5ffec03a1f32a853cc35cb12a4",
@@ -33,6 +33,6 @@
     "num_layers": 2,
     "path": "models/policy.bin"
   },
-  "source_commit": "38029f79d39d436346a075dc6c843de31a0dd2db",
-  "version": "e7a9fb7cb59e5b16"
+  "source_commit": "1a729e4045058c3912083d163c86ddc58e25084a",
+  "version": "6069f3200abcbcc9"
 }
