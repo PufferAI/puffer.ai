@@ -1,0 +1,38 @@
+{
+  "environment": "inferno",
+  "files": {
+    "game.data": {
+      "sha256": "4eb67844e994bdd70983c62f2e7fcc21c7fd93a1efb05184fd90919bbaa7686e",
+      "size": 69132643
+    },
+    "game.html": {
+      "sha256": "7b2e3ecb888002288c491101e89d0954ee0a6c5410d11b9e04e162f4e12eebe4",
+      "size": 5942
+    },
+    "game.js": {
+      "sha256": "99e344d54ca68404aebc665b743d585207d3caaa4094611ce6d1e1095a944e4f",
+      "size": 1701306
+    },
+    "game.wasm": {
+      "sha256": "92810bb388c1208e0c3b3c4bb1ff8fd73864edee3301c6f92ac34904ef56f16b",
+      "size": 1653659
+    },
+    "game.wasm.map": {
+      "sha256": "ebc52939a743181254bf9338094ef77d1950ec3d927d72b3aa94bfccbaca5cd2",
+      "size": 735797
+    },
+    "models/policy.bin": {
+      "sha256": "2904d43deaedddd7dc72eb2b6de4ae30f80c6d5ffec03a1f32a853cc35cb12a4",
+      "size": 29326720
+    }
+  },
+  "format": "puffer-osrs-web-v2",
+  "model": {
+    "entity_encoder": 1,
+    "hidden_size": 1024,
+    "num_layers": 2,
+    "path": "models/policy.bin"
+  },
+  "source_commit": "6deae83770bdc5ac4555eecb2597307b09b93fb4",
+  "version": "a8fdc496ca658300"
+}

@@ -1,0 +1,38 @@
+{
+  "environment": "colosseum",
+  "files": {
+    "game.data": {
+      "sha256": "6a33ae1ae80b8bbacdec0558c7f0ee9e3fc9abfa8bc7a2b787b4dc73057cee09",
+      "size": 95590761
+    },
+    "game.html": {
+      "sha256": "4774e6d815efa2e8bbbc70da3f35df84b4098bb763b0cfca99566d6c333c5ae0",
+      "size": 5942
+    },
+    "game.js": {
+      "sha256": "bbbe538c2332b8a49aee58d5d01c33831d1bcf0d50cf3a551edb49c271bdd0ec",
+      "size": 1848264
+    },
+    "game.wasm": {
+      "sha256": "89844027fbb42d70ad6778eeca4ef625da8f7b3366860be66a49708e4ca0ea00",
+      "size": 1657501
+    },
+    "game.wasm.map": {
+      "sha256": "0de409f0735edac5a91f2997cffc26ca55b6fb69d7d03c95178a0fd1ea1c39d2",
+      "size": 737454
+    },
+    "models/policy.bin": {
+      "sha256": "4c181e6cd6c3a27038b20ff375f76d291d6c2d9fff01f3ee964012a78732664e",
+      "size": 3019648
+    }
+  },
+  "format": "puffer-osrs-web-v2",
+  "model": {
+    "entity_encoder": 1,
+    "hidden_size": 256,
+    "num_layers": 2,
+    "path": "models/policy.bin"
+  },
+  "source_commit": "6deae83770bdc5ac4555eecb2597307b09b93fb4",
+  "version": "b7d329eac4220aaf"
+}

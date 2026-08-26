@@ -1,4 +1,31 @@
 const games = {
+    inferno: {
+        title: "OSRS Inferno",
+        description: `Old School RuneScape Inferno simulator. By Valtteri Valo.
+
+Control toggles human play. Click to move, pray, and use inventory.
+
+Actions closely match the live game.
+Observations: compact entity state`,
+        thumbnail: "assets/inferno_thumbnail.png",
+        path: "assets/inferno/game.html",
+        width: 1240,
+        height: 840,
+    },
+    colosseum: {
+        title: "OSRS Colosseum",
+        description: `Old School RuneScape Fortis Colosseum simulator. By Valtteri Valo.
+
+Control toggles human play. Click to move, pray, and use inventory.
+
+Actions closely match the live game.
+Observations: compact entity state`,
+        thumbnail: "assets/colosseum_thumbnail.png",
+        path: "assets/colosseum/game.html",
+        width: 1240,
+        height: 840,
+    },
+
     nmmo3: {
         title: "Neural MMO 3",
         quality: "gold",
