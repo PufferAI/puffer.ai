@@ -3,7 +3,7 @@ const games = {
         title: "OSRS Inferno",
         description: `Old School RuneScape Inferno simulator. By Valtteri Valo.
 
-A full TzKal-Zuk encounter with pillars, Jad, healers, and blob attacks. Hold Control to take over. Click to move, pray, and use inventory.
+Control toggles human play. Click to move, pray, and use inventory.
 
 Actions closely match the live game.
 Observations: compact entity state`,
@@ -16,7 +16,7 @@ Observations: compact entity state`,
         title: "OSRS Colosseum",
         description: `Old School RuneScape Fortis Colosseum simulator. By Valtteri Valo.
 
-Wave combat in the Colosseum arena. Hold Control to take over. Click to move, pray, and use inventory.
+Control toggles human play. Click to move, pray, and use inventory.
 
 Actions closely match the live game.
 Observations: compact entity state`,
