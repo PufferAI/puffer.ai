@@ -95,6 +95,15 @@ a:hover {
     border-radius: 5px;
 }
 
+.featured-game-container.quality-gold {
+    outline: 3px solid #d4af37;
+    outline-offset: 2px;
+}
+.featured-game-container.quality-silver {
+    outline: 3px solid #c0c4cc;
+    outline-offset: 2px;
+}
+
 .featured-game-container:hover {
     outline: 4px solid #f1f1f1; /* Highlight color, does not affect layout */
     box-shadow: 0 0 15px #f1f1f1; /* Adds a glowing effect */
@@ -116,6 +125,19 @@ a:hover {
 
 .game-description {
     margin-bottom: 1rem;
+}
+
+.policy-line {
+    margin: 0 0 1rem;
+    color: #9ad;
+    font-size: 0.95rem;
+    font-variant-numeric: tabular-nums;
+}
+.policy-line[hidden] {
+    display: none;
+}
+.policy-line .gap {
+    color: #f0a050;
 }
 
 .control-button {

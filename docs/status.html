@@ -81,6 +81,30 @@
             </thead>
             <tbody></tbody>
         </table>
+        <section class="review-block" id="web-policies" style="border-top-color:#145555;">
+            <h2 style="color:#00bbbb;">Web policy budget</h2>
+            <p class="review-lede" style="color:#9ad;">
+                Browser cap: 1M params (3·H²·L), divided by demo agent count.
+                To-ship is the best <code>env/score</code> on a run that fits.
+                Best is unconstrained. Wasm demos still have the old weights.
+            </p>
+            <table class="status" id="policy-table">
+                <thead>
+                    <tr>
+                        <th>Env</th>
+                        <th>Agents</th>
+                        <th>Cap</th>
+                        <th>Ship perf</th>
+                        <th>Ship score</th>
+                        <th>Ship params</th>
+                        <th>Best perf</th>
+                        <th>Best score</th>
+                        <th>Best params</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
         <section class="review-block" id="review">
             <h2>Unfinished / review</h2>
             <p class="review-lede">
@@ -248,7 +272,46 @@
             });
         });
 
+        function fmtParams(p) {
+            if (p === null || p === undefined || Number.isNaN(Number(p))) return "—";
+            const n = Number(p);
+            if (n >= 1e6) return (n / 1e6).toFixed(2) + "M";
+            if (n >= 1e3) return (n / 1e3).toFixed(0) + "k";
+            return String(Math.round(n));
+        }
+
+        async function loadPolicies() {
+            const tb = document.querySelector("#policy-table tbody");
+            if (!tb) return;
+            try {
+                const res = await fetch("assets/policies.json?ts=" + Date.now(), { cache: "no-store" });
+                if (!res.ok) throw new Error("missing");
+                const data = await res.json();
+                const rows = Object.entries(data.envs || {}).map(([env, rec]) => ({ env, ...rec }));
+                tb.innerHTML = rows.map((r) => {
+                    const s = r.ship || {};
+                    const b = r.best || {};
+                    const same = s.run_id && s.run_id === b.run_id;
+                    const gap = (!same && s.perf != null && b.perf != null && b.perf - s.perf > 0.02);
+                    return `<tr>
+                        <td><b>${r.env}</b></td>
+                        <td class="num">${r.web_agents}</td>
+                        <td class="num">${fmtParams(r.param_budget)}</td>
+                        <td class="num ${gap ? "st-review" : ""}">${s.perf == null ? "—" : Number(s.perf).toFixed(3)}</td>
+                        <td class="num">${fmtNum(s.score, 3)}</td>
+                        <td class="num">${fmtParams(s.params)}</td>
+                        <td class="num">${b.perf == null ? "—" : Number(b.perf).toFixed(3)}</td>
+                        <td class="num">${fmtNum(b.score, 3)}</td>
+                        <td class="num">${fmtParams(b.params)}${same ? "" : ' <span class="st-review">not shipped</span>'}</td>
+                    </tr>`;
+                }).join("");
+            } catch (e) {
+                tb.innerHTML = `<tr><td colspan="9" class="note">policies.json not ready</td></tr>`;
+            }
+        }
+
         load();
+        loadPolicies();
         setInterval(load, 8000);
     </script>
 </body>

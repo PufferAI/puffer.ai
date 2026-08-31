@@ -65,9 +65,72 @@ function loadGame(game) {
     document.querySelector('.game-info .game-title').textContent = game.title;
     document.querySelector('.game-description').style.whiteSpace = 'pre-wrap';
     document.querySelector('.game-description').textContent = game.description;
+    renderPolicyLine(game);
 
     container.classList.remove("quality-gold", "quality-silver", "quality-cyan");
     container.classList.add(qualityClass(game));
+}
+
+let policies = null;
+const policiesReady = fetch("assets/policies.json", { cache: "no-store" })
+    .then((r) => (r.ok ? r.json() : null))
+    .then((data) => { policies = data; })
+    .catch(() => { policies = null; });
+
+function envFromGame(game) {
+    const m = String(game.path || "").match(/assets\/([^/]+)\//);
+    return m ? m[1] : null;
+}
+
+function fmtNum(v, digits) {
+    if (v === null || v === undefined || Number.isNaN(Number(v))) return "—";
+    const n = Number(v);
+    const abs = Math.abs(n);
+    if (abs >= 1e6) return (n / 1e6).toFixed(2) + "M";
+    if (abs >= 1e3) return (n / 1e3).toFixed(abs >= 10000 ? 0 : 1) + "k";
+    if (abs >= 100) return n.toFixed(1);
+    return n.toFixed(digits);
+}
+
+function fmtParams(p) {
+    if (p === null || p === undefined) return "—";
+    const n = Number(p);
+    if (n >= 1e6) return (n / 1e6).toFixed(2) + "M params";
+    if (n >= 1e3) return (n / 1e3).toFixed(0) + "k params";
+    return Math.round(n) + " params";
+}
+
+function policyBit(label, rec, warn) {
+    if (!rec) return "";
+    const perf = rec.perf == null ? "—" : Number(rec.perf).toFixed(3);
+    const score = fmtNum(rec.score, 2);
+    const cls = warn ? ' class="gap"' : "";
+    return `<span${cls}>${label}: ${perf} perf · ${score} score · ${fmtParams(rec.params)}</span>`;
+}
+
+function renderPolicyLine(game) {
+    const el = document.querySelector(".policy-line");
+    if (!el) return;
+    const env = envFromGame(game);
+    const rec = policies && policies.envs && env ? policies.envs[env] : null;
+    if (!rec) {
+        el.hidden = true;
+        el.innerHTML = "";
+        return;
+    }
+    const ship = rec.ship;
+    const best = rec.best;
+    const same = ship && best && ship.run_id === best.run_id;
+    const bits = [];
+    if (ship) bits.push(policyBit("To ship", ship, false));
+    else bits.push('<span class="gap">No policy under the param budget</span>');
+    if (best && !same) bits.push(policyBit("Best", best, true));
+    else if (same) bits.push("Best run fits the budget");
+    if (rec.web_agents > 1) {
+        bits.push(`${rec.web_agents} agents · cap ${fmtParams(rec.param_budget)}`);
+    }
+    el.innerHTML = bits.join(" · ");
+    el.hidden = false;
 }
 
 function initializeGames() {
@@ -126,11 +189,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const demoGame = document.querySelector('.featured-game');
 
     if (demoGame) {
-        // Load specific env if specified in URL params
-        const env = new URLSearchParams(window.location.search).get("env");
-
-        const catalog = allGames();
-        if (env != null && env in catalog) loadGame(catalog[env]);
-        else randomizeGame();
+        const start = () => {
+            const env = new URLSearchParams(window.location.search).get("env");
+            const catalog = allGames();
+            if (env != null && env in catalog) loadGame(catalog[env]);
+            else randomizeGame();
+        };
+        policiesReady.then(start, start);
     }
 });

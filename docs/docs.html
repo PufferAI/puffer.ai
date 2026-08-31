@@ -46,11 +46,11 @@ cd puffertank
             </header>
             <pre><code># PuffeRL
 ./build.sh ENV
-./puffer [train|eval|sweep]
+./puffer [train|eval|sweep] [--section.key=value]
 
 # Standalone
 ./build.sh ENV --cpu
-./ENV [latest|your_model.bin]
+./ENV [latest|your_model.bin] [--section.key=value]
 
 # Example: Train and render
 ./build.sh breakout --cu

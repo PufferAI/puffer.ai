@@ -76,7 +76,7 @@ Actions: Discrete turn and move`,
     boxoban: {
         title: "Boxoban",
         quality: "gold",
-        description: `Sokoban-style crate puzzles generated from Boxoban levels.
+        description: `Sokoban-style crate puzzles from DeepMind Boxoban (medium). Four-box levels with interior walls.
 
 Controls: WASD or Arrow keys
 Observations: Local tile crop
@@ -165,6 +165,46 @@ Controls:
         width: 800,
         height: 600,
     },
+    osrs_inferno: {
+        title: "OSRS Inferno",
+        quality: "gold",
+        description: `Old School RuneScape Inferno. Survive 69 waves and TzKal-Zuk. By Valo.
+
+The browser demo is the real visual client. First load is large (3D assets). Use the wave bar to jump; Zuk is wave 69.
+
+Controls:
+    Take control: Control or H
+    Camera: Middle-drag orbit, right-drag pan, scroll zoom
+    Click to move / attack
+    Escape: exit (embedded)
+
+Observations: Entity-centric combat state
+Actions: Discrete combat / inventory / prayer`,
+        thumbnail: "assets/osrs_inferno_thumbnail.png",
+        path: "assets/osrs_inferno/game.html",
+        width: 1240,
+        height: 840,
+    },
+    osrs_colosseum: {
+        title: "OSRS Colosseum",
+        quality: "gold",
+        description: `Old School RuneScape Fortis Colosseum. 12 waves and Sol Heredit. By Valo.
+
+The browser demo is the real visual client. First load is large (3D assets). Use the wave bar to jump; Sol is wave 12.
+
+Controls:
+    Take control: Control or H
+    Camera: Middle-drag orbit, right-drag pan, scroll zoom
+    Click to move / attack
+    Escape: exit (embedded)
+
+Observations: Entity-centric combat state
+Actions: Discrete combat / inventory / prayer`,
+        thumbnail: "assets/osrs_colosseum_thumbnail.png",
+        path: "assets/osrs_colosseum/game.html",
+        width: 1240,
+        height: 840,
+    },
     moba: {
         title: "MOBA",
         quality: "silver",
@@ -238,11 +278,11 @@ Actions: Discrete. Move`,
     },
     craftax: {
         title: "Craftax",
-        quality: "cyan",
-        description: `A C port of Craftax. Survive, gather, and craft.
+        quality: "gold",
+        description: `C port of Craftax. Survive, gather, and craft. Hold Shift to play.
 
-Controls: WASD or Arrow keys, other keys to craft/use
-Observations: Local world crop (continuous)
+Controls: WASD or arrows to move, other keys to craft/use
+Observations: Local world crop
 Actions: Discrete`,
         thumbnail: "assets/craftax_thumbnail.png",
         path: "assets/craftax/game.html",

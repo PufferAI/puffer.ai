@@ -1,0 +1,455 @@
+{
+  "updated": "2026-08-31T16:56:00Z",
+  "note": "Each run's best env/score row (not the last sample). Ship = that pick with params <= 1e6/web_agents. Best = unconstrained. params = 3*H*H*L (MinGRU).",
+  "base_budget_params": 1000000,
+  "param_formula": "3 * hidden_size * hidden_size * num_layers",
+  "envs": {
+    "boxoban": {
+      "web_agents": 1,
+      "param_budget": 1000000,
+      "n_runs": 970,
+      "ship": {
+        "run_id": "web1m_boxoban",
+        "log": "logs/boxoban/sweep_1787560351658_1492.ini",
+        "hidden": 256,
+        "layers": 4,
+        "params": 890368,
+        "perf": 0.124150,
+        "score": 0.124150,
+        "uptime_s": 414.0525321960449,
+        "agent_steps": 3092774912.0,
+        "n_eval": 11180.0
+      },
+      "best_under_1m": null,
+      "best": {
+        "run_id": "sweep_1787561199733_1506",
+        "log": "logs/boxoban/sweep_1787561199733_1506.ini",
+        "hidden": 1024,
+        "layers": 4.2558794,
+        "params": 13387839,
+        "perf": 0.4267493784427643,
+        "score": 0.4267493784427643,
+        "uptime_s": 3066.2986345291138,
+        "agent_steps": 3042181120.0,
+        "n_eval": 11447.0
+      }
+    },
+    "breakout": {
+      "web_agents": 1,
+      "param_budget": 1000000,
+      "n_runs": 1200,
+      "ship": {
+        "run_id": "sweep_1787631558947_0403",
+        "log": "logs/breakout/sweep_1787631558947_0403.ini",
+        "hidden": 64,
+        "layers": 2.05622196,
+        "params": 25267,
+        "perf": 0.9999661445617676,
+        "score": 863.9707641601562,
+        "uptime_s": 3.4125330448150635,
+        "agent_steps": 108462080.0,
+        "n_eval": 2670.0
+      },
+      "best_under_1m": null,
+      "best": {
+        "run_id": "sweep_1787631558947_0403",
+        "log": "logs/breakout/sweep_1787631558947_0403.ini",
+        "hidden": 64,
+        "layers": 2.05622196,
+        "params": 25267,
+        "perf": 0.9999661445617676,
+        "score": 863.9707641601562,
+        "uptime_s": 3.4125330448150635,
+        "agent_steps": 108462080.0,
+        "n_eval": 2670.0
+      }
+    },
+    "cartpole": {
+      "web_agents": 1,
+      "param_budget": 1000000,
+      "n_runs": 2400,
+      "ship": {
+        "run_id": "sweep_1787670884241_0528",
+        "log": "logs/cartpole/sweep_1787670884241_0528.ini",
+        "hidden": 32,
+        "layers": 2.89923811,
+        "params": 8906,
+        "perf": 0.9951018691062927,
+        "score": 200.0,
+        "uptime_s": 0.6904473304748535,
+        "agent_steps": 7864320.0,
+        "n_eval": 16374.0
+      },
+      "best_under_1m": null,
+      "best": {
+        "run_id": "sweep_1787670884241_0528",
+        "log": "logs/cartpole/sweep_1787670884241_0528.ini",
+        "hidden": 32,
+        "layers": 2.89923811,
+        "params": 8906,
+        "perf": 0.9951018691062927,
+        "score": 200.0,
+        "uptime_s": 0.6904473304748535,
+        "agent_steps": 7864320.0,
+        "n_eval": 16374.0
+      }
+    },
+    "craftax": {
+      "web_agents": 1,
+      "param_budget": 1000000,
+      "n_runs": 2484,
+      "ship": {
+        "run_id": "web1m_craftax",
+        "log": "logs/craftax_clean/sweep_1787888391839_0409.ini",
+        "hidden": 256,
+        "layers": 3,
+        "params": 1022112,
+        "perf": 0.322555,
+        "score": 72.897591,
+        "uptime_s": 2323.95,
+        "agent_steps": 2725249024.0,
+        "n_eval": 10048.0
+      },
+      "best_under_1m": {
+        "run_id": "sweep_1787888391839_0409",
+        "log": "logs/craftax_clean/sweep_1787888391839_0409.ini",
+        "hidden": 256,
+        "layers": 3.65393591,
+        "params": 718393,
+        "perf": 0.3842407464981079,
+        "score": 87.53398132324219,
+        "uptime_s": 1298.0255510807037,
+        "agent_steps": 2725249024.0,
+        "n_eval": 10006.0
+      },
+      "best": {
+        "run_id": "sweep_1787996561419_0935",
+        "log": "logs/craftax_clean/sweep_1787996561419_0935.ini",
+        "hidden": 1024,
+        "layers": 4.0331459,
+        "params": 12687180,
+        "perf": 0.5142455697059631,
+        "score": 119.06929016113281,
+        "uptime_s": 4146.980968236923,
+        "agent_steps": 3492806656.0,
+        "n_eval": 10016.0
+      }
+    },
+    "drone": {
+      "web_agents": 64,
+      "param_budget": 15625,
+      "n_runs": 1201,
+      "ship": {
+        "run_id": "sweep_1788190132024_0847",
+        "log": "logs/drone/sweep_1788190132024_0847.ini",
+        "hidden": 64,
+        "layers": 2,
+        "params": 24576,
+        "perf": 0.9028329253196716,
+        "score": 369.90399169921875,
+        "uptime_s": 50.17913222312927,
+        "agent_steps": 199753728.0,
+        "n_eval": 10128.0
+      },
+      "best_under_1m": {
+        "run_id": "sweep_1788190132024_0847",
+        "log": "logs/drone/sweep_1788190132024_0847.ini",
+        "hidden": 64,
+        "layers": 2,
+        "params": 24576,
+        "perf": 0.9028329253196716,
+        "score": 369.90399169921875,
+        "uptime_s": 50.17913222312927,
+        "agent_steps": 199753728.0,
+        "n_eval": 10128.0
+      },
+      "best": {
+        "run_id": "sweep_1788190132024_0847",
+        "log": "logs/drone/sweep_1788190132024_0847.ini",
+        "hidden": 64,
+        "layers": 2,
+        "params": 24576,
+        "perf": 0.9028329253196716,
+        "score": 369.90399169921875,
+        "uptime_s": 50.17913222312927,
+        "agent_steps": 199753728.0,
+        "n_eval": 10128.0
+      }
+    },
+    "g2048": {
+      "web_agents": 1,
+      "param_budget": 1000000,
+      "n_runs": 1200,
+      "ship": {
+        "run_id": "sweep_1787578199550_1172",
+        "log": "logs/g2048/sweep_1787578199550_1172.ini",
+        "hidden": 256,
+        "layers": 4.61509275,
+        "params": 907364,
+        "perf": 0.11366787552833557,
+        "score": 9311.6787109375,
+        "uptime_s": 110.46595215797424,
+        "agent_steps": 450887680.0,
+        "n_eval": 10003.0
+      },
+      "best_under_1m": null,
+      "best": {
+        "run_id": "sweep_1787578948526_1185",
+        "log": "logs/g2048/sweep_1787578948526_1185.ini",
+        "hidden": 1024,
+        "layers": 4.99474859,
+        "params": 15712120,
+        "perf": 0.17856326699256897,
+        "score": 14628.4560546875,
+        "uptime_s": 1239.347808122635,
+        "agent_steps": 780140544.0,
+        "n_eval": 10191.0
+      }
+    },
+    "maze": {
+      "web_agents": 1,
+      "param_budget": 1000000,
+      "n_runs": 694,
+      "ship": {
+        "run_id": "sweep_1787713469111_0593",
+        "log": "logs/maze/sweep_1787713469111_0593.ini",
+        "hidden": 256,
+        "layers": 4.02855301,
+        "params": 792046,
+        "perf": 1.0,
+        "score": 1.0,
+        "uptime_s": 157.39194107055664,
+        "agent_steps": 479854592.0,
+        "n_eval": 11707.0
+      },
+      "best_under_1m": null,
+      "best": {
+        "run_id": "sweep_1787713469111_0593",
+        "log": "logs/maze/sweep_1787713469111_0593.ini",
+        "hidden": 256,
+        "layers": 4.02855301,
+        "params": 792046,
+        "perf": 1.0,
+        "score": 1.0,
+        "uptime_s": 157.39194107055664,
+        "agent_steps": 479854592.0,
+        "n_eval": 11707.0
+      }
+    },
+    "nmmo3": {
+      "web_agents": 1,
+      "param_budget": 1000000,
+      "n_runs": 1201,
+      "ship": {
+        "run_id": "sweep_1787481846229_1117",
+        "log": "logs/nmmo3/sweep_1787481846229_1117.ini",
+        "hidden": 512,
+        "layers": 1.17428923,
+        "params": 923499,
+        "perf": 0.35832417011260986,
+        "score": 14.332967758178711,
+        "uptime_s": 607.2175583839417,
+        "agent_steps": 723517440.0,
+        "n_eval": 10031.0
+      },
+      "best_under_1m": null,
+      "best": {
+        "run_id": "sweep_1787453901583_0710",
+        "log": "logs/nmmo3/sweep_1787453901583_0710.ini",
+        "hidden": 1024,
+        "layers": 4.18532562,
+        "params": 13165896,
+        "perf": 0.38115888833999634,
+        "score": 15.246355056762695,
+        "uptime_s": 3061.8844652175903,
+        "agent_steps": 1204551680.0,
+        "n_eval": 10083.0
+      }
+    },
+    "osrs_colosseum": {
+      "web_agents": 1,
+      "param_budget": 1000000,
+      "n_runs": 1077,
+      "ship": {
+        "run_id": "sweep_1787518400429_1223",
+        "log": "logs/osrs_colosseum/sweep_1787518400429_1223.ini",
+        "hidden": 256,
+        "layers": 4.99808693,
+        "params": 982664,
+        "perf": 0.8806419372558594,
+        "score": 0.8806419372558594,
+        "uptime_s": 1076.5767929553986,
+        "agent_steps": 931135488.0,
+        "n_eval": 10304.0
+      },
+      "best_under_1m": null,
+      "best": {
+        "run_id": "sweep_1787523323442_1256",
+        "log": "logs/osrs_colosseum/sweep_1787523323442_1256.ini",
+        "hidden": 512,
+        "layers": 2.79811978,
+        "params": 2200531,
+        "perf": 0.9243341088294983,
+        "score": 0.9243341088294983,
+        "uptime_s": 2957.1083142757416,
+        "agent_steps": 1277165568.0,
+        "n_eval": 10025.0
+      }
+    },
+    "osrs_inferno": {
+      "web_agents": 1,
+      "param_budget": 1000000,
+      "n_runs": 1200,
+      "ship": {
+        "run_id": "sweep_1787369030872_1043",
+        "log": "logs/osrs_inferno/sweep_1787369030872_1043.ini",
+        "hidden": 512,
+        "layers": 1.0,
+        "params": 786432,
+        "perf": 0.7047082781791687,
+        "score": 0.7047082781791687,
+        "uptime_s": 671.8720734119415,
+        "agent_steps": 335020032.0,
+        "n_eval": 10011.0
+      },
+      "best_under_1m": null,
+      "best": {
+        "run_id": "sweep_1787377331953_1144",
+        "log": "logs/osrs_inferno/sweep_1787377331953_1144.ini",
+        "hidden": 1024,
+        "layers": 3.63811564,
+        "params": 11444522,
+        "perf": 0.8667131066322327,
+        "score": 0.8667131066322327,
+        "uptime_s": 1241.1643166542053,
+        "agent_steps": 276824064.0,
+        "n_eval": 10020.0
+      }
+    },
+    "pacman": {
+      "web_agents": 1,
+      "param_budget": 1000000,
+      "n_runs": 592,
+      "ship": {
+        "run_id": "sweep_1787686686231_0391",
+        "log": "logs/pacman/sweep_1787686686231_0391.ini",
+        "hidden": 256,
+        "layers": 4.25250816,
+        "params": 836077,
+        "perf": 0.9893471598625183,
+        "score": 237.44741821289062,
+        "uptime_s": 100.71043848991394,
+        "agent_steps": 434110464.0,
+        "n_eval": 10328.0
+      },
+      "best_under_1m": null,
+      "best": {
+        "run_id": "sweep_1787692678629_0545",
+        "log": "logs/pacman/sweep_1787692678629_0545.ini",
+        "hidden": 512,
+        "layers": 6.47288322,
+        "params": 5090482,
+        "perf": 1.0018446445465088,
+        "score": 240.45188903808594,
+        "uptime_s": 440.8271236419678,
+        "agent_steps": 618659840.0,
+        "n_eval": 10133.0
+      }
+    },
+    "terraform": {
+      "web_agents": 1,
+      "param_budget": 1000000,
+      "n_runs": 679,
+      "ship": {
+        "run_id": "sweep_1787655856134_0556",
+        "log": "logs/terraform/sweep_1787655856134_0556.ini",
+        "hidden": 128,
+        "layers": 7.57035828,
+        "params": 372098,
+        "perf": 0.688291,
+        "score": 0.688291,
+        "uptime_s": 390.78,
+        "agent_steps": 445644800.0,
+        "n_eval": 12288.0
+      },
+      "best_under_1m": null,
+      "best": {
+        "run_id": "sweep_1787652392176_0506",
+        "log": "logs/terraform/sweep_1787652392176_0506.ini",
+        "hidden": 1024,
+        "layers": 6.80667019,
+        "params": 21411933,
+        "perf": 0.7362775802612305,
+        "score": 0.7362775802612305,
+        "uptime_s": 2499.119285583496,
+        "agent_steps": 635437056.0,
+        "n_eval": 12288.0
+      }
+    },
+    "tetris": {
+      "web_agents": 1,
+      "param_budget": 1000000,
+      "n_runs": 830,
+      "ship": {
+        "run_id": "sweep_1787607179300_0605",
+        "log": "logs/tetris/sweep_1787607179300_0605.ini",
+        "hidden": 256,
+        "layers": 4.40175724,
+        "params": 865421,
+        "perf": 0.5640079831838608,
+        "score": 84601.2265625,
+        "uptime_s": 169.0211145877838,
+        "agent_steps": 939524096.0,
+        "n_eval": 10471.0
+      },
+      "best_under_1m": null,
+      "best": {
+        "run_id": "sweep_1787609955625_0637",
+        "log": "logs/tetris/sweep_1787609955625_0637.ini",
+        "hidden": 1024,
+        "layers": 7.08489561,
+        "params": 22287154,
+        "perf": 0.9504724741935731,
+        "score": 142571.296875,
+        "uptime_s": 2919.7509088516235,
+        "agent_steps": 1610612736.0,
+        "n_eval": 10068.0
+      }
+    },
+    "tower_climb": {
+      "web_agents": 1,
+      "param_budget": 1000000,
+      "n_runs": 1002,
+      "ship": {
+        "run_id": "sweep_1787705761450_0911",
+        "log": "logs/tower_climb/sweep_1787705761450_0911.ini",
+        "hidden": 256,
+        "layers": 4.92711544,
+        "params": 968710,
+        "perf": 0.955786406993866,
+        "score": 5.364530086517334,
+        "uptime_s": 32.68740367889404,
+        "agent_steps": 203423744.0,
+        "n_eval": 112929.0
+      },
+      "best_under_1m": null,
+      "best": {
+        "run_id": "sweep_1787699281927_0442",
+        "log": "logs/tower_climb/sweep_1787699281927_0442.ini",
+        "hidden": 1024,
+        "layers": 5.61048269,
+        "params": 17649052,
+        "perf": 0.9864083528518677,
+        "score": 5.463403224945068,
+        "uptime_s": 375.24159693717957,
+        "agent_steps": 176160768.0,
+        "n_eval": 121104.0
+      }
+    }
+  },
+  "catalog_key": {
+    "g2048": "twentyfortyeight",
+    "osrs_colosseum": "osrs_colosseum",
+    "osrs_inferno": "osrs_inferno"
+  }
+}
