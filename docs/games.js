@@ -276,6 +276,18 @@ Actions: Discrete. Move`,
         width: 1280,
         height: 720,
     },
+    nethack: {
+        title: "NetHack",
+        quality: "silver",
+        description: `The full NetHack 3.6 game with a random character every run. By Finlay Sanders.
+
+Observations: glyph map, status line, inventory with item state, message text, known spells
+Actions: Multi-discrete. 26 verbs with item-slot and direction heads`,
+        thumbnail: "assets/nethack_thumbnail.png",
+        path: "assets/nethack/game.html",
+        width: 1280,
+        height: 800,
+    },
     craftax: {
         title: "Craftax",
         quality: "gold",
