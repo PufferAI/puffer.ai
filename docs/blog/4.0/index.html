@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PufferLib 4.0</title>
+    <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+    <main class="content">
+        <article class="blog-post">
+            <header class="post-header">
+                <h1>PufferLib 4.0</h1>
+            </header>
+            <img class="cover" src="img0.jpg" alt="">
+<p>PufferLib is an fast and sane reinforcement learning library. This update solves most baseline environments 3-5x faster on average. We'll be releasing articles with details all week. For now, here are the highlights:</p>
+<h2>We replaced Torch with 5,000 lines of deterministic CUDA-C</h2>
+<p>Torch is still available as a fallback and for quicker prototyping, but our main training implementation in Puffer 4 is raw CUDA. It is capable of training our standard model at 15M steps per second and smaller models at over 20M steps per second on a single RTX 5090, up from 3-5M in Puffer 3. </p>
+<video controls playsinline preload="metadata" src="video1.mp4"></video>
+<h2>Constellation Visualizes 20,000 Experiments</h2>
+<div class="image-container"><img src="img2.jpg" alt=""></div>
+<p>We wrote our own aggregate experiment visualizer in C. It can handle 100k points at 60 FPS locally and is easy to embed online. Play with the baselines from this release now at puffer.ai.</p>
+<h2>MinGRU + Highway connections is a hardware-efficient upgrade to LSTMs</h2>
+<p>MinGRU replaces LSTM as our core RNN. It parallelizable over the time dimension during training, which lets us train on longer sequences. We use highway connections instead of traditional normalization between layers. This lets us scale the model both larger and smaller than in Puffer 3 while retaining hardware efficiency.</p>
+<div class="image-container"><img src="img3.png" alt=""></div>
+        </article>
+    </main>
+    <script src="../../header.js"></script>
+</body>
+</html>

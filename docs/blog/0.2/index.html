@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PufferLib 0.2: Ready to Take on the Big Fish</title>
+    <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+    <main class="content">
+        <article class="blog-post">
+<header class="post-header">
+                    <h1>PufferLib 0.2: Ready to Take on the Big Fish</h1>
+                </header>
+
+                <p>PufferLib's goal is to make reinforcement learning on complex game environments as simple as it is on Atari. We released version 0.1 as a preliminary API with limited testing. Now, we're excited to announce version 0.2, which includes dozens of bug fixes, better testing, a streamlined API, and a working demo on CleanRL.</p>
+
+                <h2>Problem Statement</h2>
+
+                <p>To understand the need for PufferLib, let's consider the difference between Atari and one of the most complex game environments out there: Neural MMO. Atari is deterministic, fully observable, and single-agent, with relatively short time horizons and simple observation and action spaces. In contrast, Neural MMO is nondeterministic, only partially observable, and features large and variable agent populations, with longer time horizons and hierarchical observation and action spaces.</p>
+
+                <p>Most RL frameworks are designed with Atari in mind, resulting in limited support for multiple agents, complex observation and action spaces, and a bias towards small models with fewer than 10 million parameters. This makes it challenging for researchers to tackle more complex environments and leads many to focus exclusively on Atari and other simple environments.</p>
+
+                <h2>CleanRL Demos</h2>
+
+                <p>For our initial demo, we ran Neural MMO on CleanRL's single-file Proximal Policy Optimization (PPO) implementation designed for Atari by replacing only the vectorized environment creation code, without considering any of Neural MMO's complexities. For ease of experimentation, we have since wrapped CleanRL in a function and added additional logging. The latest version also includes double-buffering, an asynchronous environment simulation approach from the SampleFactory paper. To ensure the accuracy of our results, we maintain a public WandB profile with current baselines, including Atari results as a correctness check.</p>
+
+                <h2>PufferLib Emulation</h2>
+
+                <p>The key idea behind PufferLib is emulation, or wrapping a complex environment to appear simple, thereby “emulating” an Atari-like game from the perspective of the reinforcement learning framework. This approach handles environment complexity in a wrapper layer instead of natively by the reinforcement learning framework, allowing us to use simple reinforcement learning code with an internally complex environment.</p>
+
+                <p>We will use Neural MMO as a running example here. Neural MMO has hierarchical observation and action spaces, while most reinforcement learning frameworks expect fixed size vectors or tensors. PufferLib flattens observations and action spaces to conform to this expectation, without losing any structural information: both observations and actions are unflattened right before they are required. Reinforcement learning frameworks also expect vectorized environments to have a constant number of agents. PufferLib pads Neural MMO’s variable population to a fixed number of agents and also ensures they appear in the same sorted order. Finally, PufferLib also handles some subtleties in multiagent environment termination signals that are a common source of bugs. PufferLib works with single-agent environments, too!</p>
+
+                <p>Creating a PufferLib binding for a new environment is straightforward - simply provide the environment class and name in the pufferlib.emulation.Binding() function. Here's an example binding for Neural MMO:</p>
+
+                <pre><code>pufferlib.emulation.Binding(
+    env_cls=nmmo.Env,
+    env_name='Neural MMO',
+)</code></pre>
+
+                <p>The Binding class also accepts optional arguments to disable certain emulation features if they're not needed. Additional features include hooks for observation featurization and reward shaping, as well as the ability to suppress output and errors from the environment to avoid excessive logging.</p>
+
+                <h2>PufferLib Vectorization</h2>
+
+                <p>Most reinforcement learning libraries, including CleanRL, require vectorized environments that stack observation tensors across environments and split stacked actions across all environments. While a few options technically support multiagent environments, they are prone to difficult and finicky errors that are costly to debug. PufferLib takes a different approach by providing a wrapper with native support for multiagent environments. You can specify the number of CPU cores and the number of environments per core.</p>
+
+                <p>To use PufferLib's vectorization, create a VecEnvs object by passing in a binding and the number of workers and environments per worker:>
+
+                <pre><code>pufferlib.vectorization.RayVecEnv(
+  binding,
+  num_workers=num_cores, 
+  envs_per_worker=envs_per_worker
+)</code></pre>
+
+                <p>All other popular vectorization implementations are based on native multiprocessing. This works well for bug-free environments that adhere perfectly to the Gym API but quickly becomes cumbersome outside of this ideal setting. Multiprocessing does not scale natively beyond a single machine, eats stack traces from the environments, and does not allow direct access to remote environments outside of the multiprocessed functions. PufferLib's vectorization is backed by Ray, which scales natively to multiple machines, provides correct stack traces, and allows arbitrary access to individual remote environments. At the same time, it is shorter and simpler than any multiprocessed implementation. This vectorization approach makes it easy to reset environments with new maps, convey task specifications, or receive logging information that is not suitable for the infos field. We will cover this in a subsequent post with more detail.</p>
+
+                <p>The one major downside to using Ray as a backend is that it is not particularly fast. Ray itself caps at a few hundred to a few thousand remote calls per second. Currently, this is the price that has to be paid for simplicity and generality. Using larger batch sizes that require many simulated environments per core and employing async techniques like double-buffering can help mitigate this issue. Ultimately, as RL continues to scale up, the problem will solve itself as models become the bottleneck.</p>
+
+                <h2>Next Steps</h2>
+
+                <p>This release represents only a small part of what RL could be with better tooling. Here are some of our plans for future development:</p>
+
+                <p><strong>Emulation features:</strong> We plan to add native support for team-based environments and better passthrough support for accessing any environment-specific features outside of Gym/PettingZoo. There is also room for performance optimization in this area.</p>
+
+                <p><strong>Algorithmic features:</strong> We aim to provide PufferLib-compatible modules for commonly used methods in complex environments research, such as historical self-play, multiplayer skill-rating, and curriculum learning.</p>
+
+                <p><strong>More integrations:</strong> In our initial release, we included both RLlib and CleanRL support. While we still provide an RLlib binding, we have focused on CleanRL as a faster testing mechanism in the early stages of development. However, PufferLib is designed to be easy to integrate with new learning libraries, and we plan to provide baselines for these as well.</p>
+
+                <p><strong>Versioning Compatibility:</strong> The rapid progress of Gym/Gymnasium has created compatibility conflicts between specific environments, gym versions, and learning library dependencies. We are still on an old version of Gym from before all of this happened and are slowly increasing test coverage and compatibility with new versions.</p>
+
+                <p>Blog post by Joseph Suarez. Thank you to Ryan Sullivan for feedback and suggestions. Join our Discord if you are interested in contributing to PufferLib!</p>
+        </article>
+    </main>
+    <script src="../../header.js"></script>
+    <link rel="stylesheet" href="../../highlight.css">
+    <script src="../../highlight.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

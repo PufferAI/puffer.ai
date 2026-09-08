@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PufferLib 3.0: Better Reinforcement Learning at 4,000,000 Steps/Second</title>
+    <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+    <main class="content">
+        <article class="blog-post">
+<header class="post-header">
+                    <h1>PufferLib 3.0: Better Reinforcement Learning at 4,000,000 Steps/Second</h1>
+                </header>
+
+                <p>Sane and robust reinforcement learning is here! Our latest benchmarks train at up to 4M steps/second on a single RTX 5090. Here's a 30 second demo during which we solve Breakout from scratch:</p>
+
+                <p>The core training code is <1000 lines and we've spent a long time making it easy to follow. All our code is free and open source at puffer.ai, complete with documentation, a pip package, and docker images. Join discord for help or to get involved with development. We'll be posting a new article with details every day this week. For now, here are some highlights:</p>
+                <p>
+
+                <h2>New Environments</h2>
+                <p>We're adding 10 first-party environments to Ocean for a total of 22. Play them here online!</p>
+
+                <h2>Hyperparameter Tuning that Works</h2>
+
+                <p>Power up your RL with Protein, our new hyperparameter tuning algorithm! It's a heavily modified version of ImbueAI's CARBS that has set SOTA out-of-the-box for multiple clients. We've run tens of thousands of experiments with it across Ocean and third-party environments over the course of development. Here's Protein tuning a ludicrously hard maze environment:</p>
+
+                <h2>Algorithmic Breakthroughs</h2>
+                <p>Up until this release, we were just making existing methods faster. Not anymore! Our new trainer solves problems out-of-the-box that 2.0 couldn't solve in a 200 run sweep. The default set of hyperparameters solves most of the easier environments that used to require their own sweeps, too!</p>
+
+                <h2>PufferEnv C API</h2>
+                <p>It's easier than ever to build your own high-perf reinforcement learning environment. Our C API is an analog to Gymnasium with optimizations that propagate through Python. Native PufferEnvs simulate observations directly into shared memory batches with zero redundant copy operations. Two tutorial environments and a starter template are now available in our docs.</p>
+
+                <h2>Hire Puffer</h2>
+                <p>RL is hard. We make it easier. Hire us to get our eyes on your RL problem, assistance in fast simulation, prioritized feature development, and more. Priority service contracts start at 10k/mo, with larger contracts available for fixed deliverables. DM here or email jsuarez🐡puffer🐡ai.</p>
+        </article>
+    </main>
+    <script src="../../header.js"></script>
+</body>
+</html>

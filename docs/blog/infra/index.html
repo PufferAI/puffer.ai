@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reinforcement Learning Infra is Trash and it's Our Fault</title>
+    <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+    <main class="content">
+        <article class="blog-post">
+            <header class="post-header">
+                <h1>Reinforcement Learning Infra is Trash and it's Our Fault</h1>
+            </header>
+            <img class="cover" src="img0.jpg" alt="">
+<div class="image-container"><img src="img1.jpg" alt=""></div>
+<p>This snake environment simulates 14M and trains 1M snake steps per second. I wrote it from scratch in 5 days, including asci, rgb, and human playable renderers. It is ~450 lines of dead simple code. The RL stack we need is PyTorch, Python, and Cython. Not Jax and Rust or C++.</p>
+<h2>The Problem with Jax</h2>
+<p>Jax promises speed. That's the reason you use it. The code is uglier and more complicated. It's a weird fusion of functional bro's first autograd and a bit of OOP (or oops) to appease the barista-pythonistas. I hate it. But fine, say you think it's alright. It still doesn't solve much. All the jax/pytorch comparisons use stupidly small batch sizes. Stop running a 500k param neural network on batch size 8. Use more envs. The snake env has 4096 agents. That's a reasonable batch size for small networks. For heavier stuff like Atari with image obs, use 48 or 64. I got it training at 16k steps/second just with that and async simulation.</p>
+<p>Okay, what about JAX for implementing environments? You have half of a point there, you crafty rhetorical device! There are some envs where jax is great. Particle or evolutionary sims come to mind. Stuff where you have really simple env dynamics that are easy to vectorize.</p>
+<p>The problem happens when you want to simulate more complex envs. Go read the Craftax code. It's the exception that proves the rule: 3k+ lines of very well written jax solving logic puzzle after logic puzzle just to get the thing to run vectorized. I don't know about you, but I'm too dumb to do that. By introducing a restrictive DSL, Jax moves RL back towards simpler environments in the name of performance, with perhaps a couple exceptions made by wizards.</p>
+<h2>The problem with Rust and C++</h2>
+<p>Ain't nobody got time for that shit. Researchers aren't going to write it and they're not going to edit it. So you'd better be sure that you nail a wide range of use cases on your first go. Because if they need to add a feature, and your env is in C++, they just aren't going to use it. And what's the point of Rust anyways? Memory safety? We're talking about training envs. Malloc all the memory in init and put all the frees in the destructor. That's it. But you still have to deal with build systems, extra dependencies, and PyBind in C++. Or...</p>
+<h2>Just use Cython</h2>
+<p>You literally just write your Python code in the dumbest way possible, writing out loops, check that it works, change the file extension to .pyx, add some types, and boom, 100x faster. No PyBind, no extra bullshit, nothing. Want to get fancy with your simulators? You can share numpy array memory between Python and Cython. So you can write loops from in Cython and have the changes reflected in Python. C speed, no copies. Want to get really fancy? Cython structs give you a built-in entity component system that mirrors the memory to Python. More on that in a few weeks. For now, go read the snake code in the pufferai/pufferlib dev branch. It's in pufferlib/environments/ocean/snake.</p>
+<p>/rant Go star PufferLib. It helps me out a ton, and I'm working on fixing this infra nightmare full time.</p>
+<p>https://github.com/pufferai/pufferlib</p>
+        </article>
+    </main>
+    <script src="../../header.js"></script>
+</body>
+</html>

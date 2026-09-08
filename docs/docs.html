@@ -10,9 +10,9 @@
     <main class="content">
         <p>PufferLib is a fast and sane reinforcement learning library. Our key features are:</p>
                 <ul>
-                    <li><strong>PuffeRL:</strong> Up to 60,000,000 step/second training in only ~10k lines of CUDA.</li>
+                    <li><strong>PuffeRL:</strong> Up to 60,000,000 step/second training in only ~10k lines of CUDA C.</li>
                     <li><strong>Ocean:</strong> 60+ C and CUDA environments from simple arcade games to massively multiagent sims</li>
-                    <li><strong>Constellation:</strong> Performant experiment local + web visualization toolkit in C</li>
+                    <li><strong>Constellation:</strong> Performant local + web experiment visualization toolkit in C</li>
                     <li><strong>Protein:</strong> Our algorithm for automatic hyperparameter and reward tuning</li>
                 </ul>
 
@@ -26,18 +26,46 @@
                 <h1>Installation</h1>
             </header>
 
+            <pre><code>curl -fsSL https://raw.githubusercontent.com/PufferAI/PufferTank/refs/heads/5.0/install.sh | bash</code></pre>
+
+            Or use our prebuilt CUDA Docker:
             <pre><code>git clone https://github.com/pufferai/puffertank
 cd puffertank
 ./docker.sh test</code></pre>
 
-            Yoink the dependencies from the dockerfile instead if you don't like containers. You'll need CUDA, cuBLAS, and NCCL. We only test the listed CUDA version but older/newer should work since we're not using any of the higher-level CUDA libraries that tend to change more often.</b>
-
             <h2>Installation Test</h2>
 
-            <pre><code>./build.sh breakout --cu
+            Train a policy in under a second (RTX 5090)
+            <pre><code>
+./build.sh breakout --cu
 ./puffer train
 ./puffer eval latest</code></pre>
-            Trains a policy in under a second on an RTX 5090. Eval requires a graphical interface. Works over ssh -X. Docker over ssh requires -X when you first run the container. Running without -X and reconnecting with -X will not work.
+
+            Or if you don't have an Nvidia GPU available:
+            <pre><code>
+./build.sh breakout --cpu
+./breakout</code></pre>
+
+            You can download pretrained policies from our <a href="https://github.com/PufferAI/puffer.ai">website repo</a>.
+
+            <h2>Remote Rendering</h2>
+            PufferLib supports broadly compatible CPU eval and rendering. We recommend copying trained checkpoints to your local machine and using the --cpu build option to watch your policies. But if you really want to render remotely, you can do something like this:
+
+            <pre><code># remote
+sudo apt install tigervnc-standalone-server
+vncpasswd
+printf '#!/bin/sh\nexec sleep infinity\n' > ~/.vnc/xstartup
+chmod +x ~/.vnc/xstartup
+vncserver :1 -geometry 1920x1080 -localhost yes
+
+# local
+sudo apt install tigervnc-viewer
+ssh -L 5901:127.0.0.1:5901 user@host
+vncviewer localhost:5901
+
+# remote
+DISPLAY=:1 ./puffer eval latest
+DISPLAY=:1 ./seethestars</code></pre>
         </article>
 
         <article id="post-2" class="blog-post">
@@ -60,6 +88,7 @@ cd puffertank
 # Example: Multi-GPU sweep + visualization
 ./build.sh breakout
 ./puffer sweep --sweep.gpus=4
+./build.sh cache_data # Builds resources/constellation/experiments.ini from logs/
 ./build.sh constellation
 ./seethestars
 
@@ -72,7 +101,7 @@ cd puffertank
 --profile  # Build kernel benchmark
 --cu       # Trainer build flag for CUDA native environments
 --float    # For numerics testing vs. default bf16
---web      # Build standalone with emscripten for puffer.ai
+--web      # emscripten web build (install separately)
 
 </code></pre>
         </article>
@@ -83,9 +112,9 @@ cd puffertank
 
            <p>The PufferLib 5.0 native backend is ~10,000 lines of CUDA C. ~5,000 is devoted to training and infrastructure. The rest is sweeps, visualization, and logging. Fork the project and edit directly. There is no prebuilt package blackboxing functionality. Everything is written as simply and transparently as possible. If you're new to low-level dev, it's much easier than you think. Give the environment tutorial a try!</p>
 
-           <p><b>Memory Management:</b> Tensors in PufferLib are just structs with a shape and a data pointer. Every tensor registers its size with an allocator at init time. After all tensors are registered, the allocator sums up the sizes and does a single allocation of continuous memory. There are separate allocators for weights, gradients, and activations. No tensors are created or reallocated afterwards. Static memory improves performance, simplifies cudagraph tracing, and cleans up profile timelines. Since weights and gradients are contiguous, we can apply updates to them in a single kernel without looping over tensors.</p>
+           <p><b>Memory Management:</b> Tensors in PufferLib are just structs with a shape and a data pointer. Every tensor registers its size with an allocator at startup time. After all tensors are registered, the allocator sums up the sizes and does a single allocation of contiguous memory. There are separate allocators for weights, gradients, and activations. No tensors are created or reallocated afterwards. Static memory improves performance, simplifies cudagraph tracing, and cleans up profile timelines. Since weights and gradients are contiguous, we can apply updates to them in a single kernel without looping over tensors.</p>
 
-           <p><b>Tracing:</b> Cudagraphs capture and replay GPU operations in order to reduce kernel launch overhead. At the start of each run, PufferLib runs a few warm up epochs on empty rollout buffers. It then separately traces both the rollout forward pass and the entire train minibatch + loss + policy update. We bloat memory a bit by tracing separate cudagraphs for each step during rollouts in order to avoid an extra data copy for intermediate graph buffers.</p>
+           <p><b>Tracing:</b> Cudagraphs capture and replay GPU operations in order to reduce kernel launch overhead. On the first epoch of each run, PufferLib traces both the rollout forward pass and the entire train minibatch + loss + policy update. We bloat memory a bit by tracing separate cudagraphs for each step during rollouts in order to avoid an extra data copy for intermediate graph buffers.</p>
 
            <p><b>Vectorization:</b> Environment instances are chunked into buffers, each of which is associated with a rollout worker on a separate CUDA stream. Within each buffer, environment execution is parallelized with OMP threading. Rollout workers are independent of each other but each process the same number of environment steps per epoch. Each buffer asynchronously queues data transfers to/from the GPU and uses pinned memory.</p>
 
@@ -93,34 +122,27 @@ cd puffertank
 
            <p><b>Algorithm:</b> PufferLib implements a PPO-variant with improvements based on our own research. It supports both synchronous and 1-epoch asynchronous training as in CleanBa.</p>
 
-           <p><b>PufferNet:</b> Our default model architecture combines MinGRU, an RNN that is parallelizable over the time dimension, with highway nets, a fancy residual that replaces expensive normalization layers. It's equal to or better than an LSTM on every environment we've tested and much faster.</p>
+           <p><b>PufferNet:</b> Our default model architecture combines MinGRU, a linear recurrence that is parallelizable over the time dimension, with highway nets, a fancy residual that replaces expensive normalization layers. It's equal to or better than an LSTM on every environment we've tested and much faster.</p>
 
-           <p><b>Sweeps:</b> The fundamental unit of compute in PufferLib is a hyperparameter sweep, not a single experiment. <b>Protein</b> is a tuning algorithm based on our own research. It combines Gaussian processes with a simple genetic algorithm over the Pareto-frontier defined by cost (experiment wall-clock time) and score. This is the main thing we haven't ported over to CUDA C yet.
+           <p><b>Sweeps:</b> The fundamental unit of compute in PufferLib is a hyperparameter sweep, not a single experiment. <b>Protein</b> is a tuning algorithm based on our own research. It combines Gaussian processes with a simple genetic algorithm over the Pareto-frontier defined by wall-clock experiment time and score.</p>
 
 
     </article>
     <article id="post-5" class="blog-post">
         <header class="post-header">
-            <h1>Tutorial: Writing Your Own Environment at Millions of SPS (steps/second)!</h1>
+            <h1>Building Your Own Environments</h1>
         </header>
 
-        <p>Ocean environments are written in C. Mostly very simple C. Like first 2 weeks of an intro systems course C. Follow this guide and then copy the <a href="https://github.com/PufferAI/PufferLib/blob/5.0/ocean/minimal">Template</a> environment as a starting point for your own environment. The comments walk your thorough our API.</p>
+        <p>Ocean environments are written in C. Mostly very simple C. Like first 2 weeks of an intro systems course C. Compile standalone builds with --cpu. We recommend --debug during development to catch indexing and overflow bugs with the address sanitizer. C isn't much fun without it. Observations, actions, rewards, and terminals are each allocated as big chunks of memory that are contiguous across all (usually thousands) of environment instances.</p>
 
-        <p>Compile standalone builds with --cpu. We recommend --debug during development to catch indexing and overflow bugs with the address sanitizer. C isn't much fun without it. Observations, actions, rewards, and terminals are each allocated as big chunks of memory that are contiguous across all (usually thousands) of environment instances.</p>
-
-        <p>Create a .ini file in the <b>config/</b> directory with the settings for your environment. Copy the one for Tempalte as a starting point. Your environment is now available for training just like any other Ocean environment:</p>
-
-        <pre><code>./build.sh env_name
-./puffer train
-./puffer eval latest</code></pre>
+        <p>The <a href="https://github.com/PufferAI/PufferLib/blob/5.0/ocean/minimal">Minimal</a> environment is a clean template with comments that walk you through our API. Read and understand it first. To create your own environment, first copy and rename all the files. PufferLib explicitly looks for your_env.h inside of ocean/your_env. The .cu file included is a more advanced example of a custom encoder, which most environments will not require.</p>
 
         <p>Here's a checklist of common bugs if your env is not training:</p>
-
         <ul>
             <li><b>Zero or incorrect observations/actions:</b> Ensure you have defined your observation and action metadata (space/size/type) correctly in your binding.c. Note that observation buffers are not zeroed for you every step, so if you are only writing information to specific indicies (i.e. one-hots), be sure you are zeroing them. One memset is usually the quickest.</li>
             <li><b>NaN losses:</b> If your losses NaN after 1 epoch, your environment almost certainly has data corruption. You are writing to memory that does not match the obs/action sizes you have defined, or you have defined them using the wrong types. If your losses NaN after a longer time, it may be hyperparameters.</li>
             <li><b>Incorrect or missing resets:</b> Your environment should handle its own resets internally. For envs that never reset, it is often useful to respawn agents if they are stuck (e.g. no reward for 500 steps). If every rollout has the same number of timesteps, you should stagger your environments on init.</li>
-            <li><b>Not zeroing observations:</b> If you are writing over your observation buffers but only write to some elements each step, If you don't zero out rewards, they will retain their value from the previous step. Ditto for terminals. Zero them at the start of c_step to be safe. A single memset will do it for multiagent envs. If you are not setting every element of every obs (i.e. one-hots), make sure to clear those too.</li>
+            <li><b>Not zeroing observations:</b> If you are writing over your observation buffers but only write to some elements each step, If you don't zero out rewards, they will retain their value from the previous step. Ditto for terminals. Zero them at the start of puf_step to be safe. A single memset will do it for multiagent envs. If you are not setting every element of every obs (i.e. one-hots), make sure to clear those too.</li>
             <li><b>Manually inspect data scale:</b> You want observations and rewards to be roughly in the range of -1 to 1. 0 to 1 is fine. -5 to 5 is kind of fine. Randomly having one obs with magnitude 1000 is not.</li>
         </ul>
 
@@ -131,10 +153,11 @@ cd puffertank
             <h1>FAQ</h1>
         </header>
 
+        <p><b>Can I run PufferLib without an Nvidia GPU?</b> As of 5.0, we have a solid --cpu eval mode but no CPU training option. A 10c/hr cloud GPU will outperform your CPU by 10x.</p>
+        <p><b>Why are the docs so short?</b> Our API surface is tiny and fully covered by our example envs.</p>
+        <p><b>I'm new to RL. How do I contribute?</b> Start by building a simple new environment and getting it to train. I review environment PRs from new contributors live on stream.</p>
+        <p><b>Where did all the Python/third-party stuff go?</b> It was all 100x+ slower than PufferLib is now. We do plan on hooking the C/C++ for Atari and maybe ProcGen into our low-level interface when we have time.</p>
         <p><b>Why is it called PufferLib?</b> Would you have rathered yet another minimal tech logo? Here, have a pufferfish 🐡
-        <p><b>I'm new to RL. How do I contribute?</b> Start by building a simple new environment in C and getting it to train. I review environment PRs from new contributors live on stream.</p>
-        <p><b>How do I export screenshots/gifs?</b> F12 for screenshots, control+F12 for gifs. This is built in to raylib.
-        <p><b>Where did all the Python/third-party stuff go?</b> It was all 100x+ slower than PufferLib is now. We do plan on hooking the C/C++ for Atari, NetHack, and maybe ProcGen into our low-level interface when we have time.</p>
 
     </article>
     </div>

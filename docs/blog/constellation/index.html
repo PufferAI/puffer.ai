@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualizing 20k RL Experiments with Constellation</title>
+    <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+    <main class="content">
+        <article class="blog-post">
+            <header class="post-header">
+                <h1>Visualizing 20k RL Experiments with Constellation</h1>
+            </header>
+            <img class="cover" src="img0.jpg" alt="">
+<p>We ran 1000+ experiment hyperparameter sweeps for all of the environments in PufferLib 4.  12+ trillion total interactions, 17+ petabytes of observations processed. You can play with the data live in your browser at  <a href="https://puffer.ai/constellation.html">puffer.ai</a>. Puffer 4 and Constellation are open source under the MIT license. Feed the🐡 a⭐️ on <a href="https://github.com/pufferai/pufferlib">GitHub</a> to support the project. If you're doing RL professionally, PufferAI also offers custom simulators and dedicated R&amp;D services.</p>
+<p>Constellation is a single ~1200 line C file built with <a href="https://www.raylib.com/">raylib</a>, <a href="https://github.com/raysan5/raygui">raygui</a>, a couple simple shaders, and <a href="https://github.com/davegamble/cjson">cJSON</a> for loading data. It's a simple static-memory architecture that can render 100k points at 60 fps. No lag spikes when switching plot settings. The controls give you x, y, z, and color axes, linear/log/logit scales, and two filters that can be applied to any key. Settings are shared across figures. Right-clicking anywhere will bring up a tooltip for the nearest point as well as copy the hyperparameters to your clipboard for easy replication.</p>
+<p>The first two plots are simple 3D and 2D point clouds. Our baselines downsample each experiment to between 1 and 50 points, depending on its duration. Scatters are cleaner than line plots when viewing hundreds or thousands of experiments. We usually use 2D + color for single-environment analysis and 3D when comparing across all environments.</p>
+<video controls playsinline preload="metadata" src="video1.mp4"></video>
+<p>The third plot is a TSNE over hyperparameters. It can be useful to click around and find clusters of good settings for one or multiple environments. We got carried away with performance improvements this release and didn't have enough time to do as much analysis with this as we would have liked. The final plot shows the ranges of hyperparameters for the current data selection, modified by filters. You can use this, for example, to find stable ranges for runs above a specific performance threshold or under a sample budget.</p>
+<video controls playsinline preload="metadata" src="video2.mp4"></video>
+<p>When running benchmarks for PufferLib 4.0, we had multiple multi-gpu machines sweeping different environments. The simplest workflow for constellation is to zip the log directory on remote machines, scp them to your local, and run the data postprocessing script in the constellation directory.</p>
+<p>Constellation was heavily inspired by <a href="https://github.com/openrlbenchmark/openrlbenchmark">OpenRL Benchmark</a>, a database of WandB runs across many environments and algorithms. We wanted to share PufferLib 4's baselines on our website and make it easy for people to play with the data. After OpenAI <a href="https://openai.com/index/openai-to-acquire-neptune/?utm_source=neptune-website-redirect">bought and killed</a> Neptune, we decided it was time to move away from 3rd party services for core functionality. WandB is still supported for now.</p>
+        </article>
+    </main>
+    <script src="../../header.js"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CARBS Dominates Hyperparameter Tuning</title>
+    <link rel="stylesheet" href="../../styles.css">
+    <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+    </script>
+    <script type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+</head>
+<body>
+    <main class="content">
+        <article class="blog-post">
+            <header class="post-header">
+                <h1>CARBS Dominates Hyperparameter Tuning</h1>
+            </header>
+            <img class="cover" src="img0.jpg" alt="">
+<p>I recently integrated CARBS, a hyperparameter tuning algorithm by @imbue_ai, with PufferLib and WandB. Here are the results!</p>
+<p>Joseph Suarez is a newly minted MIT PhD and full-time RL exorcist. I build simple, ultra-high performance tools for reinforcement learning. It's all open source. You can support my work by starring <a href="https://github.com/pufferai/pufferlib">PufferLib</a>.</p>
+<h2>What is CARBS?</h2>
+<p>CARBS augments Bayesian hyperparameter tuning with a cost-aware pareto front. This means that CARBS tracks how long each experiment takes, in addition to how well it does. It maintains a set of all experiments for which there are no others both faster and better. This allows CARBS to efficiently explore multiple promising paths. I've been using CARBS for this reason and can attest that it works well across a variety of reinforcement learning environments.</p>
+<p>That is now what I'll be testing today. CARBS also has a bunch of extra math-heavy tricks, and I wanted to put it head to head with other methods on a synthetic task. If it's outright better than other methods even in this worst case, then we can probably swap it in safely.</p>
+<h2>The Benchmark</h2>
+<p>If you're looking for real sweep results on real RL envs, I have plenty of those in PufferLib. Today is about a more controlled synthetic test. The &quot;environment&quot; samples 10 variables from a uniform normal distribution. These are the secret optimal hyperparameters. The hyperparameter tuning algorithm proposes a set of candidate parameters and I compute a reward based on how close they are to the target parameters. I designed the specific function below because it is smooth and goes to 0 with a single massively wrong hyperparameter.</p>
+<pre><code class="language-python">class SyntheticExperiment:
+    def __init__(self, n_params, noise=0.1):
+        self.n_params = n_params
+        self.noise = noise
+
+        self.param_optima = np.random.randn(n_params)
+
+    def optimize(self, params):
+        dist = (params-self.param_optima)**2
+        reward = 2**(-dist)
+        noise = 1 + self.noise*np.random.randn()
+        return noise * np.prod(reward)</code></pre>
+<p>$$\text{reward} = \left( 1 + \sigma \cdot \mathcal{N}(0, 1) \right) \cdot \prod_{i=1}^{n} 2^{-(p_i - \theta_i)^2}$$</p>
+<h2>Experiments</h2>
+<p>Each algorithm gets 100 samples from which to learn the same set of optimal hyperparameters. The source code is at the bottom of this post and depends on my fork of CARBS, which is public on the PufferAI GitHub. I tested random search, a simple genetic algorithm, WandB's builtin bayes search, and CARBS. The original runs and graphs are available <a href="https://wandb.ai/jsuarez/sweeping">here</a>.</p>
+<h2>WandB Random</h2>
+<div class="image-container"><img src="img1.jpg" alt=""></div>
+<h2>Genetic Algorithm</h2>
+<div class="image-container"><img src="img2.jpg" alt=""></div>
+<h2>WandB Bayes</h2>
+<div class="image-container"><img src="img3.jpg" alt=""></div>
+<h2>CARBS</h2>
+<div class="image-container"><img src="img4.jpg" alt=""></div>
+<h2>Summary</h2>
+<p>So that's it. CARBS just wins. I designed the worst benchmark I could think of for CARBS, since it doesn't involve cost awareness at all, and it still solved the benchmark. I didn't tune in CARBS favor at all either - since it takes a few extra seconds per experiment, I actually ran the other methods more during dev. PufferAI will be using CARBS for all future sweeps. Star the repo on GitHub to support my work!</p>
+        </article>
+    </main>
+    <script src="../../header.js"></script>
+    <link rel="stylesheet" href="../../highlight.css">
+    <script src="../../highlight.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

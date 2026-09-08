@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Puffing Up PPO</title>
+    <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+    <main class="content">
+        <article class="blog-post">
+<header class="post-header">
+                    <h1>Puffing Up PPO</h1>
+                </header>
+
+                <p>Our day-to-day reinforcement learning work feels like a different field thanks to our new training algorithm. It often solves new environments out-of-the-box in seconds with default hyperparameters, and we're open-sourcing it with PufferLib 3.0. Star the project on GitHub to support our work!</p>
+
+                <h2>A Hard Benchmark</h2>
+                <p>We use arcade envs like Pong, Breakout, and Enduro for a lot of our early experiments. These are great because we can train a ~150k parameter MLP-LSTM at 2-4M steps/second (~10B steps per hour). We also use harder game environments like Neural MMO to test ~2-3M parameter networks at 500k-1M steps/second. In this release, we wanted a pure benchmark task with intuitive, easily scalable difficulty to complement our game environments. So we made Puffer Maze! We can generate any size maze we like and train on 11x11 crops of tiles at >1M steps/second with a 2M parameter model. If you're familiar with the literature, you'll know that RL isn't great at mazes, and most of the papers that use them are about hacking exploration bonuses. Our setting is a ludicrously sparse problem in which the agent only gets a reward at the very end.</p>
+
+                <h2>Mordernizing the Optimizer</h2>
+                <p>Our previous releases had a high-performance but algorithmically vanilla PPO implementation using Adam. This update uses Muon, which initially didn't seem to make much of a difference, but when we ran full sweeps, there was an immediate step-change in capabilities. The hyperparameters we  found for Breakout not only solved the environment ~30% faster, but they also worked on nearly every other env in Ocean! Before this update, we would run a ~200 experiment hyperparameter sweep on each and every environment in order to get good baselines. We also swapped linear learning rate annealing for cosine annealing. This was a more minor detail: while having some form of annealing matters tremendously, we found that the method used doesn't matter much when swept alongside other hyperparameters. But cosine annealing produces more consistent learning curves during sweeps, which helps fit a model to hyperparameters.</p>
+
+                <h2>Trajectory Segment Filtering</h2>
+                <p><a href="https://machinelearning.apple.com/research/robust-autonomy-emerges">Apple's self-driving RL paper</a> filtered out training data with uninformative advantage estimates. We've wanted to adopt this for a while, but the naive implementation breaks LSTMs. Our solution was to apply filtering to entire trajectory segments based on the sum of the advantage estimate over the entire segment of usually 64 observations. As an additional improvement, we apply <a href="https://arxiv.org/pdf/1511.05952">prioritized experience replay</a> instead of filtering over a fixed range. Neither of these techniques helps with every environment, but it can be a massive improvement if rewards are sparse. Prioritized replay is equal to uniform sampling with alpha=0 and beta_0=1, and we sweep both these coefficients, so we can easily see how much prioritized replay matters for any given environment.</p>
+
+                <h2>Experience the Puffer Advantage</h2>
+                <p>PPO was the algorithm OpenAI used to beat top pros at DoTA in 2019 and is probably the most widely used on-policy RL algorithm today. Half of what makes PPO good is clipping updates to avoid going too far off-policy. The other half is <a href="https://arxiv.org/pdf/1506.02438">generalized advantage estimation</a>, which scales rewards based on a fancy exponentially decaying average of n-step bootstrap estimates. In simpler terms: it determines how much a dollar today is worth vs. a dollar tomorrow.</p>
+
+                <p>The other really well-known on-policy algorithm is IMPALA. This one gets confused a lot, because it also introduced a ResNet-based architecture in the same paper. So when people say they are using IMPALA, half the time, they are just doing PPO with a ResNet and not actually using the algorithm. But when they are, the key to IMPALA is VTrace, which corrects off-policy updates. It essentially takes the clipping ratio used in PPO and uses it inside of the advantage function per-step, instead of just at the end.</p>
+
+                <p>Our original idea was to combine VTrace with trajectory segment filtering in PufferLib to keep around high-value data from epoch to epoch. That was way too off-policy and didn't work at all. But in the process, we spent a lot of time staring at the math... and realized GAE and VTrace are virtually identical! So we put them together and boom, Puffer Advantage! All the reference implementations we found for GAE and VTrace were pretty slow, so this release ships with a custom CUDA kernel. Puffer Advantage is equal to GAE when you set both clip coefficients to infinity and equal to VTrace with lambda=1, so our method is a strict generalization of both.</p>
+        </article>
+    </main>
+    <script src="../../header.js"></script>
+</body>
+</html>
