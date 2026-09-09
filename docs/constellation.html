@@ -21,9 +21,12 @@
             background: var(--foreground);
         }
         .main-content {
-            max-width: 1920;
+            max-width: 1920px;
+            width: 100%;
             margin: 0 auto;
             padding: var(--spacing-md);
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
         .section-header {
             margin: var(--spacing-lg) 0 var(--spacing-sm);
@@ -46,16 +49,27 @@
 	.constellation-wrap {
 	    display: flex;
 	    flex-direction: column;
-	    align-items: center;
+	    align-items: stretch;
 	    width: 100%;
 	}
 
+	.vis-stage {
+	    position: relative;
+	    overflow: hidden;
+	    margin: 0 auto;
+	    width: 100%;
+	    max-width: 1920px;
+	    aspect-ratio: 1920 / 560;
+	}
+
 	.featured-game {
-	    width: min(90vw, 100%);
-	    aspect-ratio: 16/9;
-	    height:auto;
-	    display:block;
+	    position: absolute;
+	    top: 0;
+	    left: 0;
+	    width: 1920px;
+	    height: 560px;
 	    border: none;
+	    transform-origin: 0 0;
 	}
 
         .wip-grid {
@@ -119,11 +133,13 @@
 </head>
 <body>
     <main class="main-content">
-        <div class = "contellation-wrap">
+        <div class="constellation-wrap">
 	    <div class="rotate-notice">
 		Constellation is best viewed in landscape mode — rotate your device for the full experience.
 	    </div>
-            <iframe src="assets/constellation/game.html" class="featured-game" title="Constellation"></iframe>
+            <div class="vis-stage">
+                <iframe src="assets/constellation/game.html" class="featured-game" title="Constellation"></iframe>
+            </div>
             <h2 class="section-header" style="margin: 0;width: 1920px; max-width: 100%;">Constellation</h2>
             <p class="section-description" style="margin: 0;width: 1920px; max-width: 100%;">
             <i>Each thought is a star</i><br>
@@ -131,11 +147,40 @@
             <i>But they shine brightest</i><br>
             <br>
 
-	    Our experiment visualization toolkit. Includes pareto-optimal points from 20,000+ baseline experiments!<br>
+	    Our experiment visualization toolkit. Includes pareto-optimal points from the 5.0 constellation sweeps.<br>
 		Right click to view a data point. Click drop downs to change axes / apply filters. Have fun!
             </p>
         </div>
     </main>
     <script src="header.js"></script>
+    <script>
+        var NATIVE_W = 1920;
+        var NATIVE_H = 560;
+        function fitConstellation() {
+            var stage = document.querySelector(".vis-stage");
+            var frame = document.querySelector(".featured-game");
+            var wrap = document.querySelector(".constellation-wrap");
+            if (!stage || !frame) return;
+            var box = wrap || stage.parentElement;
+            var top = (box || stage).getBoundingClientRect().top;
+            var availH = Math.max(160, window.innerHeight - top - 16);
+            var availW = box ? box.clientWidth : stage.clientWidth;
+            var s = Math.min(availW / NATIVE_W, availH / NATIVE_H, 1);
+            stage.style.width = (NATIVE_W * s) + "px";
+            stage.style.height = (NATIVE_H * s) + "px";
+            frame.style.transform = "scale(" + s + ")";
+        }
+        window.addEventListener("resize", fitConstellation);
+        window.addEventListener("load", fitConstellation);
+        if (window.ResizeObserver) {
+            new ResizeObserver(fitConstellation).observe(document.documentElement);
+        }
+        if (window.MutationObserver) {
+            new MutationObserver(fitConstellation).observe(document.body, { childList: true });
+        }
+        fitConstellation();
+        setTimeout(fitConstellation, 0);
+        setTimeout(fitConstellation, 250);
+    </script>
 </body>
 </html>
