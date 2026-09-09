@@ -1,8 +1,8 @@
 {
-  "updated": "2026-08-17T15:15:03Z",
-  "host": "puffermax1 RTX 5090",
-  "commit": "5.0 + 2026-08-17 source",
-  "note": "PufferLib 5.0 single-GPU retrain on puffermax1. Main ocean.html games only. Skip if remaining >1h after SPS sample. CPU eval capped 90s / 32 episodes.",
+  "updated": "2026-09-09T00:10:36Z",
+  "host": "constellation + puffermax1",
+  "commit": "5.0",
+  "note": "Constellation sweep peaks (best env/score) for tracked envs. Other rows: Aug 17 single-GPU puffermax1 retrain.",
   "envs": {
     "nmmo3": {
       "env": "nmmo3",
@@ -12,16 +12,16 @@
       "build_flags": "",
       "run_id": "puffermax1",
       "updated": "2026-08-17T05:32:19Z",
-      "uptime_s": 1471.4341411590576,
+      "uptime_s": 3061.8844652175903,
       "sps": 919171.1644768136,
-      "score": 14.361299514770508,
-      "perf": 0.3590324819087982,
-      "steps": 1199964160.0,
+      "score": 15.246355056762695,
+      "perf": 0.38115888833999634,
+      "steps": 1204551680.0,
       "checkpoint": "/puffertank/pufferc/checkpoints/nmmo3/1786942910477/0000001199964160.bin",
       "log": "/puffertank/pufferc/logs/nmmo3/1786942910477.ini",
       "finished_at": "2026-08-17T05:32:19Z",
-      "web_built": false,
-      "note": "",
+      "web_built": true,
+      "note": "constellation n=1203 best sweep_1787453901583_0710",
       "cuda_eval": {
         "env": "nmmo3",
         "score": 2.524138,
@@ -31,7 +31,8 @@
       },
       "cpu_eval": {
         "error": "timeout 90s"
-      }
+      },
+      "n_runs": 1203
     },
     "drone": {
       "env": "drone",
@@ -41,16 +42,16 @@
       "build_flags": "",
       "run_id": "puffermax1",
       "updated": "2026-08-17T05:28:26Z",
-      "uptime_s": 14.004134178161621,
+      "uptime_s": 998.7124900817871,
       "sps": 7711457.653073407,
-      "score": 275.6171569824219,
-      "perf": 0.7901014089584351,
-      "steps": 88604672.0,
+      "score": 418.0505065917969,
+      "perf": 0.9654188752174377,
+      "steps": 199753728.0,
       "checkpoint": "/puffertank/pufferc/checkpoints/drone/1786944490525/0000000088604672.bin",
       "log": "/puffertank/pufferc/logs/drone/1786944490525.ini",
       "finished_at": "2026-08-17T05:28:26Z",
-      "web_built": false,
-      "note": "",
+      "web_built": true,
+      "note": "constellation n=991 best sweep_1788723560653_0967",
       "cuda_eval": {
         "env": "drone",
         "score": 274.341583,
@@ -70,7 +71,8 @@
         "steps": 2048,
         "agents": 64,
         "rc": 0
-      }
+      },
+      "n_runs": 991
     },
     "tetris": {
       "env": "tetris",
@@ -80,16 +82,16 @@
       "build_flags": "",
       "run_id": "puffermax1",
       "updated": "2026-08-17T05:39:55Z",
-      "uptime_s": 607.3789277076721,
+      "uptime_s": 2919.7509088516235,
       "sps": 4148419.5151965623,
-      "score": 31085.46484375,
-      "perf": 0.4578794538974762,
-      "steps": 1924136960.0,
+      "score": 142571.296875,
+      "perf": 0.9504724741935731,
+      "steps": 1610612736.0,
       "checkpoint": "/puffertank/pufferc/checkpoints/tetris/1786944510695/0000001924136960.bin",
       "log": "/puffertank/pufferc/logs/tetris/1786944510695.ini",
       "finished_at": "2026-08-17T05:39:55Z",
-      "web_built": false,
-      "note": "",
+      "web_built": true,
+      "note": "constellation n=830 best sweep_1787609955625_0637",
       "cuda_eval": {
         "env": "tetris",
         "score": 8188.125488,
@@ -109,7 +111,8 @@
         "steps": 74362,
         "agents": 1,
         "rc": 0
-      }
+      },
+      "n_runs": 830
     },
     "maze": {
       "env": "maze",
@@ -119,16 +122,16 @@
       "build_flags": "",
       "run_id": "puffermax1",
       "updated": "2026-08-17T05:45:09Z",
-      "uptime_s": 304.3169937133789,
+      "uptime_s": 157.39194107055664,
       "sps": 1139366.6740336989,
-      "score": 0.9998309016227722,
-      "perf": 0.9998309016227722,
-      "steps": 337903616.0,
+      "score": 1.0,
+      "perf": 1.0,
+      "steps": 479854592.0,
       "checkpoint": "/puffertank/pufferc/checkpoints/maze/1786945199861/0000000337903616.bin",
       "log": "/puffertank/pufferc/logs/maze/1786945199861.ini",
       "finished_at": "2026-08-17T05:45:09Z",
-      "web_built": false,
-      "note": "",
+      "web_built": true,
+      "note": "constellation n=694 best sweep_1787713469111_0593",
       "cuda_eval": {
         "env": "maze",
         "score": 1.0,
@@ -148,7 +151,8 @@
         "steps": 1763,
         "agents": 1,
         "rc": 0
-      }
+      },
+      "n_runs": 694
     },
     "boxoban": {
       "env": "boxoban",
@@ -158,16 +162,16 @@
       "build_flags": "",
       "run_id": "puffermax1",
       "updated": "2026-08-17T06:35:59Z",
-      "uptime_s": 3014.137115240097,
+      "uptime_s": 3066.2986345291138,
       "sps": 1061552.6288727676,
-      "score": 0.14454872906208038,
-      "perf": 0.14454872906208038,
-      "steps": 2999975936.0,
+      "score": 0.4267493784427643,
+      "perf": 0.4267493784427643,
+      "steps": 3042181120.0,
       "checkpoint": "/puffertank/pufferc/checkpoints/boxoban/1786945513905/0000002999975936.bin",
       "log": "/puffertank/pufferc/logs/boxoban/1786945513905.ini",
       "finished_at": "2026-08-17T06:35:59Z",
-      "web_built": false,
-      "note": "",
+      "web_built": true,
+      "note": "constellation n=970 best sweep_1787561199733_1506",
       "cuda_eval": {
         "env": "boxoban",
         "score": 0.172821,
@@ -187,7 +191,8 @@
         "steps": 4763,
         "agents": 1,
         "rc": 0
-      }
+      },
+      "n_runs": 970
     },
     "pong": {
       "env": "pong",
@@ -236,16 +241,16 @@
       "build_flags": "",
       "run_id": "puffermax1",
       "updated": "2026-08-17T06:51:04Z",
-      "uptime_s": 326.70599937438965,
+      "uptime_s": 1239.347808122635,
       "sps": 1127670.6926419626,
-      "score": 3052.887939453125,
-      "perf": 0.037266723811626434,
-      "steps": 339476480.0,
+      "score": 14628.4560546875,
+      "perf": 0.17856326699256897,
+      "steps": 780140544.0,
       "checkpoint": "/puffertank/pufferc/checkpoints/g2048/1786948571420/0000000339476480.bin",
       "log": "/puffertank/pufferc/logs/g2048/1786948571420.ini",
       "finished_at": "2026-08-17T06:51:04Z",
-      "web_built": false,
-      "note": "",
+      "web_built": true,
+      "note": "constellation n=1200 best sweep_1787578948526_1185",
       "cuda_eval": {
         "env": "g2048",
         "score": 326.22818,
@@ -253,7 +258,8 @@
         "games": 149,
         "params": 15750144
       },
-      "cpu_eval": {}
+      "cpu_eval": {},
+      "n_runs": 1200
     },
     "cartpole": {
       "env": "cartpole",
@@ -263,16 +269,16 @@
       "build_flags": "",
       "run_id": "puffermax1",
       "updated": "2026-08-17T06:43:24Z",
-      "uptime_s": 2.000699520111084,
+      "uptime_s": 0.6378674507141113,
       "sps": 49405681.090687566,
       "score": 200.0,
-      "perf": 0.9950329661369324,
-      "steps": 14942208.0,
+      "perf": 0.9949973225593567,
+      "steps": 5177344.0,
       "checkpoint": "/puffertank/pufferc/checkpoints/cartpole/1786949001755/0000000014942208.bin",
       "log": "/puffertank/pufferc/logs/cartpole/1786949001755.ini",
       "finished_at": "2026-08-17T06:43:24Z",
-      "web_built": false,
-      "note": "",
+      "web_built": true,
+      "note": "constellation n=2400 best sweep_1787671001204_0912",
       "cuda_eval": {
         "env": "cartpole",
         "score": 200.0,
@@ -292,7 +298,8 @@
         "steps": 6400,
         "agents": 1,
         "rc": 0
-      }
+      },
+      "n_runs": 2400
     },
     "robocode": {
       "env": "robocode",
@@ -302,16 +309,16 @@
       "build_flags": "",
       "run_id": "puffermax1",
       "updated": "2026-08-17T06:44:29Z",
-      "uptime_s": 52.014315366744995,
+      "uptime_s": 2941.0606820583344,
       "sps": 6242379.333520215,
-      "score": 3.1005911827087402,
-      "perf": 0.0005788951530121267,
-      "steps": 199229440.0,
+      "score": 145.99034118652344,
+      "perf": 0.4959016442298889,
+      "steps": 2999975936.0,
       "checkpoint": "/puffertank/pufferc/checkpoints/robocode/1786949008817/0000000199229440.bin",
       "log": "/puffertank/pufferc/logs/robocode/1786949008817.ini",
       "finished_at": "2026-08-17T06:44:29Z",
-      "web_built": false,
-      "note": "",
+      "web_built": true,
+      "note": "constellation n=1201 best sweep_1788471395188_0258",
       "cuda_eval": {
         "env": "robocode",
         "score": 6.326773,
@@ -331,7 +338,8 @@
         "steps": 18432,
         "agents": 1,
         "rc": 0
-      }
+      },
+      "n_runs": 1201
     },
     "moba": {
       "env": "moba",
@@ -383,16 +391,16 @@
       "build_flags": "",
       "run_id": "puffermax1",
       "updated": "2026-08-17T06:49:52Z",
-      "uptime_s": 40.078704833984375,
+      "uptime_s": 375.24159693717957,
       "sps": 11893378.560245762,
-      "score": 1.5027917623519897,
-      "perf": 0.04595198109745979,
-      "steps": 447741952.0,
+      "score": 5.463403224945068,
+      "perf": 0.9864083528518677,
+      "steps": 176160768.0,
       "checkpoint": "/puffertank/pufferc/checkpoints/tower_climb/1786949350251/0000000447741952.bin",
       "log": "/puffertank/pufferc/logs/tower_climb/1786949350251.ini",
       "finished_at": "2026-08-17T06:49:52Z",
-      "web_built": false,
-      "note": "",
+      "web_built": true,
+      "note": "constellation n=1002 best sweep_1787699281927_0442",
       "cuda_eval": {
         "env": "tower_climb",
         "score": 1.536686,
@@ -412,7 +420,8 @@
         "steps": 1851,
         "agents": 1,
         "rc": 0
-      }
+      },
+      "n_runs": 1002
     },
     "snake": {
       "env": "snake",
@@ -449,16 +458,16 @@
       "build_flags": "",
       "run_id": "puffermax1",
       "updated": "2026-08-17T07:02:56Z",
-      "uptime_s": 56.033695936203,
+      "uptime_s": 31870.33984375,
       "sps": 6549482.861554659,
-      "score": 3.631911039352417,
-      "perf": 0.06763099879026413,
-      "steps": 199229440.0,
+      "score": 138.83221435546875,
+      "perf": 0.6143008470535278,
+      "steps": 119999037440.0,
       "checkpoint": "/puffertank/pufferc/checkpoints/craftax/1786950115193/0000000199229440.bin",
       "log": "/puffertank/pufferc/logs/craftax/1786950115193.ini",
       "finished_at": "2026-08-17T07:02:56Z",
-      "web_built": false,
-      "note": "",
+      "web_built": true,
+      "note": "constellation n=2486 best scale8c",
       "cuda_eval": {
         "env": "craftax",
         "score": 2.532164,
@@ -478,7 +487,8 @@
         "steps": 48667,
         "agents": 1,
         "rc": 0
-      }
+      },
+      "n_runs": 2486
     },
     "battle": {
       "env": "battle",
@@ -527,16 +537,16 @@
       "build_flags": "",
       "run_id": "puffermax1",
       "updated": "2026-08-17T07:06:54Z",
-      "uptime_s": 148.09895205497742,
+      "uptime_s": 2499.119285583496,
       "sps": 1817043.4689810658,
-      "score": 0.49293750524520874,
-      "perf": 0.49293750524520874,
-      "steps": 234356736.0,
+      "score": 0.7362775802612305,
+      "perf": 0.7362775802612305,
+      "steps": 635437056.0,
       "checkpoint": "/puffertank/pufferc/checkpoints/terraform/1786950181357/0000000234356736.bin",
       "log": "/puffertank/pufferc/logs/terraform/1786950181357.ini",
       "finished_at": "2026-08-17T07:06:54Z",
-      "web_built": false,
-      "note": "",
+      "web_built": true,
+      "note": "constellation n=679 best sweep_1787652392176_0506",
       "cuda_eval": {
         "env": "terraform",
         "score": 0.493054,
@@ -556,7 +566,8 @@
         "steps": 32768,
         "agents": 1,
         "rc": 0
-      }
+      },
+      "n_runs": 679
     },
     "overcooked": {
       "env": "overcooked",
@@ -819,16 +830,16 @@
       "build_flags": "",
       "run_id": "puffermax1",
       "updated": "2026-08-17T07:37:41Z",
-      "uptime_s": 74.02718091011047,
+      "uptime_s": 440.8271236419678,
       "sps": 3301467.4117564927,
-      "score": 222.91921997070312,
-      "perf": 0.9288297295570374,
-      "steps": 204996608.0,
+      "score": 240.45188903808594,
+      "perf": 1.0018446445465088,
+      "steps": 618659840.0,
       "checkpoint": "/puffertank/pufferc/checkpoints/pacman/1786952178932/0000000204996608.bin",
       "log": "/puffertank/pufferc/logs/pacman/1786952178932.ini",
       "finished_at": "2026-08-17T07:37:41Z",
-      "web_built": false,
-      "note": "",
+      "web_built": true,
+      "note": "constellation n=592 best sweep_1787692678629_0545",
       "cuda_eval": {
         "env": "pacman",
         "score": 135.086288,
@@ -848,7 +859,8 @@
         "steps": 11207,
         "agents": 1,
         "rc": 0
-      }
+      },
+      "n_runs": 592
     },
     "go": {
       "env": "go",
@@ -1113,16 +1125,16 @@
       "build_flags": "",
       "run_id": "puffermax1",
       "updated": "2026-08-17T07:46:46Z",
-      "uptime_s": 76.02671360969543,
+      "uptime_s": 697.8057861328125,
       "sps": 3677713.077948212,
-      "score": 4.829418659210205,
-      "perf": 0.982938826084137,
-      "steps": 279969792.0,
+      "score": 0.9780701994895935,
+      "perf": 0.9780701994895935,
+      "steps": 101711872.0,
       "checkpoint": "/puffertank/pufferc/checkpoints/slimevolley/1786952724805/0000000279969792.bin",
       "log": "/puffertank/pufferc/logs/slimevolley/1786952724805.ini",
       "finished_at": "2026-08-17T07:46:46Z",
-      "web_built": false,
-      "note": "",
+      "web_built": true,
+      "note": "constellation n=918 best sweep_1788868397320_0575",
       "cuda_eval": {
         "env": "slimevolley",
         "score": 4.307229,
@@ -1142,7 +1154,8 @@
         "steps": 77952,
         "agents": 1,
         "rc": 0
-      }
+      },
+      "n_runs": 918
     },
     "blastar": {
       "env": "blastar",
@@ -2206,16 +2219,16 @@
       "build_flags": "--cu",
       "run_id": "puffermax1",
       "updated": "2026-08-17T04:50:00Z",
-      "uptime_s": 0.908,
+      "uptime_s": 3.4125330448150635,
       "sps": 62810257.587647095,
-      "score": 833.97021484375,
-      "perf": 0.9652433395385742,
-      "steps": 54919168.0,
+      "score": 863.9707641601562,
+      "perf": 0.9999661445617676,
+      "steps": 108462080.0,
       "checkpoint": "checkpoints/breakout/1786942239048/0000000054919168.bin",
       "log": null,
       "finished_at": "2026-08-17T04:50:00Z",
-      "web_built": false,
-      "note": "",
+      "web_built": true,
+      "note": "constellation n=1201 best sweep_1787631558947_0403",
       "cuda_eval": {
         "score": 828.329651,
         "perf": 0.958715,
@@ -2227,7 +2240,41 @@
         "perf": 0.949784,
         "n": 10000,
         "match": 1
-      }
+      },
+      "n_runs": 1201
+    },
+    "osrs_inferno": {
+      "env": "osrs_inferno",
+      "status": "done",
+      "score": 0.8667131066322327,
+      "perf": 0.8667131066322327,
+      "steps": 276824064.0,
+      "uptime_s": 1241.1643166542053,
+      "n_runs": 1200,
+      "note": "constellation n=1200 best sweep_1787377331953_1144",
+      "web_built": true
+    },
+    "osrs_colosseum": {
+      "env": "osrs_colosseum",
+      "status": "done",
+      "score": 0.9243341088294983,
+      "perf": 0.9243341088294983,
+      "steps": 1277165568.0,
+      "uptime_s": 2957.1083142757416,
+      "n_runs": 1077,
+      "note": "constellation n=1077 best sweep_1787523323442_1256",
+      "web_built": true
+    },
+    "nethack": {
+      "env": "nethack",
+      "status": "done",
+      "score": 17077.033203125,
+      "perf": 0.06498701095581055,
+      "steps": 1999896576.0,
+      "uptime_s": 27184.529126405716,
+      "n_runs": 1208,
+      "note": "constellation n=1208 best rt_2B_1122_s203",
+      "web_built": true
     }
   }
 }

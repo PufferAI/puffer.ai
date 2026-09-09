@@ -102,10 +102,9 @@ function fmtParams(p) {
 
 function policyBit(label, rec, warn) {
     if (!rec) return "";
-    const perf = rec.perf == null ? "—" : Number(rec.perf).toFixed(3);
     const score = fmtNum(rec.score, 2);
     const cls = warn ? ' class="gap"' : "";
-    return `<span${cls}>${label}: ${perf} perf · ${score} score · ${fmtParams(rec.params)}</span>`;
+    return `<span${cls}>${label} ${score} score · ${fmtParams(rec.params)}</span>`;
 }
 
 function renderPolicyLine(game) {
@@ -121,11 +120,14 @@ function renderPolicyLine(game) {
     const ship = rec.ship;
     const best = rec.best;
     const same = ship && best && ship.run_id === best.run_id;
+    const shipWorse = !!(ship && best && !same &&
+        ship.score != null && best.score != null &&
+        Number(best.score) > Number(ship.score));
     const bits = [];
-    if (ship) bits.push(policyBit("To ship", ship, false));
+    if (ship) bits.push(policyBit("Shipped", ship, shipWorse));
     else bits.push('<span class="gap">No policy under the param budget</span>');
-    if (best && !same) bits.push(policyBit("Best", best, true));
-    else if (same) bits.push("Best run fits the budget");
+    if (best && !same) bits.push(policyBit("Best", best, false));
+    else if (same) bits.push("matches best");
     if (rec.web_agents > 1) {
         bits.push(`${rec.web_agents} agents · cap ${fmtParams(rec.param_budget)}`);
     }
@@ -173,15 +175,40 @@ function allGames() {
     return Object.assign({}, games, typeof toy !== 'undefined' ? toy : {}, wip);
 }
 
+function goldGames() {
+    const gold = Object.values(games).filter((g) => envQuality(g) === "gold");
+    return gold.length ? gold : Object.values(games);
+}
+
+function featuredPath() {
+    const iframe = document.querySelector(".featured-game");
+    if (!iframe || !iframe.src) {
+        return "";
+    }
+    return iframe.src.split("/").slice(-2).join("/");
+}
+
+let randBag = [];
+
+function shuffleRandBag(excludePath) {
+    const pool = goldGames().filter((g) => g.path !== excludePath);
+    const src = pool.length ? pool : goldGames();
+    randBag = src.slice();
+    for (let i = randBag.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const t = randBag[i];
+        randBag[i] = randBag[j];
+        randBag[j] = t;
+    }
+}
+
 function randomizeGame() {
-    const currentGame = document.querySelector('.featured-game');
-    const gameEntries = Object.entries(games);
-    const currentPath = currentGame.src.split('/').slice(-2).join('/');
-    let newGame;
-    do {
-        newGame = gameEntries[Math.floor(Math.random() * gameEntries.length)][1];
-    } while (newGame.path === currentPath);
-    loadGame(newGame);
+    const currentPath = featuredPath();
+    randBag = randBag.filter((g) => g.path !== currentPath);
+    if (!randBag.length) {
+        shuffleRandBag(currentPath);
+    }
+    loadGame(randBag.pop());
 }
 
 document.addEventListener('DOMContentLoaded', () => {

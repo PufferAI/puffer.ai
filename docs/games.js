@@ -1,4 +1,16 @@
 const games = {
+    nethack: {
+        title: "NetHack",
+        quality: "gold",
+        description: `The full NetHack 3.6 game with a random character every run. By Finlay Sanders.
+
+Observations: glyph map, status line, inventory with item state, message text, known spells
+Actions: Multi-discrete. 26 verbs with item-slot and direction heads`,
+        thumbnail: "assets/nethack_thumbnail.png",
+        path: "assets/nethack/game.html",
+        width: 1280,
+        height: 800,
+    },
     nmmo3: {
         title: "Neural MMO 3",
         quality: "gold",
@@ -27,143 +39,6 @@ Actions: Discrete. Move, sprint, attack, use item, buy, sell`,
         path: "assets/nmmo3/game.html",
         width: 960,
         height: 704,
-    },
-    drone: {
-        title: "Drone",
-        quality: "gold",
-        description: `Four motor thrust based drone simulation. By Sam Turner and Finlay Sanders.
-
-Observations: Own mechanics and orientation, relative distance to goal
-Actions: Continuous thrust per motor`,
-        thumbnail: "assets/drone_thumbnail.png",
-        path: "assets/drone/game.html",
-        width: 1080,
-        height: 720,
-    },
-    tetris: {
-        title: "Tetris",
-        quality: "gold",
-        description: `A fast version of the classic Atari game. By Hadrien Crassous.
-
-Score points by clearing rows.
-
-Controls:
-    Move: A/D or Left/Right
-    Rotate: W or Up
-    Soft drop: S or Down
-    Hard drop: Space
-    Stash piece: C
-
-Observations: 1d vector (continuous)
-Actions: Discrete. Move, rotate, soft/hard drop, stash`,
-        thumbnail: "assets/tetris_thumbnail.png",
-        path: "assets/tetris/game.html",
-        width: 384,
-        height: 928,
-    },
-    maze: {
-        title: "Maze",
-        quality: "gold",
-        description: `Procedurally generated mazes with sparse reward. By Joseph Suarez.
-
-Observations: Local crop of tiles
-Actions: Discrete turn and move`,
-        thumbnail: "assets/maze_thumbnail.png",
-        path: "assets/maze/game.html",
-        width: 752,
-        height: 752,
-    },
-    boxoban: {
-        title: "Boxoban",
-        quality: "gold",
-        description: `Sokoban-style crate puzzles from DeepMind Boxoban (medium). Four-box levels with interior walls.
-
-Controls: WASD or Arrow keys
-Observations: Local tile crop
-Actions: Discrete. Move`,
-        thumbnail: "assets/boxoban_thumbnail.png",
-        path: "assets/boxoban/game.html",
-        width: 320,
-        height: 320,
-    },
-    breakout: {
-        title: "Breakout",
-        quality: "gold",
-        description: `A fast version of the classic Atari game. By Noah Farr with physics enhancements by David (dmoore101).
-
-Break two screens of bricks before losing all five lives to win.
-
-Controls: 
-    Move: A/D or Left/Right
-    Fire: W or Up
-
-Observations: 1d vector (continuous)
-Actions: Discrete. Move, fire`,
-        thumbnail: "assets/breakout_thumbnail.png",
-        path: "assets/breakout/game.html",
-        width: 576,
-        height: 330,
-    },
-    pong: {
-        title: "Pong",
-        quality: "gold",
-        description: `A fast version of the classic Atari game. By Nathan Lichtlé.
-
-First player to score 21 goals wins.
-
-Controls: W/S or Up/Down to move
-Observations: 1d vector (continuous)
-Actions: Discrete. Move`,
-        thumbnail: "assets/pong_thumbnail.png",
-        path: "assets/pong/game.html",
-        width: 620,
-        height: 640,
-    },
-    twentyfortyeight: {
-        title: "2048",
-        quality: "gold",
-        description: `A fast version of the classic game. By Yannik.
-
-Score points by merging same-valued tiles to make a bigger number.
-
-Controls: WASD or Arrow keys to slide tiles
-Observations: 1d game state vector (continuous)
-Actions: Slide tiles`,
-        thumbnail: "assets/2048_thumbnail.png",
-        path: "assets/g2048/game.html",
-        width: 400,
-        height: 450,
-    },
-    cartpole: {
-        title: "CartPole",
-        quality: "gold",
-        description: `The classic RL toy problem. Keep the pole standing.
-
-Controls: Right/D or Left/A
-Observations: 1D state (continuous)
-Actions: Discrete. Left/Right`,
-        thumbnail: "assets/cartpole_thumbnail.png",
-        path: "assets/cartpole/game.html",
-        width: 600,
-        height: 200,
-    },
-    robocode: {
-        title: "Robocode",
-        quality: "gold",
-        description: `Port of the Java programming challenge Robocode to C. By Joseph Suarez.
-
-Really cool tank battle environment.
-
-Controls:
-    Move forward: W or Up
-    Move backward: S or Down
-    Turn left: A or Left
-    Turn right: D or Right
-    Fire: Space`,
-        thumbnail: "assets/robocode_thumbnail.png",
-        path: "assets/robocode/game.html",
-        width: 800,
-        height: 600,
     },
     osrs_inferno: {
         title: "OSRS Inferno",
@@ -205,6 +80,224 @@ Actions: Discrete combat / inventory / prayer`,
         width: 1240,
         height: 840,
     },
+    craftax: {
+        title: "Craftax",
+        quality: "gold",
+        description: `C port of Craftax. Survive, gather, and craft. Hold Shift to play.
+
+Controls: WASD or arrows to move, other keys to craft/use
+Observations: Local world crop
+Actions: Discrete`,
+        thumbnail: "assets/craftax_thumbnail.png",
+        path: "assets/craftax/game.html",
+        width: 964,
+        height: 814,
+    },
+    drone: {
+        title: "Drone",
+        quality: "gold",
+        description: `Four motor thrust based drone simulation. By Sam Turner and Finlay Sanders.
+
+Observations: Own mechanics and orientation, relative distance to goal
+Actions: Continuous thrust per motor`,
+        thumbnail: "assets/drone_thumbnail.png",
+        path: "assets/drone/game.html",
+        width: 1080,
+        height: 720,
+    },
+    robocode: {
+        title: "Robocode",
+        quality: "gold",
+        description: `Port of the Java programming challenge Robocode to C. By Joseph Suarez.
+
+Really cool tank battle environment.
+
+Controls:
+    Move forward: W or Up
+    Move backward: S or Down
+    Turn left: A or Left
+    Turn right: D or Right
+    Fire: Space`,
+        thumbnail: "assets/robocode_thumbnail.png",
+        path: "assets/robocode/game.html",
+        width: 800,
+        height: 600,
+    },
+    tetris: {
+        title: "Tetris",
+        quality: "gold",
+        description: `A fast version of the classic Atari game. By Hadrien Crassous.
+
+Score points by clearing rows.
+
+Controls:
+    Move: A/D or Left/Right
+    Rotate: W or Up
+    Soft drop: S or Down
+    Hard drop: Space
+    Stash piece: C
+
+Observations: 1d vector (continuous)
+Actions: Discrete. Move, rotate, soft/hard drop, stash`,
+        thumbnail: "assets/tetris_thumbnail.png",
+        path: "assets/tetris/game.html",
+        width: 384,
+        height: 928,
+    },
+    boxoban: {
+        title: "Boxoban",
+        quality: "gold",
+        description: `Sokoban-style crate puzzles from DeepMind Boxoban (medium). Four-box levels with interior walls.
+
+Controls: WASD or Arrow keys
+Observations: Local tile crop
+Actions: Discrete. Move`,
+        thumbnail: "assets/boxoban_thumbnail.png",
+        path: "assets/boxoban/game.html",
+        width: 320,
+        height: 320,
+    },
+    twentyfortyeight: {
+        title: "2048",
+        quality: "gold",
+        description: `A fast version of the classic game. By Yannik.
+
+Score points by merging same-valued tiles to make a bigger number.
+
+Controls: WASD or Arrow keys to slide tiles
+Observations: 1d game state vector (continuous)
+Actions: Slide tiles`,
+        thumbnail: "assets/2048_thumbnail.png",
+        path: "assets/g2048/game.html",
+        width: 400,
+        height: 450,
+    },
+    maze: {
+        title: "Maze",
+        quality: "gold",
+        description: `Procedurally generated mazes with sparse reward. By Joseph Suarez.
+
+Observations: Local crop of tiles
+Actions: Discrete turn and move`,
+        thumbnail: "assets/maze_thumbnail.png",
+        path: "assets/maze/game.html",
+        width: 752,
+        height: 752,
+    },
+    tower_climb: {
+        title: "Tower Climb",
+        quality: "gold",
+        description: `A tower climber based on the Japanese puzzle game Catherine. By Spencer Cheng.
+
+Push and pull blocks to create a path to the objective at the top. You can climb, cling, and shimmy along blocks.
+
+Controls:
+    Move: Arrow keys
+    Camera: WASD
+    Grab Block: Space
+
+Observations: 3D crop of nearby blocks, 1D vector of self data. Continuous.
+Actions: Discrete. Move, grab block.`,
+        thumbnail: "assets/tower_climb_thumbnail.png",
+        path: "assets/tower_climb/game.html",
+        width: 1008,
+        height: 900,
+    },
+    terraform: {
+        title: "Terraform",
+        quality: "gold",
+        description: `Terraform the earth with bulldozers. By Spencer Cheng.
+
+Controls:
+    Move: WASD or Arrow keys
+    Fill bucket: Space
+    Empty bucket: Enter
+    Observation overlay: Control (while holding left shift)
+
+Observations: Partially observed local state (continuous)
+Actions: Discrete. Move, fill/empty bucket`,
+        thumbnail: "assets/terraform_thumbnail.png",
+        path: "assets/terraform/game.html",
+        width: 1080,
+        height: 720,
+    },
+    pacman: {
+        title: "Pacman",
+        quality: "gold",
+        description: `A fast version of the classic arcade game. By Gabe.
+
+Score points by eating dots and ghosts. But not when they're eating you!
+
+Controls:
+    Move: WASD or Arrow keys
+
+Observations: 1d game state vector (continuous)
+Actions: Move`,
+        thumbnail: "assets/pacman_thumbnail.png",
+        path: "assets/pacman/game.html",
+        width: 560,
+        height: 660,
+    },
+    slimevolley: {
+        title: "Slime Volley",
+        quality: "gold",
+        description: `A classic RL environment originally by an unknown author and popularized by David Ha (hardmaru). This version contributed by Joao Abrantes.
+
+Controls: A/D or Left/Right, W/Up/Space to jump
+
+Observations: 1D vector (continuous)
+Actions: Multidiscrete. Move, jump`,
+        thumbnail: "assets/slimevolley_thumbnail.png",
+        path: "assets/slimevolley/game.html",
+        width: 1200,
+        height: 500,
+    },
+    breakout: {
+        title: "Breakout",
+        quality: "gold",
+        description: `A fast version of the classic Atari game. By Noah Farr with physics enhancements by David (dmoore101).
+
+Break two screens of bricks before losing all five lives to win.
+
+Controls: 
+    Move: A/D or Left/Right
+    Fire: W or Up
+
+Observations: 1d vector (continuous)
+Actions: Discrete. Move, fire`,
+        thumbnail: "assets/breakout_thumbnail.png",
+        path: "assets/breakout/game.html",
+        width: 576,
+        height: 330,
+    },
+    pong: {
+        title: "Pong",
+        quality: "gold",
+        description: `A fast version of the classic Atari game. By Nathan Lichtlé.
+
+First player to score 21 goals wins.
+
+Controls: W/S or Up/Down to move
+Observations: 1d vector (continuous)
+Actions: Discrete. Move`,
+        thumbnail: "assets/pong_thumbnail.png",
+        path: "assets/pong/game.html",
+        width: 620,
+        height: 640,
+    },
+    cartpole: {
+        title: "CartPole",
+        quality: "gold",
+        description: `The classic RL toy problem. Keep the pole standing.
+
+Controls: Right/D or Left/A
+Observations: 1D state (continuous)
+Actions: Discrete. Left/Right`,
+        thumbnail: "assets/cartpole_thumbnail.png",
+        path: "assets/cartpole/game.html",
+        width: 600,
+        height: 200,
+    },
     moba: {
         title: "MOBA",
         quality: "silver",
@@ -243,25 +336,6 @@ Actions: Multidiscrete (accelerate, turn)`,
         width: 1080,
         height: 720,
     },
-    tower_climb: {
-        title: "Tower Climb",
-        quality: "silver",
-        description: `A tower climber based on the Japanese puzzle game Catherine. By Spencer Cheng.
-
-Push and pull blocks to create a path to the objective at the top. You can climb, cling, and shimmy along blocks.
-
-Controls:
-    Move: Arrow keys
-    Camera: WASD
-    Grab Block: Space
-
-Observations: 3D crop of nearby blocks, 1D vector of self data. Continuous.
-Actions: Discrete. Move, grab block.`,
-        thumbnail: "assets/tower_climb_thumbnail.png",
-        path: "assets/tower_climb/game.html",
-        width: 1008,
-        height: 900,
-    },
     snake: {
         title: "Multiagent Snake",
         quality: "silver",
@@ -276,30 +350,91 @@ Actions: Discrete. Move`,
         width: 1280,
         height: 720,
     },
-    nethack: {
-        title: "NetHack",
+    chess: {
+        title: "Chess",
         quality: "silver",
-        description: `The full NetHack 3.6 game with a random character every run. By Finlay Sanders.
+        description: `Standard chess against a built-in opponent.
 
-Observations: glyph map, status line, inventory with item state, message text, known spells
-Actions: Multi-discrete. 26 verbs with item-slot and direction heads`,
-        thumbnail: "assets/nethack_thumbnail.png",
-        path: "assets/nethack/game.html",
-        width: 1280,
-        height: 800,
+Controls: Click to move
+Observations: Board tiles
+Actions: Discrete. Move`,
+        thumbnail: "assets/chess_thumbnail.png",
+        path: "assets/chess/game.html",
+        width: 512,
+        height: 652,
     },
-    craftax: {
-        title: "Craftax",
-        quality: "gold",
-        description: `C port of Craftax. Survive, gather, and craft. Hold Shift to play.
+    double_pendulum: {
+        title: "Double Pendulum",
+        quality: "silver",
+        description: `Balance a double inverted pendulum.
 
-Controls: WASD or arrows to move, other keys to craft/use
-Observations: Local world crop
+Controls: Left/Right
+Observations: 1D state (continuous)
+Actions: Discrete / continuous force`,
+        thumbnail: "assets/double_pendulum_thumbnail.png",
+        path: "assets/double_pendulum/game.html",
+        width: 800,
+        height: 420,
+    },
+    boss_fight: {
+        title: "Boss Fight",
+        quality: "silver",
+        description: `Dodge AOE and hit a stationary boss.
+
+Trained 5.0 baseline.
+
+Controls: WASD move, Space dodge, J attack
+Observations: 1D combat state
 Actions: Discrete`,
-        thumbnail: "assets/craftax_thumbnail.png",
-        path: "assets/craftax/game.html",
-        width: 1024,
-        height: 1104,
+        thumbnail: "assets/boss_fight_thumbnail.png",
+        path: "assets/boss_fight/game.html",
+        width: 720,
+        height: 720,
+    },
+    ants: {
+        title: "Ants",
+        quality: "silver",
+        description: `Two colonies forage with pheromones and a vision cone.
+
+Trained 5.0 baseline.
+
+Controls: V vision, P pheromones
+Observations: Local food / pheromone features
+Actions: Discrete. Turn, move`,
+        thumbnail: "assets/ants_thumbnail.png",
+        path: "assets/ants/game.html",
+        width: 1280,
+        height: 720,
+    },
+    clifford: {
+        title: "Clifford",
+        quality: "silver",
+        description: `Synthesize a Clifford circuit. Tableau is the observation.
+
+Trained 5.0 net; default difficulty=10 / goal_bonus=0 does not solve yet.
+
+Controls: Number keys pick a gate
+Observations: 12x12 tableau
+Actions: Discrete. Gate`,
+        thumbnail: "assets/clifford_thumbnail.png",
+        path: "assets/clifford/game.html",
+        width: 480,
+        height: 568,
+    },
+    affine_lock: {
+        title: "Affine Lock",
+        quality: "silver",
+        description: `Match a 16-bit target with reversible bit transforms.
+
+Trained 5.0 baseline.
+
+Controls: Number keys 1-8
+Observations: Current and target bits
+Actions: Discrete. Transform`,
+        thumbnail: "assets/affine_lock_thumbnail.png",
+        path: "assets/affine_lock/game.html",
+        width: 780,
+        height: 360,
     },
     battle: {
         title: "Battle",
@@ -313,24 +448,6 @@ Actions: Discrete / continuous control`,
         path: "assets/battle/game.html",
         width: 1980,
         height: 1020,
-    },
-    terraform: {
-        title: "Terraform",
-        quality: "cyan",
-        description: `Terraform the earth with bulldozers. By Spencer Cheng.
-
-Controls:
-    Move: WASD or Arrow keys
-    Fill bucket: Space
-    Empty bucket: Enter
-    Observation overlay: Control (while holding left shift)
-
-Observations: Partially observed local state (continuous)
-Actions: Discrete. Move, fill/empty bucket`,
-        thumbnail: "assets/terraform_thumbnail.png",
-        path: "assets/terraform/game.html",
-        width: 1080,
-        height: 720,
     },
     overcooked: {
         title: "Overcooked",
@@ -438,23 +555,6 @@ Actions: Discrete. Move, accelerate, brake`,
         width: 304,
         height: 420,
     },
-    pacman: {
-        title: "Pacman",
-        quality: "cyan",
-        description: `A fast version of the classic arcade game. By Gabe.
-
-Score points by eating dots and ghosts. But not when they're eating you!
-
-Controls:
-    Move: WASD or Arrow keys
-
-Observations: 1d game state vector (continuous)
-Actions: Move`,
-        thumbnail: "assets/pacman_thumbnail.png",
-        path: "assets/pacman/game.html",
-        width: 560,
-        height: 660,
-    },
     go: {
         title: "Go",
         quality: "cyan",
@@ -468,19 +568,6 @@ Actions: Discrete. Place a stone, pass`,
         path: "assets/go/game.html",
         width: 950,
         height: 750,
-    },
-    chess: {
-        title: "Chess",
-        quality: "cyan",
-        description: `Standard chess against a built-in opponent.
-
-Controls: Click to move
-Observations: Board tiles
-Actions: Discrete. Move`,
-        thumbnail: "assets/chess_thumbnail.png",
-        path: "assets/chess/game.html",
-        width: 512,
-        height: 652,
     },
     checkers: {
         title: "Checkers",
@@ -551,20 +638,6 @@ Actions: Discrete. Toggle cell`,
         path: "assets/lightsout/game.html",
         width: 640,
         height: 640,
-    },
-    slimevolley: {
-        title: "Slime Volley",
-        quality: "cyan",
-        description: `A classic RL environment originally by an unknown author and popularized by David Ha (hardmaru). This version contributed by Joao Abrantes.
-
-Controls: A/D or Left/Right, W/Up/Space to jump
-
-Observations: 1D vector (continuous)
-Actions: Multidiscrete. Move, jump`,
-        thumbnail: "assets/slimevolley_thumbnail.png",
-        path: "assets/slimevolley/game.html",
-        width: 1200,
-        height: 500,
     },
     blastar: {
         title: "Blastar",
@@ -726,19 +799,6 @@ Actions: Multidiscrete. Turn, throttle`,
         width: 1080,
         height: 720,
     },
-    double_pendulum: {
-        title: "Double Pendulum",
-        quality: "cyan",
-        description: `Balance a double inverted pendulum.
-
-Controls: Left/Right
-Observations: 1D state (continuous)
-Actions: Discrete / continuous force`,
-        thumbnail: "assets/double_pendulum_thumbnail.png",
-        path: "assets/double_pendulum/game.html",
-        width: 800,
-        height: 420,
-    },
     whackamole: {
         title: "Whack-a-Puffer",
         quality: "cyan",
@@ -827,21 +887,6 @@ Actions: Discrete. Move`,
         width: 844,
         height: 596,
     },
-    boss_fight: {
-        title: "Boss Fight",
-        quality: "cyan",
-        description: `Dodge AOE and hit a stationary boss.
-
-Trained 5.0 baseline.
-
-Controls: WASD move, Space dodge, J attack
-Observations: 1D combat state
-Actions: Discrete`,
-        thumbnail: "assets/boss_fight_thumbnail.png",
-        path: "assets/boss_fight/game.html",
-        width: 720,
-        height: 720,
-    },
     backgammon: {
         title: "Backgammon",
         quality: "cyan",
@@ -871,21 +916,6 @@ Actions: Discrete. Cell`,
         path: "assets/chain_reaction/game.html",
         width: 1020,
         height: 900,
-    },
-    ants: {
-        title: "Ants",
-        quality: "cyan",
-        description: `Two colonies forage with pheromones and a vision cone.
-
-Trained 5.0 baseline.
-
-Controls: V vision, P pheromones
-Observations: Local food / pheromone features
-Actions: Discrete. Turn, move`,
-        thumbnail: "assets/ants_thumbnail.png",
-        path: "assets/ants/game.html",
-        width: 1280,
-        height: 720,
     },
     soccer: {
         title: "Soccer",
@@ -941,37 +971,7 @@ Actions: Discrete. Cell / tower type`,
         path: "assets/mazing_contest/game.html",
         width: 500,
         height: 633,
-    },
-    clifford: {
-        title: "Clifford",
-        quality: "cyan",
-        description: `Synthesize a Clifford circuit. Tableau is the observation.
-
-Trained 5.0 net; default difficulty=10 / goal_bonus=0 does not solve yet.
-
-Controls: Number keys pick a gate
-Observations: 12x12 tableau
-Actions: Discrete. Gate`,
-        thumbnail: "assets/clifford_thumbnail.png",
-        path: "assets/clifford/game.html",
-        width: 480,
-        height: 568,
-    },
-    affine_lock: {
-        title: "Affine Lock",
-        quality: "cyan",
-        description: `Match a 16-bit target with reversible bit transforms.
-
-Trained 5.0 baseline.
-
-Controls: Number keys 1-8
-Observations: Current and target bits
-Actions: Discrete. Transform`,
-        thumbnail: "assets/affine_lock_thumbnail.png",
-        path: "assets/affine_lock/game.html",
-        width: 780,
-        height: 360,
-    },
+    }
 }
 
 const toy = {

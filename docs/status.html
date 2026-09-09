@@ -59,10 +59,9 @@
     <main class="status-wrap">
         <h1>5.0 Prerelease Train Status</h1>
         <p class="lede">
-            Single-GPU training of every Ocean env on an 8× RTX 5090 box.
-            Breakout is the only <code>--gpu</code> env. A job is skipped if estimated
-            remaining train time is over an hour after a few seconds of SPS.
-            Web builds and policy weights are copied here as runs finish.
+            Constellation-tracked envs show sweep peaks (best <code>env/score</code>).
+            Remaining rows are the Aug 17 single-GPU puffermax1 retrain.
+            Browser cap: 1M params (3·H²·L), divided by demo agent count.
         </p>
         <div class="meta" id="meta">Loading status…</div>
         <div class="pills" id="pills"></div>
@@ -84,9 +83,9 @@
         <section class="review-block" id="web-policies" style="border-top-color:#145555;">
             <h2 style="color:#00bbbb;">Web policy budget</h2>
             <p class="review-lede" style="color:#9ad;">
-                Browser cap: 1M params (3·H²·L), divided by demo agent count.
-                To-ship is the best <code>env/score</code> on a run that fits.
-                Best is unconstrained. Wasm demos still have the old weights.
+                Shipped is the best <code>env/score</code> that fits the 1M-param
+                web budget. Best is unconstrained. Highlighted rows are where
+                the shipped score is below best.
             </p>
             <table class="status" id="policy-table">
                 <thead>
@@ -292,7 +291,7 @@
                     const s = r.ship || {};
                     const b = r.best || {};
                     const same = s.run_id && s.run_id === b.run_id;
-                    const gap = (!same && s.perf != null && b.perf != null && b.perf - s.perf > 0.02);
+                    const gap = (!same && s.score != null && b.score != null && b.score > s.score);
                     return `<tr>
                         <td><b>${r.env}</b></td>
                         <td class="num">${r.web_agents}</td>
