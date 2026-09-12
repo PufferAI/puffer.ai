@@ -151,8 +151,29 @@
     document.title = "OSRS " + encounterLabel;
     canvasElement.setAttribute("aria-label", "OSRS " + encounterLabel + " simulator");
 
+    function unwindMessage(reason) {
+      if (reason == null) return "";
+      if (typeof reason === "string") return reason;
+      if (reason instanceof Error) return reason.message || "";
+      return String(reason.message || reason);
+    }
+
+    function isEmscriptenUnwind(reason) {
+      var message = unwindMessage(reason);
+      return message === "unwind";
+    }
+
     function reportError(reason) {
-      var message = reason instanceof Error ? reason.message : String(reason);
+      // emscripten_set_main_loop(..., simulate_infinite_loop=1) throws "unwind"
+      // to freeze main(). That is the game loop starting, not a crash.
+      if (isEmscriptenUnwind(reason)) {
+        if (!runtimeError) {
+          statusElement.hidden = true;
+          canvasElement.focus();
+        }
+        return;
+      }
+      var message = unwindMessage(reason) || "unknown error";
       runtimeError = true;
       statusElement.hidden = false;
       statusElement.textContent = "Error: " + message;
@@ -224,9 +245,20 @@
     appendArgument(runtimeArguments, "numLayers", "--num-layers");
     appendArgument(runtimeArguments, "entityEncoder", "--entity-encoder");
     window.addEventListener("error", function (event) {
-      reportError(event.error || event.message);
+      var reason = event.error || event.message;
+      if (isEmscriptenUnwind(reason)) {
+        event.preventDefault();
+        reportError(reason);
+        return;
+      }
+      reportError(reason);
     });
     window.addEventListener("unhandledrejection", function (event) {
+      if (isEmscriptenUnwind(event.reason)) {
+        event.preventDefault();
+        reportError(event.reason);
+        return;
+      }
       reportError(event.reason);
     });
     window.addEventListener("keydown", function (event) {
@@ -235,9 +267,24 @@
       }
     });
 
+    var verbose = query.get("debug") === "1";
+    function runtimePrint(text) {
+      if (verbose) console.log(text);
+    }
+    function runtimePrintErr(text) {
+      var line = String(text);
+      if (verbose) {
+        console.warn(line);
+        return;
+      }
+      if (/error|abort|fail|mismatch/i.test(line)) console.warn(line);
+    }
+
     var Module = {
       arguments: runtimeArguments,
       canvas: canvasElement,
+      print: runtimePrint,
+      printErr: runtimePrintErr,
       locateFile: function (path) {
         return versionedAssetUrl(path);
       },
@@ -252,8 +299,10 @@
         reportError(reason);
       },
       onRuntimeInitialized: function () {
-        statusElement.hidden = true;
-        canvasElement.focus();
+        if (!runtimeError) {
+          statusElement.hidden = false;
+          statusElement.textContent = "Loading assets";
+        }
         window.parent.postMessage({ type: "osrs-simulator-ready" }, window.location.origin);
       },
       preRun: [function () {
