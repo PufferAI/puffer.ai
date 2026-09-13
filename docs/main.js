@@ -92,46 +92,25 @@ function fmtNum(v, digits) {
     return n.toFixed(digits);
 }
 
-function fmtParams(p) {
-    if (p === null || p === undefined) return "—";
-    const n = Number(p);
-    if (n >= 1e6) return (n / 1e6).toFixed(2) + "M params";
-    if (n >= 1e3) return (n / 1e3).toFixed(0) + "k params";
-    return Math.round(n) + " params";
-}
-
-function policyBit(label, rec, warn) {
-    if (!rec) return "";
-    const score = fmtNum(rec.score, 2);
-    const cls = warn ? ' class="gap"' : "";
-    return `<span${cls}>${label} ${score} score · ${fmtParams(rec.params)}</span>`;
-}
-
 function renderPolicyLine(game) {
     const el = document.querySelector(".policy-line");
     if (!el) return;
     const env = envFromGame(game);
     const rec = policies && policies.envs && env ? policies.envs[env] : null;
-    if (!rec) {
+    const ship = rec && rec.ship;
+    const best = rec && rec.best;
+    if (!ship || ship.score == null) {
         el.hidden = true;
         el.innerHTML = "";
         return;
     }
-    const ship = rec.ship;
-    const best = rec.best;
-    const same = ship && best && ship.run_id === best.run_id;
-    const shipWorse = !!(ship && best && !same &&
-        ship.score != null && best.score != null &&
-        Number(best.score) > Number(ship.score));
-    const bits = [];
-    if (ship) bits.push(policyBit("Shipped", ship, shipWorse));
-    else bits.push('<span class="gap">No policy under the param budget</span>');
-    if (best && !same) bits.push(policyBit("Best", best, false));
-    else if (same) bits.push("matches best");
-    if (rec.web_agents > 1) {
-        bits.push(`${rec.web_agents} agents · cap ${fmtParams(rec.param_budget)}`);
+    const x = fmtNum(ship.score, 2);
+    const same = best && ship.run_id === best.run_id;
+    let msg = `This small web model achieves score ${x}.`;
+    if (best && !same && best.score != null) {
+        msg += ` Our best model achieves score ${fmtNum(best.score, 2)}.`;
     }
-    el.innerHTML = bits.join(" · ");
+    el.textContent = msg;
     el.hidden = false;
 }
 
