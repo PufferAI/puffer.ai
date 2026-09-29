@@ -982,7 +982,7 @@ const toy = {
 
 Go to the red square.
 
-Controls: WASD or Arrow keys
+Controls: Hold Left Shift + WASD or Arrow keys
 
 Observations: 2D tile grid (discrete)
 Actions: Discrete. Up/Down/Left/Right`,
