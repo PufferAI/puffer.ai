@@ -1,0 +1,71 @@
+{
+  "format": "NP10v001",
+  "dtype": "little-endian float64",
+  "doubles": 69731,
+  "bytes": 557880,
+  "sha256": "dc71e9ac4f0fa6cb1288f2b32fbbe31aa1492b537f7455003373d3aaafa8f0ee",
+  "license": "MIT",
+  "copyright": "2026 Marc / Rage Industries",
+  "source_repository": "https://github.com/marctheshark3/rage-mill",
+  "checkpoint_sha256": "ae387e7eebbf28097bb62cc7c8e664a27a0c1c23a4255ef56cea033e96bc5c6a",
+  "reference_sha256": "cb0caa888ebaeb63ce27606453b54b02116b770314de666b92e37b026e2e6e2e",
+  "tracking_gains_sha256": "82203c192f81130bbcebc4d409714e675eff9438054f2912975c288df9bed91f",
+  "controller": "frozen JEPA target encoder inversion followed by classical TVLQR and LQR",
+  "predictor_selects_actions": false,
+  "raw_state_feedback_bypass": false,
+  "encoder": {
+    "dimensions": [
+      33,
+      128,
+      128,
+      64
+    ],
+    "activation": "SiLU"
+  },
+  "inverse": {
+    "iterations": 20,
+    "jacobian_epsilon": 1e-05,
+    "residual_tolerance": 1e-12
+  },
+  "task": {
+    "poles": 10,
+    "control_hz": 50,
+    "delay_ms": 20,
+    "force_limit_N": 10,
+    "rail_limit_m": 2.4,
+    "horizon_ticks": 1000,
+    "final_hold_ticks": 250,
+    "angle_limit_rad": 0.22,
+    "angular_speed_limit_rad_s": 1
+  },
+  "archived_python_results": {
+    "euler": {
+      "sha256": "388644fad3efe8e81c39c5ff0dce3e303d23454754ce22d9c5df2a2a5250d8e8",
+      "episodes": 32,
+      "success_count": 32,
+      "physics_hz": 640000,
+      "control_hz": 50,
+      "delay_steps": 1,
+      "minimum_final_hold_ticks": 417
+    },
+    "mujoco": {
+      "sha256": "5e22566e36d07891186696a322c6cab9a0fdb028e2e510c69a335cfb23c40114",
+      "episodes": 32,
+      "success_count": 32,
+      "physics_hz": 1000,
+      "control_hz": 50,
+      "delay_steps": 1,
+      "minimum_final_hold_ticks": 417
+    }
+  },
+  "archived_results_are_wasm_validation": false,
+  "source_sha256": {
+    "jepa.py": "8bcf114fc5300cff69a2de165b0db40caf031032ec9a12dce1f11d2a0241c250",
+    "jepa_train.py": "aea248b6b8134369715f2db0556d91680d388f134016426b474865ffd599c3e5",
+    "jepa_state_control.py": "ca870ccdf469bd7caddc4c59436813ad0031c0c4527e9a0a1a440d51c5f41075",
+    "pole_control.py": "c5ced7462cd24df12c9788bd7baaf1c24e177b6d935828e7037ce53d71ceff12",
+    "swing_trajectory.py": "426d41ccfbcadad143c0f5541f8e518ec05f7efa34a394279d939c284bd59aa4"
+  },
+  "pufferlib_source_repository": "https://github.com/marctheshark3/PufferLib",
+  "pufferlib_source_commit": "1da97aaa352d7ccdf0abe7149cbc47d7a9028d29"
+}

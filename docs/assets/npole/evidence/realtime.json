@@ -1,0 +1,8 @@
+{
+  "tick": 1000,
+  "success": true,
+  "hold": 417,
+  "wall_seconds": 20.020138227,
+  "cold_load_seconds": 0.2829676140000001,
+  "renderer": "headless Chromium SwiftShader"
+}

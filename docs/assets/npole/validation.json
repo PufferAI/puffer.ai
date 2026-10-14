@@ -1,0 +1,178 @@
+{
+  "schema": "puffer.npole.demo_validation.v1",
+  "controller": "frozen JEPA target encoder inversion followed by classical TVLQR and LQR",
+  "predictor_selects_actions": false,
+  "raw_state_feedback_bypass": false,
+  "controller_bundle_sha256": "dc71e9ac4f0fa6cb1288f2b32fbbe31aa1492b537f7455003373d3aaafa8f0ee",
+  "source_sha256": {
+    "ocean/npole/npole.h": "5dcb061790383d42404838b4c314f3757341e54e6a37a2d74df25e8d666a922f",
+    "ocean/npole/npole.c": "4ef4d1e163f987d2ce5078062c747208f672ef73b5e30cf47a4905ebee0b5610",
+    "ocean/npole/README.md": "d3ccd302eef2a18f239f5f5f3d2c2d3a7142bf985133d7b579c0ebea73cb254d",
+    "ocean/npole/web.sh": "6394e2e2a194e5be85460de39cfd286ebe0075de087064d266be7a27ad059a9f",
+    "ocean/npole/npole_controller.h": "0d1e6405f9374a29cbc9967f07418191c8eb9c8225390fd753ffa549b880b192",
+    "ocean/npole/npole_physics.h": "548f251b24956b1e4abd3bb40c33309cbee871fe643a3e0c10cb07b2dc3980d0",
+    "ocean/npole/shell.html": "ad9d3eeb8c60410b45f191684445facfa160cc1f8870397bde0a4de28d6f3785",
+    "tests/npole_bridge.c": "2faad8aa0dfccd62634a8af30f8c4392784a9a2715f65b18619adf4274d29219",
+    "config/npole.ini": "3803835338caa3104871aa45ae7c05e1a1e29be4718ac92786e0d44c34feff30",
+    "tests/test_npole.py": "fd18d4135eb23debb961c6368223ea7a96c4fefaf5479739c40e3e5027c132a0",
+    "tests/validate_npole.py": "85beb9fd2e756c22ececad66798902259e6e5bd75810935e40d6c15cdcb7ec7f"
+  },
+  "build_sha256": {
+    "game.html": "35ddb60582910099d99fb4583d9dc13b18dead55258e7a5152bbc22bd356f823",
+    "game.js": "fe381e382672432442496582d3de45bdb3bbd2921cfb68f7801bfa6bd744734b",
+    "game.wasm": "2d8b00bc49d89a71ddb09b8745cf32ae89c3acb12a3db8c1415d46625dfa4c67",
+    "game.data": "dc71e9ac4f0fa6cb1288f2b32fbbe31aa1492b537f7455003373d3aaafa8f0ee"
+  },
+  "build_toolchain": {
+    "emscripten": "3.1.64",
+    "llvm": "19.1.1",
+    "binaryen": "118",
+    "raylib": "5.5"
+  },
+  "task": {
+    "passive_poles": 10,
+    "control_hz": 50,
+    "physics_hz": 1000,
+    "delay_ms": 20,
+    "force_limit_N": 10,
+    "horizon_ticks": 1000,
+    "final_hold_seconds": 5,
+    "final_boundary_states": 251,
+    "rail_limit_m": 2.4,
+    "angle_limit_rad": 0.22,
+    "angular_speed_limit_rad_s": 1
+  },
+  "reserved_final_seeds": [
+    2026101600,
+    2026101601,
+    2026101602,
+    2026101603,
+    2026101604,
+    2026101605,
+    2026101606,
+    2026101607,
+    2026101608,
+    2026101609,
+    2026101610,
+    2026101611,
+    2026101612,
+    2026101613,
+    2026101614,
+    2026101615,
+    2026101616,
+    2026101617,
+    2026101618,
+    2026101619,
+    2026101620,
+    2026101621,
+    2026101622,
+    2026101623,
+    2026101624,
+    2026101625,
+    2026101626,
+    2026101627,
+    2026101628,
+    2026101629,
+    2026101630,
+    2026101631
+  ],
+  "successes": {
+    "c_rk4": 32,
+    "independent_mujoco": 32,
+    "browser_wasm": 32,
+    "lan_x86_64_cpu": 32
+  },
+  "minimum_final_hold_scored_ticks": 417,
+  "primary_recordings_independently_audited": 96,
+  "lan_repeat_recordings_independently_audited": 32,
+  "all_initial_states_identical_across_engines": true,
+  "test_npole": {
+    "passed": 15,
+    "skipped": 0
+  },
+  "lan_rtx3090_host": {
+    "cpu_native_build_and_32_trials": "passed",
+    "cpu_debug_sanitizers_development_episode": "passed",
+    "cuda_sm86_environment_api_compile": "passed",
+    "cuda_sm86_compile_command": "nvcc -std=c++17 -arch=sm_86 -x cu -DNP_TEST_ENV_API -Isrc -Iraylib-5.5_linux_amd64/include -c tests/npole_bridge.c -o npole-api-sm86.o",
+    "native_binary_sha256": "4b4d7ab0ab7fc23a4c70e90bc70f1403b2c9dc5f8a42b5bf775e0054fe166046",
+    "cuda_api_object_sha256": "e27f006b7d10f5d1991baea7a2759a6a87800f70e9a8ad9b71b6c4a87a8eb98d",
+    "gpu_training_runtime": "unverified",
+    "runtime_blocker": "NVML driver/library version mismatch: loaded kernel 595.91.07, NVML 595.99",
+    "cuda_compiler": "11.5.119",
+    "puffer_trained_checkpoint": false
+  },
+  "browser": {
+    "version": "153.0.8010.12",
+    "renderer": "headless Chromium SwiftShader",
+    "page_errors": [],
+    "realtime_development_trial": {
+      "tick": 1000,
+      "success": true,
+      "hold": 417,
+      "wall_seconds": 20.020138227,
+      "cold_load_seconds": 0.2829676140000001,
+      "renderer": "headless Chromium SwiftShader"
+    },
+    "load_measurement_scope": "local HTTP server with browser already installed; not network cold-load performance",
+    "ui": {
+      "pause_stops_ticks": true,
+      "resume_advances_ticks": true,
+      "manual_applied_force_N": -10,
+      "reset_changes_seed": true,
+      "mobile": {
+        "width": 390,
+        "documentWidth": 390,
+        "canvas": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 341.25,
+          "top": 0,
+          "right": 390,
+          "bottom": 341.25,
+          "left": 0
+        }
+      },
+      "gallery_loaded": true,
+      "errors": []
+    }
+  },
+  "controller_parity": {
+    "historical_fixture_count": 40,
+    "maximum_normalized_command_error": 1.1790487799631655e-08,
+    "maximum_recovered_state_error": 5.1514348342607263e-14,
+    "scope": "40 immutable historical state fixtures; controller calculation parity only"
+  },
+  "receipts": {
+    "c_and_mujoco": "evidence/c-mujoco32.json",
+    "wasm": "evidence/wasm32.json",
+    "independent_audit": "evidence/recording-audit.json"
+  },
+  "recordings": {
+    "public_representative_seed": 2026101600,
+    "public_representative_files": [
+      "evidence/c_rk4-2026101600.npz",
+      "evidence/mujoco-2026101600.npz",
+      "evidence/wasm-2026101600.json.gz"
+    ],
+    "full_cohort": "all 96 primary and 32 LAN recordings retained by submitter; all outcomes and primary raw-recording hashes in receipts; validators reproduce the complete cohort"
+  },
+  "physics_model_difference": "analytic mass matrix adds 1e-6 I; independent MuJoCo uses 1e-6 tip rotational inertias, with a slightly different cart inertia; acceleration tolerance rtol=3e-5, atol=8e-6",
+  "offline_reference_optimization": "timed out; returned iterate passed separate dynamics/endpoint feasibility; objective optimality not established",
+  "evidence_sha256": {
+    "c-mujoco32.json": "75d9378c5a6718d967693893d6d23fc50f1a39b6c819749c07eb10b0f015b586",
+    "c-mujoco32-frozen.json": "0f9638f7979a121ac47d5e8bf92549df67c2b7b9cd9ff7f90b5a8f82b03d3a4e",
+    "wasm32.json": "cdbd79820fe406eb59b05f0611475b09465885b0b59744690cd0b7b30b151527",
+    "wasm32-frozen.json": "d76ea2a2e43d107126129c03108ad47f413a5512a352429a139897ba44a51855",
+    "recording-audit.json": "20601af25c397b91a4b2781814913e10d150cb4d6dd20574cb551d26856559d4",
+    "controller-parity.json": "bbfca901b781cbfc57eafd68e2b91302d0a3ca4a74ecc38a10b0c17ab1cb64fa",
+    "ui-checks.json": "7915b84567fe2153443778c03dfa4ed378ea05ed00a82e29060eeec3b7552cd7",
+    "realtime.json": "843284161cc3eccfd2e2baf2d6f7773a56a669155e346b02f7baabfe6a5dcccf",
+    "c_rk4-2026101600.npz": "27633df57afe543785c1f5e98bc4bd32fbde4b55faea8fef4b08c4de3c514fa0",
+    "mujoco-2026101600.npz": "f291bb22387ca8b38388e6742862c274043230d2b14adfce552f22c115c5d0af",
+    "wasm-2026101600.json.gz": "676f169fc0d8f73fca39e5400741f3800a94b0606ec8515111b9076cc464c6c3"
+  },
+  "pufferlib_source_repository": "https://github.com/marctheshark3/PufferLib",
+  "pufferlib_source_commit": "1da97aaa352d7ccdf0abe7149cbc47d7a9028d29"
+}

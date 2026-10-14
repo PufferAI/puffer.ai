@@ -376,6 +376,21 @@ Actions: Discrete / continuous force`,
         width: 800,
         height: 420,
     },
+    npole: {
+        title: "Ten Pendulums",
+        quality: "cyan",
+        description: `Swing up ten passive serial pendulums with one cart force. By Marc / Rage Industries.
+
+Live coupled physics with a 10 N force limit, 50 Hz commands and a 20 ms actuator delay. The demonstrated controller uses a frozen JEPA state encoder and classical trajectory/balance feedback. Its predictor does not select the actions.
+
+Controls: Space pause, R reset, Shift + arrows or hold direction buttons
+Observations: 34 continuous state and actuator features
+Actions: Continuous cart force`,
+        thumbnail: "assets/npole_thumbnail.png",
+        path: "assets/npole/game.html",
+        width: 960,
+        height: 965,
+    },
     boss_fight: {
         title: "Boss Fight",
         quality: "silver",

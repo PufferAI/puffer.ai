@@ -1,0 +1,248 @@
+{
+  "scope": "40 immutable historical state fixtures; controller calculation parity only",
+  "samples": [
+    {
+      "tick": 0,
+      "command_error": 0.0,
+      "state_error": 6.553785292240377e-15,
+      "latent_residual": 1.3883730673772457e-15
+    },
+    {
+      "tick": 25,
+      "command_error": 6.517009154549669e-14,
+      "state_error": 2.9032332093947844e-14,
+      "latent_residual": 4.072935671353651e-15
+    },
+    {
+      "tick": 50,
+      "command_error": 1.1102230246251565e-15,
+      "state_error": 5.129230373768223e-14,
+      "latent_residual": 5.637559855847833e-15
+    },
+    {
+      "tick": 75,
+      "command_error": 2.55351295663786e-14,
+      "state_error": 3.907985046680551e-14,
+      "latent_residual": 3.4890977599476514e-15
+    },
+    {
+      "tick": 100,
+      "command_error": 3.6637359812630166e-14,
+      "state_error": 1.3683498778505054e-14,
+      "latent_residual": 2.968979102438168e-15
+    },
+    {
+      "tick": 125,
+      "command_error": 2.3037127760971998e-14,
+      "state_error": 3.524958103184872e-14,
+      "latent_residual": 5.522810336390953e-15
+    },
+    {
+      "tick": 150,
+      "command_error": 1.099120794378905e-14,
+      "state_error": 1.9317880628477724e-14,
+      "latent_residual": 3.8669317073702695e-15
+    },
+    {
+      "tick": 175,
+      "command_error": 2.6556534749033744e-13,
+      "state_error": 4.951594689828198e-14,
+      "latent_residual": 4.415931720067633e-15
+    },
+    {
+      "tick": 200,
+      "command_error": 1.4077627952246985e-13,
+      "state_error": 2.6423307986078726e-14,
+      "latent_residual": 4.372130919074113e-15
+    },
+    {
+      "tick": 225,
+      "command_error": 7.671641100159832e-14,
+      "state_error": 2.942091015256665e-14,
+      "latent_residual": 7.760872882271525e-15
+    },
+    {
+      "tick": 250,
+      "command_error": 4.241051954068098e-14,
+      "state_error": 5.1514348342607263e-14,
+      "latent_residual": 8.411782711043108e-15
+    },
+    {
+      "tick": 275,
+      "command_error": 1.8107737531636303e-13,
+      "state_error": 3.019806626980426e-14,
+      "latent_residual": 4.275642597916491e-15
+    },
+    {
+      "tick": 300,
+      "command_error": 1.8596235662471372e-13,
+      "state_error": 2.531308496145357e-14,
+      "latent_residual": 5.198280889472521e-15
+    },
+    {
+      "tick": 325,
+      "command_error": 4.141131881851834e-14,
+      "state_error": 2.708944180085382e-14,
+      "latent_residual": 4.2984711576069214e-15
+    },
+    {
+      "tick": 350,
+      "command_error": 2.6978419498391304e-14,
+      "state_error": 2.5757174171303632e-14,
+      "latent_residual": 4.95745971585616e-15
+    },
+    {
+      "tick": 375,
+      "command_error": 1.4654943925052066e-14,
+      "state_error": 2.0872192862952943e-14,
+      "latent_residual": 3.993892553217601e-15
+    },
+    {
+      "tick": 400,
+      "command_error": 7.377431998634165e-13,
+      "state_error": 2.2648549702353193e-14,
+      "latent_residual": 4.3116167255680085e-15
+    },
+    {
+      "tick": 425,
+      "command_error": 2.5288660054911816e-12,
+      "state_error": 1.942890293094024e-14,
+      "latent_residual": 3.291208886483163e-15
+    },
+    {
+      "tick": 450,
+      "command_error": 8.770761894538737e-15,
+      "state_error": 3.0253577421035516e-14,
+      "latent_residual": 4.072755389340541e-15
+    },
+    {
+      "tick": 475,
+      "command_error": 2.3876733923344773e-13,
+      "state_error": 5.1514348342607263e-14,
+      "latent_residual": 5.567094946878982e-15
+    },
+    {
+      "tick": 500,
+      "command_error": 8.526512829121202e-14,
+      "state_error": 1.7763568394002505e-14,
+      "latent_residual": 3.6834254103142996e-15
+    },
+    {
+      "tick": 525,
+      "command_error": 5.576372696936005e-13,
+      "state_error": 1.7319479184152442e-14,
+      "latent_residual": 4.159836512301447e-15
+    },
+    {
+      "tick": 550,
+      "command_error": 9.732645800397677e-10,
+      "state_error": 1.709743457922741e-14,
+      "latent_residual": 3.553147333202946e-15
+    },
+    {
+      "tick": 575,
+      "command_error": 3.029097112028367e-09,
+      "state_error": 2.220446049250313e-14,
+      "latent_residual": 3.982465705066258e-15
+    },
+    {
+      "tick": 600,
+      "command_error": 8.749832802745772e-10,
+      "state_error": 3.2862601528904634e-14,
+      "latent_residual": 3.076842015749926e-15
+    },
+    {
+      "tick": 625,
+      "command_error": 4.444789536428573e-10,
+      "state_error": 2.951111577331744e-14,
+      "latent_residual": 3.596178939863906e-15
+    },
+    {
+      "tick": 650,
+      "command_error": 6.311678270309873e-09,
+      "state_error": 2.912080299122266e-14,
+      "latent_residual": 3.089117323233044e-15
+    },
+    {
+      "tick": 675,
+      "command_error": 6.9773598097150336e-09,
+      "state_error": 1.8617052344183094e-14,
+      "latent_residual": 3.4516551111895528e-15
+    },
+    {
+      "tick": 700,
+      "command_error": 2.0355937525862178e-09,
+      "state_error": 1.5291587440735555e-14,
+      "latent_residual": 3.3388060102953967e-15
+    },
+    {
+      "tick": 725,
+      "command_error": 7.865885864530298e-09,
+      "state_error": 2.883457361768649e-14,
+      "latent_residual": 3.9313549435940165e-15
+    },
+    {
+      "tick": 750,
+      "command_error": 1.2481876990322327e-09,
+      "state_error": 1.1450909664922904e-14,
+      "latent_residual": 2.7376156982791036e-15
+    },
+    {
+      "tick": 775,
+      "command_error": 1.9503895824779516e-09,
+      "state_error": 2.992658204581389e-14,
+      "latent_residual": 3.179391797594009e-15
+    },
+    {
+      "tick": 800,
+      "command_error": 9.260355099058315e-09,
+      "state_error": 2.5897686772857753e-14,
+      "latent_residual": 4.004476135345333e-15
+    },
+    {
+      "tick": 825,
+      "command_error": 6.929559407189978e-09,
+      "state_error": 1.3134458798358395e-14,
+      "latent_residual": 3.1979156778890063e-15
+    },
+    {
+      "tick": 850,
+      "command_error": 2.1195784875513435e-09,
+      "state_error": 3.20498835804095e-14,
+      "latent_residual": 3.071109780057906e-15
+    },
+    {
+      "tick": 875,
+      "command_error": 4.5248655729419884e-09,
+      "state_error": 2.650246512082377e-14,
+      "latent_residual": 3.3793628843320912e-15
+    },
+    {
+      "tick": 900,
+      "command_error": 1.1790487799631655e-08,
+      "state_error": 2.21371980826177e-14,
+      "latent_residual": 4.083493372790438e-15
+    },
+    {
+      "tick": 925,
+      "command_error": 6.906173787554652e-09,
+      "state_error": 2.2574461583341432e-14,
+      "latent_residual": 2.8079659778719322e-15
+    },
+    {
+      "tick": 950,
+      "command_error": 5.4765549126293626e-09,
+      "state_error": 2.1802894771824957e-14,
+      "latent_residual": 2.4619808926049383e-15
+    },
+    {
+      "tick": 975,
+      "command_error": 8.2135538350628e-09,
+      "state_error": 1.031940843150889e-14,
+      "latent_residual": 2.798398789296317e-15
+    }
+  ],
+  "maximum_command_error": 1.1790487799631655e-08,
+  "maximum_state_error": 5.1514348342607263e-14,
+  "maximum_residual": 8.411782711043108e-15
+}

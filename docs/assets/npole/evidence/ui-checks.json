@@ -1,0 +1,22 @@
+{
+  "pause_stops_ticks": true,
+  "resume_advances_ticks": true,
+  "manual_applied_force_N": -10,
+  "reset_changes_seed": true,
+  "mobile": {
+    "width": 390,
+    "documentWidth": 390,
+    "canvas": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 341.25,
+      "top": 0,
+      "right": 390,
+      "bottom": 341.25,
+      "left": 0
+    }
+  },
+  "gallery_loaded": true,
+  "errors": []
+}
