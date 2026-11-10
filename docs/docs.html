@@ -96,12 +96,24 @@ DISPLAY=:1 ./seethestars</code></pre>
 ./build.sh breakout --cpu --debug
 ./breakout --headless
 
+# Example: Your own env, outside the checkout (puffer is on PATH after install.sh)
+puffer new my_env && cd my_env   # my_env.h and my_env.ini from the template
+puffer check                     # syntax-only compile, no binary
+puffer test                      # ASan/UBSan harness: random-action checks, then tests/*.c
+puffer eval --cpu                # the standalone binary with keyboard controls
+puffer train                     # eval works the same way; binaries live in build/
+puffer build breakout --cu       # an Ocean env from any directory
+puffer test all                  # the generic checks over every Ocean env
+
 # Extra flags
 --debug    # -O0 -g; ASan/UBSan on --cpu
 --profile  # Build kernel benchmark
 --cu       # Trainer build flag for CUDA native environments
 --float    # For numerics testing vs. default bf16
 --web      # emscripten web build (install separately)
+--check    # Syntax-only compile with the --cpu flags, no binary
+--test     # build/test_ENV: the sanitiser harness (puffer test)
+--dry-run  # Print the compile commands instead of running them
 
 </code></pre>
         </article>
@@ -135,7 +147,11 @@ DISPLAY=:1 ./seethestars</code></pre>
 
         <p>Ocean environments are written in C. Mostly very simple C. Like first 2 weeks of an intro systems course C. Compile standalone builds with --cpu. We recommend --debug during development to catch indexing and overflow bugs with the address sanitizer. C isn't much fun without it. Observations, actions, rewards, and terminals are each allocated as big chunks of memory that are contiguous across all (usually thousands) of environment instances.</p>
 
-        <p>The <a href="https://github.com/PufferAI/PufferLib/blob/5.0/ocean/minimal">Minimal</a> environment is a clean template with comments that walk you through our API. Read and understand it first. To create your own environment, first copy and rename all the files. PufferLib explicitly looks for your_env.h inside of ocean/your_env. The .cu file included is a more advanced example of a custom encoder, which most environments will not require.</p>
+        <p>The <a href="https://github.com/PufferAI/PufferLib/blob/5.0/ocean/minimal">Minimal</a> environment is a clean template with comments that walk you through our API. Read and understand it first. To create your own environment, first copy and rename all the files. PufferLib looks for your_env.h inside of ocean/your_env, or in any directory you point build.sh at. The .cu file included is a more advanced example of a custom encoder, which most environments will not require.</p>
+
+        <p>You don't need to work inside the PufferLib checkout. <code>puffer new my_env</code> copies the <a href="https://github.com/PufferAI/PufferLib/blob/5.0/ocean/template">template</a> into a new directory, and <code>puffer check</code>, <code>puffer test</code>, <code>puffer eval --cpu</code> and <code>puffer train</code> build it against the PufferLib that install.sh put under ~/.puffer.</p>
+
+        <p><code>puffer test</code> drives the env with random actions under the address sanitiser and checks what the trainer assumes: finite values, terminals that are 0 or 1, episodes that end, the same trajectory for the same seed, no writes past an agent's buffers. Env-specific tests go in tests/*.c with puf_test.h.</p>
 
         <p>Here's a checklist of common bugs if your env is not training:</p>
         <ul>
