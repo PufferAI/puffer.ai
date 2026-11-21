@@ -933,7 +933,7 @@ Actions: Multidiscrete per player`,
     tron: {
         title: "Tron",
         quality: "cyan",
-        description: `Light-cycle self-play on a 24x17 grid. By uoRetr0.
+        description: `Light-cycle self-play on a 24x17 grid. By Yusuf Al-Khawaldeh.
 
 Two riders leave walls; last one alive wins. Trained via self-play; this demo races two policies.
 
